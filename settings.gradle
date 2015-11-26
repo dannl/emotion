@@ -1,1 +1,1 @@
-include ':client', ':gif', ':producer', ':utils'
+include ':client', ':gif', ':producer', ':utils', ':android-gif-drawable'

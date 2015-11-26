@@ -28,6 +28,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Reads frame data from a GIF image source and decodes it into individual frames
@@ -494,6 +495,12 @@ public class GifDecoder {
     public synchronized int read(InputWrapper data) {
         this.header = getHeaderParser().setData(data)
                 .parseHeader();
+        final List<GifFrame> frames = this.header.frames;
+        int frameStart = 0;
+        for (GifFrame frame : frames) {
+            Log.e("GifDecoder", String.format("buffer size: %d", frame.bufferFrameStart - frameStart));
+            frameStart = frame.bufferFrameStart;
+        }
         if (data != null) {
             setData(header, data);
         }
