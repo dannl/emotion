@@ -1,4 +1,4 @@
-package factory.emotion.client;
+package factory.emotion.client.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import factory.emotion.client.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_compress) {
             final Intent intent = new Intent(this, CompressWXEmotionActivity.class);
             startActivity(intent);
+            return true;
+        } else if (id == R.id.action_test_lib) {
+            startActivity(new Intent(this, TestGifLibActivity.class));
             return true;
         }
 

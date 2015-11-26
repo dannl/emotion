@@ -94,5 +94,6 @@
     <orderEntry type="library" exported="" name="design-23.1.1" level="project" />
     <orderEntry type="module" module-name="gif" exported="" />
     <orderEntry type="module" module-name="utils" exported="" />
+    <orderEntry type="module" module-name="android-gif-drawable" exported="" />
   </component>
 </module>

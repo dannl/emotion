@@ -2,6 +2,7 @@
     <string name="app_name">QQDD</string>
     <string name="action_settings">Settings</string>
     <string name="action_compress">压缩图片</string>
+    <string name="action_test_lib">测试lib</string>
     <string name="title_activity_compress_wxemotion">微信表情压缩</string>
     <string name="sample_rate">采样率</string>
     <string name="process">开始转换</string>
@@ -9,4 +10,5 @@
     微信只支持500k的gif作为表情 \n
     采样率就是每x帧截取1帧放到结果中！0表示直接压缩！</string>
     <string name="action_open_file">打开gif文件...</string>
+    <string name="title_activity_test_gif_lib">测试Library</string>
 </resources>

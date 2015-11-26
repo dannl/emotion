@@ -1,4 +1,4 @@
-package factory.emotion.client;
+package factory.emotion.client.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -18,6 +18,7 @@ import com.example.niub.utils.UIUtils;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import factory.emotion.client.R;
 import factory.emotion.gif.GifCompressor;
 import factory.emotion.gifreader.FileInputStreamWrapper;
 import factory.emotion.gifreader.GifImageView;
