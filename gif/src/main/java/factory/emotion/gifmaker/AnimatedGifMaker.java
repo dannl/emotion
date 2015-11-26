@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public class AnimatedGifMaker {
+public class AnimatedGifMaker{
 	// still logs noWRITE and noEXISTER
 	// use Paint for instance field transparent in the future
 	protected int width; // image size
@@ -1193,6 +1193,7 @@ class LZWEncoder {
 		os.write(initCodeSize); // write "initial code size" byte
 
 		remaining = imgW * imgH; // reset navigation variables
+
 		curPixel = 0;
 
 		compress(initCodeSize + 1, os); // compress and write the pixel data
@@ -1270,4 +1271,3 @@ class LZWEncoder {
 		}
 	}
 }
-

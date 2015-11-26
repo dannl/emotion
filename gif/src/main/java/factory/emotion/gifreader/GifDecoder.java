@@ -52,7 +52,7 @@ public class GifDecoder {
     /**
      * File read status: No errors.
      */
-    static final int STATUS_OK = 0;
+    public static final int STATUS_OK = 0;
     /**
      * File read status: Error decoding file (may be partially decoded).
      */
@@ -198,11 +198,12 @@ public class GifDecoder {
         this(new SimpleBitmapProvider());
     }
 
-    int getWidth() {
+
+    public int getWidth() {
         return header.width;
     }
 
-    int getHeight() {
+    public int getHeight() {
         return header.height;
     }
 
@@ -258,7 +259,7 @@ public class GifDecoder {
      *
      * @return frame count.
      */
-    int getFrameCount() {
+    public int getFrameCount() {
         return header.frameCount;
     }
 
@@ -302,7 +303,7 @@ public class GifDecoder {
      *
      * @return Bitmap representation of frame.
      */
-    synchronized Bitmap getNextFrame() {
+    public synchronized Bitmap getNextFrame() {
         if (header.frameCount <= 0 || framePointer < 0) {
             if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG,
@@ -875,4 +876,9 @@ public class GifDecoder {
             bitmap.setHasAlpha(true);
         }
     }
+
+    public int getFrameDelay() {
+        return header.frames.get(framePointer).delay;
+    }
+
 }

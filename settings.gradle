@@ -1,1 +1,1 @@
-include ':client', ':gif', ':producer'
+include ':client', ':gif', ':producer', ':utils'
