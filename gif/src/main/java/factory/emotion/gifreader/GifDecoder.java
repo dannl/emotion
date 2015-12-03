@@ -498,8 +498,7 @@ public class GifDecoder {
         final List<GifFrame> frames = this.header.frames;
         int frameStart = 0;
         for (GifFrame frame : frames) {
-            Log.e("GifDecoder", String.format("buffer size: %d", frame.bufferFrameStart - frameStart));
-            frameStart = frame.bufferFrameStart;
+            Log.e("GIfDecoder", "frame img size: " + frame.bufferSize);
         }
         if (data != null) {
             setData(header, data);

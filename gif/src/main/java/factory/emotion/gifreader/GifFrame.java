@@ -51,4 +51,8 @@ class GifFrame {
      * Local Color Table.
      */
     int[] lct;
+    /**
+     * buffer size of the bitmap data.
+     */
+    public int bufferSize;
 }

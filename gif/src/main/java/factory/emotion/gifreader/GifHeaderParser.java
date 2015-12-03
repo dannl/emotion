@@ -248,7 +248,7 @@ public class GifHeaderParser {
         try {
             header.currentFrame.bufferFrameStart = (int) rawData.position();
             // False decode pixel data to advance buffer.
-            skipImageData();
+            header.currentFrame.bufferSize = skipImageData();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -362,22 +362,25 @@ public class GifHeaderParser {
     /**
      * Skips LZW image data for a single frame to advance buffer.
      */
-    private void skipImageData() throws IOException {
+    private int skipImageData() throws IOException {
         // lzwMinCodeSize
         read();
         // data sub-blocks
-        skip();
+        return skip();
     }
 
     /**
      * Skips variable length blocks up to and including next zero length block.
      */
-    private void skip() throws IOException {
+    private int skip() throws IOException {
         int blockSize;
+        int skipped = 0;
         do {
             blockSize = read();
             rawData.position(rawData.position() + blockSize);
+            skipped += blockSize;
         } while (blockSize > 0);
+        return skipped;
     }
 
     /**
