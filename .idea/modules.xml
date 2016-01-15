@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/client/client.iml" filepath="$PROJECT_DIR$/client/client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/emotion.iml" filepath="$PROJECT_DIR$/emotion.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gif/gif.iml" filepath="$PROJECT_DIR$/gif/gif.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lottery/lottery.iml" filepath="$PROJECT_DIR$/lottery/lottery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/producer/producer.iml" filepath="$PROJECT_DIR$/producer/producer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
+    </modules>
+  </component>
+</project>
