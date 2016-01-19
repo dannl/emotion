@@ -16,7 +16,7 @@ public abstract class DataSource {
         return mAsyncHttpClient;
     }
 
-    public abstract void getAll(@NotNull DataSourceCallback callback);
+    public abstract void getAll(@NotNull DataLoadingCallback callback);
 
-    public abstract void getNewSince(@NotNull LotteryRecord since, @NotNull DataSourceCallback callback);
+    public abstract void getNewSince(@NotNull LotteryRecord since, @NotNull DataLoadingCallback callback);
 }

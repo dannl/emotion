@@ -1,5 +1,10 @@
 package com.qqdd.lottery.data;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Set;
 
@@ -41,5 +46,34 @@ public class LotteryRecord implements Lottery {
     @Override
     public String toString() {
         return mDate.toString() + " " + mLottery.toString();
+    }
+
+    public JSONObject toJson() {
+        final JSONObject json = new JSONObject();
+        try {
+            json.put("lottery", getLottery().toJson());
+            json.put("date", getDate().toString());
+        } catch (JSONException e) {
+        }
+        return json;
+    }
+
+    public static LotteryRecord fromJson(final JSONObject json) {
+        if (json == null) {
+            return null;
+        }
+        try {
+            final JSONObject lottery = json.getJSONObject("lottery");
+            final LotteryData lt = LotteryData.fromJson(lottery);
+            if (lt == null) {
+                return null;
+            }
+            final LotteryRecord result = new LotteryRecord(lt);
+            result.setDate(DateFormat.getDateInstance().parse(json.getString("date")));
+            return result;
+        } catch (JSONException e) {
+        } catch (ParseException e) {
+        }
+        return null;
     }
 }

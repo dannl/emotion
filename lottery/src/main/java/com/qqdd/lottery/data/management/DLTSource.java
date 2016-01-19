@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.loopj.android.http.SyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
-import com.qqdd.lottery.data.DLT;
+import com.qqdd.lottery.data.LotteryData;
 import com.qqdd.lottery.data.LotteryRecord;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class DLTSource extends DataSource {
     private LoadTask mRequestTask;
 
     @Override
-    public void getAll(@NonNull DataSourceCallback callback) {
+    public void getAll(@NonNull DataLoadingCallback callback) {
         if (mRequestTask != null) {
             callback.onBusy();
             return;
@@ -44,7 +44,7 @@ public class DLTSource extends DataSource {
     }
 
     @Override
-    public void getNewSince(@NonNull LotteryRecord since, @NonNull DataSourceCallback callback) {
+    public void getNewSince(@NonNull LotteryRecord since, @NonNull DataLoadingCallback callback) {
 
     }
 
@@ -52,9 +52,9 @@ public class DLTSource extends DataSource {
 
         int mIndex = 1;
         boolean mEnded = false;
-        private DataSourceCallback mCallback;
+        private DataLoadingCallback mCallback;
 
-        public LoadTask(DataSourceCallback callback) {
+        public LoadTask(DataLoadingCallback callback) {
             mCallback = callback;
         }
 
@@ -114,7 +114,7 @@ public class DLTSource extends DataSource {
             return null;
         }
         final Matcher matcher = NUMBER_PATTERN.matcher(line);
-        DLT lt = new DLT();
+        LotteryData lt = LotteryData.newDLT();
         if (!matcher.find()) {
             return null;
         }

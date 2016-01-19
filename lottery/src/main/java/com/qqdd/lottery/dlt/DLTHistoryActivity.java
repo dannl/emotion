@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.management.DLTSource;
-import com.qqdd.lottery.data.management.DataSourceCallback;
+import com.qqdd.lottery.data.management.DataLoadingCallback;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class DLTHistoryActivity extends AppCompatActivity {
 //        });
         final ListView listView = new ListView(this);
         setContentView(listView);
-        new DLTSource().getAll(new DataSourceCallback() {
+        new DLTSource().getAll(new DataLoadingCallback() {
             @Override
             public void onLoaded(final List<LotteryRecord> result) {
                 listView.setAdapter(new BaseAdapter() {
