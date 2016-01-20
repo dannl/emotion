@@ -1,14 +1,10 @@
 package com.qqdd.lottery.data.management;
 
-import com.qqdd.lottery.data.LotteryRecord;
-
-import java.util.List;
-
 /**
  * Created by danliu on 1/19/16.
  */
-public interface DataLoadingCallback {
-    void onLoaded(List<LotteryRecord> result);
+public interface DataLoadingCallback<T> {
+    void onLoaded(T result);
 
     void onLoadFailed(String err);
 

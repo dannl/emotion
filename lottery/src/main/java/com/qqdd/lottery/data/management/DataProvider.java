@@ -74,7 +74,7 @@ public class DataProvider {
             if (cacheFile.exists()) {
                 mLoadFromLocalTask.execute();
             } else {
-                mDataSource.getAll(new DataLoadingCallback() {
+                mDataSource.getAll(new DataLoadingCallback<List<LotteryRecord>>() {
                     @Override
                     public void onLoaded(List<LotteryRecord> result) {
                         mDLTs = result;
@@ -149,7 +149,7 @@ public class DataProvider {
                     mCallback.onLoadFailed("load from local failed.");
                     mLoadTask = null;
                 } else {
-                    mDataSource.getNewSince(lotteryRecords.get(0), new DataLoadingCallback() {
+                    mDataSource.getNewSince(lotteryRecords.get(0), new DataLoadingCallback<List<LotteryRecord>>() {
                         @Override
                         public void onLoaded(List<LotteryRecord> result) {
                             lotteryRecords.addAll(0, result);

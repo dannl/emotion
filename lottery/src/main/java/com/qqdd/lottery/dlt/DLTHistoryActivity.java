@@ -35,7 +35,7 @@ public class DLTHistoryActivity extends AppCompatActivity {
             @Override
             public void onClick(final View view) {
                 DataProvider.getInstance()
-                        .loadDLT(new DataLoadingCallback() {
+                        .loadDLT(new DataLoadingCallback<List<LotteryRecord>>() {
                             @Override
                             public void onLoaded(List<LotteryRecord> result) {
                                 if (result == null || result.isEmpty()) {
@@ -86,7 +86,7 @@ public class DLTHistoryActivity extends AppCompatActivity {
             }
         });
         final ListView listView = (ListView) findViewById(R.id.list);
-        DataProvider.getInstance().loadDLT(new DataLoadingCallback() {
+        DataProvider.getInstance().loadDLT(new DataLoadingCallback<List<LotteryRecord>>() {
             @Override
             public void onLoaded(final List<LotteryRecord> result) {
                 listView.setAdapter(new BaseAdapter() {

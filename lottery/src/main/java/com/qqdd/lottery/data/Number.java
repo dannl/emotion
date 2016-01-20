@@ -1,4 +1,4 @@
-package com.qqdd.lottery.ui.data;
+package com.qqdd.lottery.data;
 
 /**
  * Created by danliu on 1/20/16.

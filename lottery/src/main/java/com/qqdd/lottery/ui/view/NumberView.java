@@ -50,7 +50,7 @@ public class NumberView extends LinearLayout {
         }
     }
 
-    public void setNumber(final com.qqdd.lottery.ui.data.Number number) {
+    public void setNumber(final com.qqdd.lottery.data.Number number) {
         if (number == null) {
             mNumber.setText("");
             mProbability.setText("");
