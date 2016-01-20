@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Intent intent = new Intent(MainActivity.this, DLTHistoryActivity.class);
+                final Intent intent = new Intent(MainActivity.this, OccurrenceProbabilityActivity.class);
                 startActivity(intent);
             }
         });
@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_dlt_history) {
+            final Intent intent = new Intent(MainActivity.this, DLTHistoryActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

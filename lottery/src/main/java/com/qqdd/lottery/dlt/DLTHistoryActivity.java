@@ -63,8 +63,8 @@ public class DLTHistoryActivity extends AppCompatActivity {
                                     Log.e("TEST", "normal num " + i + " occ rate: " + normalOcc[i] / totalNormalOcc);
                                 }
                                 Log.e("TEST", "=======================================");
-                                for (int i = 0; i < normalOcc.length; i++) {
-                                    Log.e("TEST", "special num " + i + " occ rate: " + specialOcc[i] / totalNormalOcc);
+                                for (int i = 0; i < specialOcc.length; i++) {
+                                    Log.e("TEST", "special num " + i + " occ rate: " + specialOcc[i] / totalSpecialOcc);
                                 }
                                 Log.e("TEST", "=======================================");
                             }
