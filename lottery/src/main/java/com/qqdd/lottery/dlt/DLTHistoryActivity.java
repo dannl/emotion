@@ -9,8 +9,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.qqdd.lottery.data.LotteryRecord;
-import com.qqdd.lottery.data.management.DLTSource;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
+import com.qqdd.lottery.data.management.DataProvider;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class DLTHistoryActivity extends AppCompatActivity {
 //        });
         final ListView listView = new ListView(this);
         setContentView(listView);
-        new DLTSource().getAll(new DataLoadingCallback() {
+        DataProvider.getInstance().loadDLT(new DataLoadingCallback() {
             @Override
             public void onLoaded(final List<LotteryRecord> result) {
                 listView.setAdapter(new BaseAdapter() {
@@ -56,7 +56,8 @@ public class DLTHistoryActivity extends AppCompatActivity {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
                         final TextView textView = new TextView(DLTHistoryActivity.this);
-                        textView.setText(result.get(position).toString());
+                        textView.setText(result.get(position)
+                                .toString());
                         return textView;
                     }
                 });

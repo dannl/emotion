@@ -1,13 +1,13 @@
 package la.niub.util.utils;
 
-import org.apache.http.util.CharArrayBuffer;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.text.TextUtils;
+
+import org.apache.http.util.CharArrayBuffer;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -143,6 +143,9 @@ public final class IOUtilities {
     }
 
     public static void saveToFile(File file,String content,String encoding) throws IOException{
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(

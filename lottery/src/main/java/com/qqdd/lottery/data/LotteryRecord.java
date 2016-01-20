@@ -3,8 +3,8 @@ package com.qqdd.lottery.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -12,6 +12,8 @@ import java.util.Set;
  * Created by danliu on 1/19/16.
  */
 public class LotteryRecord implements Lottery {
+
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss.SSS");
 
     private LotteryData mLottery;
     private Date mDate;
@@ -52,7 +54,7 @@ public class LotteryRecord implements Lottery {
         final JSONObject json = new JSONObject();
         try {
             json.put("lottery", getLottery().toJson());
-            json.put("date", getDate().toString());
+            json.put("date", DATE_FORMAT.format(mDate));
         } catch (JSONException e) {
         }
         return json;
@@ -69,11 +71,30 @@ public class LotteryRecord implements Lottery {
                 return null;
             }
             final LotteryRecord result = new LotteryRecord(lt);
-            result.setDate(DateFormat.getDateInstance().parse(json.getString("date")));
+            result.setDate(DATE_FORMAT.parse(json.getString("date")));
             return result;
         } catch (JSONException e) {
         } catch (ParseException e) {
         }
         return null;
+    }
+
+    @Override
+    public int hashCode() {
+        if (mDate == null) {
+            return super
+                    .hashCode();
+        } else {
+            return DATE_FORMAT.format(mDate).hashCode();
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (super.equals(o)) {
+            return true;
+        } else {
+            return hashCode() == o.hashCode();
+        }
     }
 }

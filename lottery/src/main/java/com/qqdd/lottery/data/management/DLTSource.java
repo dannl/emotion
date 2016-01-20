@@ -26,11 +26,13 @@ public class DLTSource extends DataSource {
 
     public static final String DLT_REPO_URL_FORMAT = "http://www.lottery.gov.cn/lottery/dlt/History.aspx?p=%s";
 
-    private static final String RECORD_RECOGNIZER_HEAD = "<tr align=\"center\" bgcolor=\"#ffffff\">";
+    private static final String RECORD_RECOGNIZER_HEAD_0 = "<tr align=\"center\" bgcolor=\"#ffffff\">";
+    private static final String RECORD_RECOGNIZER_HEAD_1 = "<tr align=\"center\" bgcolor=\"#f4f4f4\">";
     private static final String RECORD_RECOGNIZER_TAIL = "</tr>";
     private static final Pattern NUMBER_PATTERN = Pattern.compile(
             "<FONT class='FontRed'>([0-9 ]+)</FONT> \\+ <FONT class='FontBlue'>([0-9 ]+)</FONT>");
     private static final Pattern COLUMN_PATTERN = Pattern.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})");
+    private static final Pattern TOTAL_PAGE_PATTERN = Pattern.compile("<span id=\"ContentPlaceHolderDefault_LabelTotalPages\">(\\d+)</span>");
     private LoadTask mRequestTask;
 
     @Override
@@ -39,28 +41,39 @@ public class DLTSource extends DataSource {
             callback.onBusy();
             return;
         }
-        mRequestTask = new LoadTask(callback);
+        mRequestTask = new LoadTask(null, callback);
         mRequestTask.execute();
     }
 
     @Override
     public void getNewSince(@NonNull LotteryRecord since, @NonNull DataLoadingCallback callback) {
-
+        if (mRequestTask != null) {
+            callback.onBusy();
+            return;
+        }
+        mRequestTask = new LoadTask(since, callback);
+        mRequestTask.execute();
     }
 
     private class LoadTask extends AsyncTask<Void, Void, List<LotteryRecord>> {
 
         int mIndex = 1;
         boolean mEnded = false;
+        private int mRetry = 0;
         private DataLoadingCallback mCallback;
+        private LotteryRecord mSince;
 
-        public LoadTask(DataLoadingCallback callback) {
+        public LoadTask(LotteryRecord since, DataLoadingCallback callback) {
             mCallback = callback;
+            mSince = since;
         }
+
 
         @Override
         protected void onPostExecute(List<LotteryRecord> lotteryRecords) {
-            if (mCallback != null) {
+            if (mRetry == 5) {
+                mCallback.onLoadFailed("failed to load from server");
+            } else {
                 mCallback.onLoaded(lotteryRecords);
             }
             mRequestTask = null;
@@ -69,7 +82,7 @@ public class DLTSource extends DataSource {
         @Override
         protected List<LotteryRecord> doInBackground(Void... params) {
             SyncHttpClient client = new SyncHttpClient();
-            final List<LotteryRecord> result = new ArrayList<LotteryRecord>();
+            final List<LotteryRecord> result = new ArrayList<>();
             while (!mEnded) {
                 final String url = String.format(DLT_REPO_URL_FORMAT, mIndex);
                 client.get(url, new TextHttpResponseHandler() {
@@ -77,34 +90,66 @@ public class DLTSource extends DataSource {
                     public void onFailure(int statusCode, Header[] headers, String responseString,
                                           Throwable throwable) {
                         Log.e("DLTSource", "failed: " + responseString);
+                        if (mRetry < 5) {
+                            mEnded = true;
+                        }
+                        mRetry ++;
                     }
 
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                        mIndex++;
-                        if (mIndex == 2) {
-                            mEnded = true;
-                        }
+                        List<LotteryRecord> temp = new ArrayList<>();
                         responseString = responseString.replaceAll("\r\n", "");
-                        int head = responseString.indexOf(RECORD_RECOGNIZER_HEAD);
+                        int headIndexer = 0;
+                        int head = responseString.indexOf(RECORD_RECOGNIZER_HEAD_0);
                         int tail = -1;
                         if (head >= 0) {
                             tail = responseString.indexOf(RECORD_RECOGNIZER_TAIL, head);
                         }
+                        headIndexer ++;
                         while (head >= 0 && tail >= 0) {
                             final String line = responseString.substring(head, tail);
                             final LotteryRecord record = parseLine(line);
                             if (record != null) {
-                                result.add(record);
+                                temp.add(record);
                             }
-                            head = responseString.indexOf(RECORD_RECOGNIZER_HEAD, tail);
+                            String headRec = headIndexer % 2 == 0 ? RECORD_RECOGNIZER_HEAD_0 : RECORD_RECOGNIZER_HEAD_1;
+                            head = responseString.indexOf(headRec, tail);
                             tail = responseString.indexOf(RECORD_RECOGNIZER_TAIL, head);
+                            headIndexer ++;
+                        }
+                        if (mSince != null) {
+                            int indexToRemove = -1;
+                            for (int i = 0; i < temp.size(); i++) {
+                                if (temp.get(i).equals(mSince)) {
+                                    indexToRemove = i;
+                                    break;
+                                }
+                            }
+                            if (indexToRemove >= 0) {
+                                final List<LotteryRecord> sub = temp.subList(0, indexToRemove);
+                                temp = sub;
+                                mEnded = true;
+                            }
+                        }
+                        result.addAll(temp);
+                        final Matcher totalPageMatcher = TOTAL_PAGE_PATTERN.matcher(responseString);
+                        int max = Integer.MAX_VALUE;
+                        if (!totalPageMatcher.find()) {
+                            mEnded = true;
+                        } else {
+                            max = Integer.parseInt(totalPageMatcher.group(1));
+                        }
+                        mIndex++;
+                        if (mIndex > max) {
+                            mEnded = true;
                         }
                     }
                 });
             }
             return result;
         }
+
     }
 
     private static final Calendar CALENDAR = Calendar.getInstance();
