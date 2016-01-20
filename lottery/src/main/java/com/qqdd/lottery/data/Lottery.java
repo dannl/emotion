@@ -11,4 +11,6 @@ public interface Lottery {
 
     public Set<Integer> getSpecials();
 
+    LotteryData.Type getType();
+
 }

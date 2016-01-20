@@ -13,4 +13,9 @@
     tools:context=".dlt.DLTHistoryActivity"
     tools:showIn="@layout/activity_dlt">
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/list" />
+
 </RelativeLayout>

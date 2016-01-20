@@ -13,7 +13,9 @@ import java.util.Set;
  */
 public class LotteryRecord implements Lottery {
 
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss.SSS");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+
+    public static final SimpleDateFormat DISPLAY_DATE_FORMAT = new SimpleDateFormat("yyyy年MM月dd日");
 
     private LotteryData mLottery;
     private Date mDate;
@@ -47,7 +49,7 @@ public class LotteryRecord implements Lottery {
 
     @Override
     public String toString() {
-        return mDate.toString() + " " + mLottery.toString();
+        return DISPLAY_DATE_FORMAT.format(mDate) + " " + mLottery.toString();
     }
 
     public JSONObject toJson() {
@@ -96,5 +98,10 @@ public class LotteryRecord implements Lottery {
         } else {
             return hashCode() == o.hashCode();
         }
+    }
+
+    @Override
+    public LotteryData.Type getType() {
+        return mLottery.getType();
     }
 }

@@ -23,13 +23,23 @@ public class LotteryData implements Lottery {
     private final int mNormalRange;
     private final int mSpecialRange;
     private final Type mType;
+    private RewardRule mRewardRule;
 
-    private LotteryData(Type type, int normalSize, int specialSize, int normalRange, int specialRange) {
+    private LotteryData(Type type, DLTRewardRule rewardRule, int normalSize, int specialSize, int normalRange, int specialRange) {
         mNormalSize = normalSize;
         mSpecialSize = specialSize;
         mNormalRange = normalRange;
         mSpecialRange = specialRange;
         mType = type;
+        mRewardRule = rewardRule;
+    }
+
+    public RewardRule.RewardDetail getReward(final LotteryRecord record) {
+        return mRewardRule.getReward(this, record);
+    }
+
+    public Type getType() {
+        return mType;
     }
 
     public void addNormal(final int number) {
@@ -97,7 +107,7 @@ public class LotteryData implements Lottery {
     }
 
     public static LotteryData newDLT() {
-        return new LotteryData(Type.DLT, 5, 2, 35, 12);
+        return new LotteryData(Type.DLT, DLTRewardRule.getInstance() , 5, 2, 35, 12);
     }
 
     public static LotteryData fromJson(JSONObject lottery) {
