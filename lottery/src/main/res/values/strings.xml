@@ -4,4 +4,6 @@
     <string name="action_dlt_history">大乐透历史数据...</string>
     <string name="title_activity_dlt">历史记录</string>
     <string name="title_activity_occurrence_probability">概率计算器</string>
+    <string name="normal_num_area">普通号码区:</string>
+    <string name="special_num_area">特殊号码区:</string>
 </resources>

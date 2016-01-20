@@ -13,4 +13,36 @@
     tools:context="com.qqdd.lottery.OccurrenceProbabilityActivity"
     tools:showIn="@layout/activity_occurrence_probability">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/normal_num_area"/>
+            <com.qqdd.lottery.ui.view.FixHeightRecyclerView
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:id="@+id/normal_num_area"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/special_num_area"/>
+
+            <com.qqdd.lottery.ui.view.FixHeightRecyclerView
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:id="@+id/special_num_area"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+    </ScrollView>
+
 </RelativeLayout>

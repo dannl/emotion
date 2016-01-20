@@ -12,6 +12,9 @@ public class NumberTable extends ArrayList<Number> {
     public NumberTable(final int range) {
         super(range + 1);
         mRange = range;
+        for (int i = 0; i < range + 1; i++) {
+            add(new Number(i));
+        }
     }
 
     public int getRange() {

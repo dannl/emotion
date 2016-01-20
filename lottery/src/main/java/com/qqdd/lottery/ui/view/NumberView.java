@@ -10,6 +10,7 @@ import com.qqdd.lottery.R;
 import java.text.DecimalFormat;
 
 /**
+ * simple view to display a number.
  * Created by danliu on 1/20/16.
  */
 public class NumberView extends LinearLayout {
@@ -43,8 +44,10 @@ public class NumberView extends LinearLayout {
         final Resources resources = getResources();
         if (display == Display.NORMAL) {
             mNumber.setTextColor(resources.getColor(R.color.colorPrimary));
+            mNumber.setBackgroundResource(R.drawable.red_circle_bg);
             mProbability.setTextColor(resources.getColor(R.color.colorPrimary));
         } else {
+            mNumber.setBackgroundResource(R.drawable.blue_circle_bg);
             mNumber.setTextColor(resources.getColor(R.color.colorAccent));
             mProbability.setTextColor(resources.getColor(R.color.colorAccent));
         }
@@ -56,7 +59,7 @@ public class NumberView extends LinearLayout {
             mProbability.setText("");
         } else {
             mNumber.setText(String.valueOf(number.getValue()));
-            mProbability.setText(PROBABILITY_FORMAT.format(number.getOccurrenceProbability() * 100) + "%");
+            mProbability.setText(String.format("%s%%", PROBABILITY_FORMAT.format(number.getOccurrenceProbability() * 100)));
         }
     }
 }
