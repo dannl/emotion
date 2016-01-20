@@ -23,7 +23,7 @@ public class DLTRewardRule extends RewardRule {
 
 
     @Override
-    public RewardDetail getReward(LotteryData lt, LotteryRecord record) {
+    public RewardDetail getReward(Lottery lt, LotteryRecord record) {
         if (lt.getType() != record.getLottery().getType()) {
             return new RewardDetail(Reward.NO_REWARD, new HashSet<Integer>(0), new HashSet<Integer>(0));
         }

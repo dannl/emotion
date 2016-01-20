@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.loopj.android.http.SyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
-import com.qqdd.lottery.data.LotteryData;
+import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryRecord;
 
 import java.util.ArrayList;
@@ -159,7 +159,7 @@ public class DLTSource extends DataSource {
             return null;
         }
         final Matcher matcher = NUMBER_PATTERN.matcher(line);
-        LotteryData lt = LotteryData.newDLT();
+        Lottery lt = Lottery.newDLT();
         if (!matcher.find()) {
             return null;
         }

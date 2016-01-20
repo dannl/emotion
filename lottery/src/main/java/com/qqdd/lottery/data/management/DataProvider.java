@@ -2,7 +2,7 @@ package com.qqdd.lottery.data.management;
 
 import android.os.AsyncTask;
 
-import com.qqdd.lottery.data.LotteryData;
+import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryRecord;
 
 import org.jetbrains.annotations.NotNull;
@@ -47,11 +47,11 @@ public class DataProvider {
             callback.onBusy();
             return;
         }
-        mLoadTask = new LoadTask(LotteryData.Type.DLT, new DLTSource(), callback);
+        mLoadTask = new LoadTask(Lottery.Type.DLT, new DLTSource(), callback);
         mLoadTask.execute();
     }
 
-    public static File getCacheFile(LotteryData.Type type) {
+    public static File getCacheFile(Lottery.Type type) {
         final File cacheDir = new File(StorageHelper.getExternalStorageDirectory(), "Ltt");
         return new File(cacheDir, type.toString());
     }
@@ -59,10 +59,10 @@ public class DataProvider {
     private class LoadTask {
 
         private DataSource mDataSource;
-        private LotteryData.Type mType;
+        private Lottery.Type mType;
         private DataLoadingCallback mCallback;
 
-        LoadTask(final LotteryData.Type type, final DataSource dataSource,
+        LoadTask(final Lottery.Type type, final DataSource dataSource,
                  DataLoadingCallback callback) {
             mType = type;
             mDataSource = dataSource;

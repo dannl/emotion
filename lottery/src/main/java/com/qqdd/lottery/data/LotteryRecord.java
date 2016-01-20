@@ -11,16 +11,16 @@ import java.util.Set;
 /**
  * Created by danliu on 1/19/16.
  */
-public class LotteryRecord implements Lottery {
+public class LotteryRecord implements ILottery {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
 
     public static final SimpleDateFormat DISPLAY_DATE_FORMAT = new SimpleDateFormat("yyyy年MM月dd日");
 
-    private LotteryData mLottery;
+    private Lottery mLottery;
     private Date mDate;
 
-    public LotteryRecord(final LotteryData t) {
+    public LotteryRecord(final Lottery t) {
         mLottery = t;
     }
 
@@ -35,7 +35,7 @@ public class LotteryRecord implements Lottery {
         return mLottery.getSpecials();
     }
 
-    public LotteryData getLottery() {
+    public Lottery getLottery() {
         return mLottery;
     }
 
@@ -68,7 +68,7 @@ public class LotteryRecord implements Lottery {
         }
         try {
             final JSONObject lottery = json.getJSONObject("lottery");
-            final LotteryData lt = LotteryData.fromJson(lottery);
+            final Lottery lt = Lottery.fromJson(lottery);
             if (lt == null) {
                 return null;
             }
@@ -101,7 +101,7 @@ public class LotteryRecord implements Lottery {
     }
 
     @Override
-    public LotteryData.Type getType() {
+    public Lottery.Type getType() {
         return mLottery.getType();
     }
 }

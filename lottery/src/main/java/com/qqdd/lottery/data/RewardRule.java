@@ -7,7 +7,7 @@ import java.util.Set;
  */
 public abstract class RewardRule {
 
-    public abstract RewardDetail getReward(LotteryData num, LotteryRecord record);
+    public abstract RewardDetail getReward(Lottery num, LotteryRecord record);
 
     public static class RewardDetail {
         private Reward mReward;

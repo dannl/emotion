@@ -2,8 +2,10 @@ package com.qqdd.lottery.dlt;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,9 +13,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.qqdd.lottery.R;
+import com.qqdd.lottery.data.Configuration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 import com.qqdd.lottery.data.management.DataProvider;
+import com.qqdd.lottery.utils.NumUtils;
 
 import java.util.List;
 
@@ -26,11 +30,59 @@ public class DLTHistoryActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
+                DataProvider.getInstance()
+                        .loadDLT(new DataLoadingCallback() {
+                            @Override
+                            public void onLoaded(List<LotteryRecord> result) {
+                                if (result == null || result.isEmpty()) {
+                                    return;
+                                }
+                                Configuration configuration = result.get(0)
+                                        .getLottery()
+                                        .getConfiguration();
+                                final int[] normalOcc = NumUtils.newEmptyIntArray(
+                                        configuration.getNormalRange() + 1);
+                                final int[] specialOcc = NumUtils.newEmptyIntArray(
+                                        configuration.getSpecialRange() + 1);
+                                for (LotteryRecord record : result) {
+                                    for (int i : record.getNormals()) {
+                                        normalOcc[i]++;
+                                    }
+                                    for (int i : record.getSpecials()) {
+                                        specialOcc[i]++;
+                                    }
+                                }
+                                float totalNormalOcc = NumUtils.calculateTotalInIntArray(normalOcc);
+                                float totalSpecialOcc = NumUtils.calculateTotalInIntArray(specialOcc);
+                                Log.e("TEST", "=======================================");
+                                for (int i = 0; i < normalOcc.length; i++) {
+                                    Log.e("TEST", "normal num " + i + " occ rate: " + normalOcc[i] / totalNormalOcc);
+                                }
+                                Log.e("TEST", "=======================================");
+                                for (int i = 0; i < normalOcc.length; i++) {
+                                    Log.e("TEST", "special num " + i + " occ rate: " + specialOcc[i] / totalNormalOcc);
+                                }
+                                Log.e("TEST", "=======================================");
+                            }
 
+                            @Override
+                            public void onLoadFailed(String err) {
+                                Snackbar.make(view, "load failed: " + err, Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null)
+                                        .show();
+                            }
+
+                            @Override
+                            public void onBusy() {
+                                Snackbar.make(view, "busy!! try later.", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null)
+                                        .show();
+                            }
+                        });
             }
         });
         final ListView listView = (ListView) findViewById(R.id.list);
@@ -65,12 +117,16 @@ public class DLTHistoryActivity extends AppCompatActivity {
 
             @Override
             public void onLoadFailed(String err) {
-
+                Snackbar.make(fab, "auto load failed: " + err, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null)
+                        .show();
             }
 
             @Override
             public void onBusy() {
-
+                Snackbar.make(fab, "auto load, it's busy!!!", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null)
+                        .show();
             }
         });
     }
