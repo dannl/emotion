@@ -2,6 +2,7 @@ package com.qqdd.lottery.ui.view;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,7 +20,7 @@ public class NumberView extends LinearLayout {
         NORMAL, SPECIAL
     }
 
-    private static final DecimalFormat PROBABILITY_FORMAT = new DecimalFormat("#.00");
+    private static final DecimalFormat PROBABILITY_FORMAT = new DecimalFormat("0.00");
 
     private TextView mNumber;
     private TextView mProbability;
@@ -35,6 +36,8 @@ public class NumberView extends LinearLayout {
 
     private void init(final Context context, Display display) {
         inflate(context, R.layout.number_view, this);
+        setOrientation(VERTICAL);
+        setGravity(Gravity.CENTER_HORIZONTAL);
         mNumber = (TextView) findViewById(R.id.number);
         mProbability = (TextView) findViewById(R.id.rate);
         setupDisplay(display);

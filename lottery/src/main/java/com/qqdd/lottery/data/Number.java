@@ -7,12 +7,10 @@ public class Number {
 
     private int mValue;
     private float mOccurrenceProbability;
-    private int mOccurrence;
 
     public Number(final int numberValue) {
         mValue = numberValue;
         mOccurrenceProbability = 0f;
-        mOccurrence = 0;
     }
 
     public float getOccurrenceProbability() {
@@ -31,15 +29,4 @@ public class Number {
         mValue = value;
     }
 
-    public int getOccurrence() {
-        return mOccurrence;
-    }
-
-    public void plusOccurence() {
-        mOccurrence++;
-    }
-
-    public void plusOccurence(final int times) {
-        mOccurrence += times;
-    }
 }

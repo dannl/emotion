@@ -3,16 +3,15 @@ package com.qqdd.lottery;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TableLayout;
+import android.widget.BaseAdapter;
 
-import com.qqdd.lottery.data.Number;
-import com.qqdd.lottery.data.NumberTable;
+import com.qqdd.lottery.data.*;
 import com.qqdd.lottery.ui.view.NumberView;
 
 /**
  * Created by danliu on 2016/1/20.
  */
-public class NumAreaAdapter extends RecyclerView.Adapter<NumAreaAdapter.NumItemViewHolder> {
+public class NumAreaAdapter extends BaseAdapter {
 
     private NumberTable mNumberTable;
     private NumberView.Display mDisplayToApply;
@@ -23,19 +22,27 @@ public class NumAreaAdapter extends RecyclerView.Adapter<NumAreaAdapter.NumItemV
     }
 
     @Override
-    public NumItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new NumItemViewHolder(new NumberView(parent.getContext(), mDisplayToApply));
-    }
-
-    @Override
-    public void onBindViewHolder(NumItemViewHolder holder, int position) {
-        final Number number = mNumberTable.get(position);
-        holder.numberView.setNumber(number);
-    }
-
-    @Override
-    public int getItemCount() {
+    public int getCount() {
         return mNumberTable == null ? 0 : mNumberTable.size();
+    }
+
+    @Override
+    public com.qqdd.lottery.data.Number getItem(int position) {
+        return mNumberTable == null ? null : mNumberTable.get(position);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = new NumberView(parent.getContext(), mDisplayToApply);
+        }
+        ((NumberView) convertView).setNumber(getItem(position));
+        return convertView;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     public static class NumItemViewHolder extends RecyclerView.ViewHolder {

@@ -10,11 +10,15 @@ public class NumberTable extends ArrayList<Number> {
     private int mRange;
 
     public NumberTable(final int range) {
-        super(range + 1);
+        super(range);
         mRange = range;
-        for (int i = 0; i < range + 1; i++) {
-            add(new Number(i));
+        for (int i = 0; i < range; i++) {
+            add(new Number(i + 1));
         }
+    }
+
+    public Number getWithNumber(final int number) {
+        return get(number - 1);
     }
 
     public int getRange() {

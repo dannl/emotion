@@ -6,4 +6,9 @@
     <string name="title_activity_occurrence_probability">概率计算器</string>
     <string name="normal_num_area">普通号码区:</string>
     <string name="special_num_area">特殊号码区:</string>
+    <string name="introduce">说明...</string>
+    <string name="calculate">计算概率</string>
+    <string name="start_random">开始机选</string>
+    <string name="calculating">计算中...</string>
+    <string name="duplicated_operation">重复操作，请稍候...</string>
 </resources>
