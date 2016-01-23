@@ -17,7 +17,18 @@ public class NumberTable extends ArrayList<Number> {
         }
     }
 
+    public float getTotalWeight() {
+        float result = 0;
+        for (int i = 0; i < size(); i++) {
+            result += get(i).getWeight();
+        }
+        return result;
+    }
+
     public Number getWithNumber(final int number) {
+        if (number > size() || number < 1) {
+            return null;
+        }
         return get(number - 1);
     }
 

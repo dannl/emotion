@@ -13,21 +13,19 @@ public class CalculatorItem implements Calculator {
     private boolean mEditable;
     private boolean mDeletable;
     private CalculatorImpl mCalculator;
-    private String mTitle;
-    private String mDesc;
 
-    public CalculatorItem(final String title, final String desc, final CalculatorImpl calculator) {
-        mTitle = title;
-        mDesc = desc;
+    public CalculatorItem(final CalculatorImpl calculator) {
         mCalculator = calculator;
     }
 
+    @Override
     public String getTitle() {
-        return mTitle;
+        return mCalculator.getTitle();
     }
 
+    @Override
     public String getDesc() {
-        return mDesc;
+        return mCalculator.getDesc();
     }
 
     public boolean isEditable() {

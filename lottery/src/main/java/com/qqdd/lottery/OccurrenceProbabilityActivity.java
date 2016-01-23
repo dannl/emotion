@@ -15,6 +15,8 @@ import com.qqdd.lottery.calculate.CalculatorCollection;
 import com.qqdd.lottery.calculate.CalculatorListAdapter;
 import com.qqdd.lottery.calculate.NumberProducer;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
+import com.qqdd.lottery.calculate.data.CalculatorItem;
+import com.qqdd.lottery.calculate.data.calculator.SelectionIncreaseCalculator;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
@@ -84,7 +86,22 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
     private void setupCalculatorsView() {
         mCalculators = new CalculatorCollection();
-        mCalculators.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance().createCalculator());
+        mCalculators.add(new CalculatorItem(
+                CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
+                        .createCalculator()));
+        final SelectionIncreaseCalculator selectionIncrease = CalculatorFactory.SelectionIncreaseCalculatorFactory.instance()
+                .createCalculator();
+        selectionIncrease.addNormal(4);
+        selectionIncrease.addNormal(15);
+        selectionIncrease.addNormal(10);
+        selectionIncrease.addNormal(22);
+        selectionIncrease.addNormal(8);
+        selectionIncrease.addNormal(29);
+        selectionIncrease.addNormal(6);
+        selectionIncrease.addNormal(26);
+        selectionIncrease.addSpecial(1);
+        selectionIncrease.addSpecial(4);
+        mCalculators.add(new CalculatorItem(selectionIncrease));
         mCalculatorsView.setLayoutManager(new LinearLayoutManager(this));
         mCalculatorListAdapter = new CalculatorListAdapter(mCalculators);
         mCalculatorsView.setAdapter(mCalculatorListAdapter);
@@ -128,6 +145,11 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
                         dismissProgress();
                         showSnakeBar(getString(R.string.duplicated_operation));
                     }
+
+                    @Override
+                    public void onProgressUpdate(Object... progress) {
+
+                    }
                 });
     }
 
@@ -147,6 +169,10 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
                                 mSpecialNumberAdapter.notifyDataSetChanged();
                             }
 
+                            @Override
+                            public void onProgressUpdate(Object... progress) {
+
+                            }
                             @Override
                             public void onLoadFailed(String err) {
                                 dismissProgress();
@@ -171,6 +197,11 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
             public void onBusy() {
                 dismissProgress();
                 showSnakeBar(getString(R.string.duplicated_operation));
+            }
+
+            @Override
+            public void onProgressUpdate(Object... progress) {
+
             }
         });
     }

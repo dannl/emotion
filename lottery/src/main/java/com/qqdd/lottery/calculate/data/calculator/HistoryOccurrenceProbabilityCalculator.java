@@ -1,5 +1,6 @@
-package com.qqdd.lottery.calculate.data;
+package com.qqdd.lottery.calculate.data.calculator;
 
+import com.qqdd.lottery.calculate.data.CalculatorImpl;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.utils.NumUtils;
@@ -11,6 +12,10 @@ import java.util.List;
  * Created by danliu on 1/21/16.
  */
 public class HistoryOccurrenceProbabilityCalculator extends CalculatorImpl {
+    public HistoryOccurrenceProbabilityCalculator(String title, String desc) {
+        super(title, desc);
+    }
+
     @Override
     public void calculate(List<LotteryRecord> lts, NumberTable normalTable, NumberTable specialTable) {
         //数字是从1开始而不是0,为了方便数组计算，数组中加入0.
@@ -32,10 +37,10 @@ public class HistoryOccurrenceProbabilityCalculator extends CalculatorImpl {
         float totalSpecialOcc = NumUtils.calculateTotalInIntArray(specialOcc);
 
         for (int i = 1; i < normalSize; i++) {
-            normalTable.getWithNumber(i).setOccurrenceProbability(normalOcc[i] / totalNormalOcc);
+            normalTable.getWithNumber(i).setWeight(normalOcc[i] / totalNormalOcc);
         }
         for (int i = 1; i < specialSize; i++) {
-            specialTable.getWithNumber(i).setOccurrenceProbability(specialOcc[i] / totalSpecialOcc);
+            specialTable.getWithNumber(i).setWeight(specialOcc[i] / totalSpecialOcc);
         }
 
 

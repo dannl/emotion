@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qqdd.lottery.R;
+import com.qqdd.lottery.data.NumberTable;
 
 import java.text.DecimalFormat;
 
@@ -56,13 +57,18 @@ public class NumberView extends LinearLayout {
         }
     }
 
-    public void setNumber(final com.qqdd.lottery.data.Number number) {
+    public void setNumber(final com.qqdd.lottery.data.Number number, final NumberTable table) {
         if (number == null) {
             mNumber.setText("");
             mProbability.setText("");
         } else {
             mNumber.setText(String.valueOf(number.getValue()));
-            mProbability.setText(String.format("%s%%", PROBABILITY_FORMAT.format(number.getOccurrenceProbability() * 100)));
+            final float totalWeight = table.getTotalWeight();
+            if (totalWeight == 0f) {
+                mProbability.setText("0.0%");
+            } else {
+                mProbability.setText(String.format("%s%%", PROBABILITY_FORMAT.format(number.getWeight() / table.getTotalWeight() * 100)));
+            }
         }
     }
 }

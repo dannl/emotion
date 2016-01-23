@@ -9,4 +9,6 @@ public interface DataLoadingCallback<T> {
     void onLoadFailed(String err);
 
     void onBusy();
+
+    void onProgressUpdate(Object... progress);
 }

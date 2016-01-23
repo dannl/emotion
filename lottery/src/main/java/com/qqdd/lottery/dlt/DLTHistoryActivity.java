@@ -82,6 +82,11 @@ public class DLTHistoryActivity extends AppCompatActivity {
                                         .setAction("Action", null)
                                         .show();
                             }
+
+                            @Override
+                            public void onProgressUpdate(Object... progress) {
+
+                            }
                         });
             }
         });
@@ -127,6 +132,11 @@ public class DLTHistoryActivity extends AppCompatActivity {
                 Snackbar.make(fab, "auto load, it's busy!!!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null)
                         .show();
+            }
+
+            @Override
+            public void onProgressUpdate(Object... progress) {
+
             }
         });
     }

@@ -36,7 +36,7 @@ public class NumAreaAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = new NumberView(parent.getContext(), mDisplayToApply);
         }
-        ((NumberView) convertView).setNumber(getItem(position));
+        ((NumberView) convertView).setNumber(getItem(position), mNumberTable);
         return convertView;
     }
 

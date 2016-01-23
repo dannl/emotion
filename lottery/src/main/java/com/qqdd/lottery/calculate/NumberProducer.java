@@ -87,7 +87,7 @@ public class NumberProducer {
         float total = 0;
         for (int i = 0; i < table.size(); i++) {
             final com.qqdd.lottery.data.Number number = table.get(i);
-            total += number.getOccurrenceProbability();
+            total += number.getWeight();
         }
         final Set<Integer> result = new HashSet<>(size);
         while (result.size() < size) {
@@ -95,7 +95,7 @@ public class NumberProducer {
             float indexer = 0f;
             for (int i = 0; i < table.size(); i++) {
                 Number number = table.get(i);
-                float occ = number.getOccurrenceProbability();
+                float occ = number.getWeight();
                 if (calculated >= indexer && calculated < indexer + occ) {
                     result.add(number.getValue());
                     break;
@@ -110,7 +110,7 @@ public class NumberProducer {
         int valuedNumberCount = 0;
         for (int i = 0; i < table.size(); i++) {
             final com.qqdd.lottery.data.Number number = table.get(i);
-            if (number.getOccurrenceProbability() > 0f){
+            if (number.getWeight() > 0f){
                 valuedNumberCount ++;
             }
         }

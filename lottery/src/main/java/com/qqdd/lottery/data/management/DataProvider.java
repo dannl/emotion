@@ -82,6 +82,11 @@ public class DataProvider {
                     }
 
                     @Override
+                    public void onProgressUpdate(Object... progress) {
+
+                    }
+
+                    @Override
                     public void onLoadFailed(String err) {
                         mCallback.onLoadFailed(err);
                         mLoadTask = null;
@@ -168,6 +173,11 @@ public class DataProvider {
                             mCallback.onBusy();
                             ;
                             mLoadTask = null;
+                        }
+
+                        @Override
+                        public void onProgressUpdate(Object... progress) {
+
                         }
                     });
                 }

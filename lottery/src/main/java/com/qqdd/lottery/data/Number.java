@@ -6,19 +6,19 @@ package com.qqdd.lottery.data;
 public class Number {
 
     private int mValue;
-    private float mOccurrenceProbability;
+    private float mWeight;
 
     public Number(final int numberValue) {
         mValue = numberValue;
-        mOccurrenceProbability = 0f;
+        mWeight = 0f;
     }
 
-    public float getOccurrenceProbability() {
-        return mOccurrenceProbability;
+    public float getWeight() {
+        return mWeight;
     }
 
-    public void setOccurrenceProbability(float occurrenceProbability) {
-        mOccurrenceProbability = occurrenceProbability;
+    public void setWeight(float occurrenceProbability) {
+        mWeight = occurrenceProbability;
     }
 
     public int getValue() {

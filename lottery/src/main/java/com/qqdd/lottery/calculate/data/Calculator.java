@@ -9,5 +9,10 @@ import java.util.List;
  * Created by danliu on 1/20/16.
  */
 public interface Calculator {
+
+    String getTitle();
+
+    String getDesc();
+
     void calculate(List<LotteryRecord> lts, NumberTable normalTable, NumberTable specialTable);
 }
