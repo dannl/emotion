@@ -3,13 +3,13 @@ package com.qqdd.lottery.data;
 /**
  * Created by danliu on 1/20/16.
  */
-public class Configuration {
+public class LotteryConfiguration {
 
     private static class DLTInstanceHolder {
-        private static final Configuration INSTANCE = new Configuration(5, 2, 35, 12);
+        private static final LotteryConfiguration INSTANCE = new LotteryConfiguration(5, 2, 35, 12);
     }
 
-    public static final Configuration DLTConfiguration() {
+    public static final LotteryConfiguration DLTConfiguration() {
         return DLTInstanceHolder.INSTANCE;
     }
 
@@ -18,7 +18,8 @@ public class Configuration {
     private final int mNormalRange;
     private final int mSpecialRange;
 
-    private Configuration(final int normalSize, final int specialSize, final int normalRange, final int specialRange) {
+    private LotteryConfiguration(final int normalSize, final int specialSize, final int normalRange,
+                                 final int specialRange) {
         mNormalRange = normalRange;
         mSpecialRange = specialRange;
         mNormalSize = normalSize;

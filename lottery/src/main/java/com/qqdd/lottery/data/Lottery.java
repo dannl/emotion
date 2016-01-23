@@ -20,12 +20,12 @@ public class Lottery implements ILottery {
     private final Set<Integer> mSpecial = new HashSet<>();
     private final Type mType;
     private RewardRule mRewardRule;
-    private Configuration mConfiguration;
+    private LotteryConfiguration mLotteryConfiguration;
 
-    private Lottery(Type type, DLTRewardRule rewardRule,  Configuration configuration) {
+    private Lottery(Type type, DLTRewardRule rewardRule,  LotteryConfiguration lotteryConfiguration) {
         mType = type;
         mRewardRule = rewardRule;
-        mConfiguration = configuration;
+        mLotteryConfiguration = lotteryConfiguration;
     }
 
     public RewardRule.RewardDetail getReward(final LotteryRecord record) {
@@ -36,8 +36,8 @@ public class Lottery implements ILottery {
         return mType;
     }
 
-    public Configuration getConfiguration() {
-        return mConfiguration;
+    public LotteryConfiguration getLotteryConfiguration() {
+        return mLotteryConfiguration;
     }
 
     public void addNormal(final int number) {
@@ -49,7 +49,7 @@ public class Lottery implements ILottery {
     }
 
     public boolean isValid() {
-        return mNormal.size() == mConfiguration.getNormalSize() && mSpecial.size() == mConfiguration.getSpecialSize();
+        return mNormal.size() == mLotteryConfiguration.getNormalSize() && mSpecial.size() == mLotteryConfiguration.getSpecialSize();
     }
 
     @Override
@@ -60,6 +60,20 @@ public class Lottery implements ILottery {
     @Override
     public Set<Integer> getNormals() {
         return mNormal;
+    }
+
+    public void addNormals(final Set<Integer> values) {
+        if (!mNormal.isEmpty()) {
+            return;
+        }
+        mNormal.addAll(values);
+    }
+
+    public void addSpecials(final Set<Integer> values) {
+        if (!mSpecial.isEmpty()) {
+            return;
+        }
+        mSpecial.addAll(values);
     }
 
     @Override
@@ -97,8 +111,18 @@ public class Lottery implements ILottery {
     }
 
     public static Lottery newDLT() {
-        return new Lottery(Type.DLT, DLTRewardRule.getInstance() , Configuration.DLTConfiguration());
+        return new Lottery(Type.DLT, DLTRewardRule.getInstance(), LotteryConfiguration.DLTConfiguration());
     }
+
+
+    public static Lottery newLotteryWithConfiguration(LotteryConfiguration configuration) {
+        if (configuration == LotteryConfiguration.DLTConfiguration()) {
+            return new Lottery(Type.DLT, DLTRewardRule.getInstance(), configuration);
+        }
+        return null;
+    }
+
+
 
     public static Lottery fromJson(JSONObject lottery) {
         if (lottery == null) {

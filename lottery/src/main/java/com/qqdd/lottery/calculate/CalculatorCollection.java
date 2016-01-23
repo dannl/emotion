@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by danliu on 1/20/16.
  */
-public class CalculatorController extends ArrayList<CalculatorItem> {
+public class CalculatorCollection extends ArrayList<CalculatorItem> {
 
     private CalculateTask mCalculateTask;
 
@@ -44,7 +44,7 @@ public class CalculatorController extends ArrayList<CalculatorItem> {
         @Override
         protected Void doInBackground(Void... params) {
             for (int i = 0; i < size(); i++) {
-                CalculatorController.this.get(i).calculate(mHistory, mNormalTable, mSpecialTable);
+                CalculatorCollection.this.get(i).calculate(mHistory, mNormalTable, mSpecialTable);
             }
             return null;
         }

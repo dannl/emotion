@@ -1,5 +1,6 @@
 package com.qqdd.lottery;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -10,10 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.GridView;
 
-import com.qqdd.lottery.calculate.CalculatorController;
+import com.qqdd.lottery.calculate.CalculatorCollection;
 import com.qqdd.lottery.calculate.CalculatorListAdapter;
+import com.qqdd.lottery.calculate.NumberProducer;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
-import com.qqdd.lottery.data.Configuration;
+import com.qqdd.lottery.data.Lottery;
+import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
@@ -29,12 +32,12 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
     private GridView mNormalNumberView;
     private GridView mSpecialNumberView;
     private NumAreaAdapter mNormalNumberAdapter;
-    private NumAreaAdapter mSpecialNumberApdater;
+    private NumAreaAdapter mSpecialNumberAdapter;
     private NumberTable mNormalNumbers;
     private NumberTable mSpecialNumbers;
     private DrawerLayout mDrawerLayout;
     private RecyclerView mCalculatorsView;
-    private CalculatorController mCalculators;
+    private CalculatorCollection mCalculators;
     private CalculatorListAdapter mCalculatorListAdapter;
     private View mFloatingButton;
 
@@ -80,7 +83,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
     }
 
     private void setupCalculatorsView() {
-        mCalculators = new CalculatorController();
+        mCalculators = new CalculatorCollection();
         mCalculators.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance().createCalculator());
         mCalculatorsView.setLayoutManager(new LinearLayoutManager(this));
         mCalculatorListAdapter = new CalculatorListAdapter(mCalculators);
@@ -89,20 +92,43 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
 
     private void setupData() {
-        Configuration configuration = Configuration.DLTConfiguration();
-        mNormalNumbers = new NumberTable(configuration.getNormalRange());
-        mSpecialNumbers = new NumberTable(configuration.getSpecialRange());
+        LotteryConfiguration lotteryConfiguration = LotteryConfiguration.DLTConfiguration();
+        mNormalNumbers = new NumberTable(lotteryConfiguration.getNormalRange());
+        mSpecialNumbers = new NumberTable(lotteryConfiguration.getSpecialRange());
         mNormalNumberAdapter = new NumAreaAdapter(mNormalNumbers,
                 NumberView.Display.NORMAL);
         mNormalNumberView.setAdapter(mNormalNumberAdapter);
-        mSpecialNumberApdater = new NumAreaAdapter(mSpecialNumbers,
+        mSpecialNumberAdapter = new NumAreaAdapter(mSpecialNumbers,
                 NumberView.Display.SPECIAL);
-        mSpecialNumberView.setAdapter(
-                mSpecialNumberApdater);
+        mSpecialNumberView.setAdapter(mSpecialNumberAdapter);
     }
 
     public void handleCalculateNumberClicked(View view) {
         mDrawerLayout.closeDrawer(GravityCompat.END);
+        showProgress(R.string.picking_number);
+        NumberProducer.getInstance().calculate(mNormalNumbers, mSpecialNumbers,
+                LotteryConfiguration.DLTConfiguration(), new DataLoadingCallback<Lottery>() {
+                    @Override
+                    public void onLoaded(Lottery result) {
+                        dismissProgress();
+                        new AlertDialog.Builder(OccurrenceProbabilityActivity.this)
+                                .setMessage(result.toString())
+                                .setNegativeButton(R.string.cancel, null)
+                                .show();
+                    }
+
+                    @Override
+                    public void onLoadFailed(String err) {
+                        dismissProgress();
+                        showSnakeBar(err);
+                    }
+
+                    @Override
+                    public void onBusy() {
+                        dismissProgress();
+                        showSnakeBar(getString(R.string.duplicated_operation));
+                    }
+                });
     }
 
     public void handleCalculateClicked(View view) {
@@ -118,7 +144,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
                             public void onLoaded(NumberTable result) {
                                 dismissProgress();
                                 mNormalNumberAdapter.notifyDataSetChanged();
-                                mSpecialNumberApdater.notifyDataSetChanged();
+                                mSpecialNumberAdapter.notifyDataSetChanged();
                             }
 
                             @Override

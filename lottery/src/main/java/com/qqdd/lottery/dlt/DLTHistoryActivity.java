@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.qqdd.lottery.R;
-import com.qqdd.lottery.data.Configuration;
+import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 import com.qqdd.lottery.data.management.DataProvider;
@@ -41,13 +41,13 @@ public class DLTHistoryActivity extends AppCompatActivity {
                                 if (result == null || result.isEmpty()) {
                                     return;
                                 }
-                                Configuration configuration = result.get(0)
+                                LotteryConfiguration lotteryConfiguration = result.get(0)
                                         .getLottery()
-                                        .getConfiguration();
+                                        .getLotteryConfiguration();
                                 final int[] normalOcc = NumUtils.newEmptyIntArray(
-                                        configuration.getNormalRange() + 1);
+                                        lotteryConfiguration.getNormalRange() + 1);
                                 final int[] specialOcc = NumUtils.newEmptyIntArray(
-                                        configuration.getSpecialRange() + 1);
+                                        lotteryConfiguration.getSpecialRange() + 1);
                                 for (LotteryRecord record : result) {
                                     for (int i : record.getNormals()) {
                                         normalOcc[i]++;

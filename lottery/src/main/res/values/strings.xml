@@ -11,4 +11,6 @@
     <string name="start_random">开始机选</string>
     <string name="calculating">计算中...</string>
     <string name="duplicated_operation">重复操作，请稍候...</string>
+    <string name="cancel">取消</string>
+    <string name="picking_number">正在选号...</string>
 </resources>

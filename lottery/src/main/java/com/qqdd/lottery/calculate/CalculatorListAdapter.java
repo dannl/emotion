@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 public class CalculatorListAdapter extends RecyclerView.Adapter<CalculatorListAdapter.CalculatorItemViewHolder>{
 
 
-    public CalculatorListAdapter(CalculatorController calculators) {
+    public CalculatorListAdapter(CalculatorCollection calculators) {
 
     }
 
