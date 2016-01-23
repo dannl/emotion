@@ -21,14 +21,43 @@ public class DLTRewardRule extends RewardRule {
         return SingletonHolder.INSTANCE;
     }
 
+    @Override
+    public Reward getReward(Lottery num, LotteryRecord record) {
+        if (num.getType() != record.getLottery().getType()) {
+            return Reward.NO_REWARD;
+        }
+        final Set<Integer> srcNormal = num.getNormals();
+        final Set<Integer> srcSpecial = num.getSpecials();
+        final Set<Integer> destNormal = record.getNormals();
+        final Set<Integer> destSpecial = record.getSpecials();
+
+        int normalSame = 0;
+        int specialSame = 0;
+        for (int v : srcNormal) {
+            if (destNormal.contains(v)) {
+                normalSame++;
+            }
+        }
+        for (int v : srcSpecial) {
+            if (destSpecial.contains(v)) {
+                specialSame ++;
+            }
+        }
+        int same = normalSame << 2 | specialSame;
+        Reward reward = mRewards.get(same);
+        if (reward == null) {
+            reward = Reward.NO_REWARD;
+        }
+        return reward;
+    }
 
     @Override
-    public RewardDetail getReward(Lottery lt, LotteryRecord record) {
-        if (lt.getType() != record.getLottery().getType()) {
+    public RewardDetail getRewardDetail(Lottery num, LotteryRecord record) {
+        if (num.getType() != record.getLottery().getType()) {
             return new RewardDetail(Reward.NO_REWARD, new HashSet<Integer>(0), new HashSet<Integer>(0));
         }
-        final Set<Integer> srcNormal = lt.getNormals();
-        final Set<Integer> srcSpecial = lt.getSpecials();
+        final Set<Integer> srcNormal = num.getNormals();
+        final Set<Integer> srcSpecial = num.getSpecials();
         final Set<Integer> destNormal = record.getNormals();
         final Set<Integer> destSpecial = record.getSpecials();
 
@@ -61,18 +90,24 @@ public class DLTRewardRule extends RewardRule {
 
     private DLTRewardRule() {
         mRewards = new SparseArray<>();
-        mRewards.put(2, new Reward("末等","1+2或者0+2或者",5));
-        mRewards.put(1 << 2 | 2, new Reward("末等","1+2或者0+2或者",5));
-        mRewards.put(3 << 2, new Reward("末等","1+2或者0+2或者",5));
-        mRewards.put(2 << 2 | 1, new Reward("末等","1+2或者0+2或者",5));
-        mRewards.put(2 << 2 | 2, new Reward("末等","1+2或者0+2或者",10));
-        mRewards.put(3 << 2 | 1, new Reward("末等","1+2或者0+2或者",10));
-        mRewards.put(4 << 2, new Reward("末等","1+2或者0+2或者",10));
-        mRewards.put(3 << 2 | 2, new Reward("末等","1+2或者0+2或者",200));
-        mRewards.put(4 << 2 | 1, new Reward("末等","1+2或者0+2或者",200));
-        mRewards.put(4 << 2 | 2, new Reward("末等","1+2或者0+2或者",3000));
-        mRewards.put(5 << 2, new Reward("末等","1+2或者0+2或者",3000));
-        mRewards.put(5 << 2 | 1, new Reward("末等","1+2或者0+2或者",200000));
-        mRewards.put(5 << 2 | 2, new Reward("末等","1+2或者0+2或者",10000000));
+        final Reward notBad = new Reward("末等", "1+2或者0+2或者", 5);
+        mRewards.put(2, notBad);
+        mRewards.put(1 << 2 | 2, notBad);
+        mRewards.put(3 << 2, notBad);
+        mRewards.put(2 << 2 | 1, notBad);
+        final Reward better = new Reward("五等", "1+2或者0+2或者", 10);
+        mRewards.put(2 << 2 | 2, better);
+        mRewards.put(3 << 2 | 1, better);
+        mRewards.put(4 << 2, better);
+        final Reward neverHadIt = new Reward("四等", "1+2或者0+2或者", 200);
+        mRewards.put(3 << 2 | 2, neverHadIt);
+        mRewards.put(4 << 2 | 1, neverHadIt);
+        final Reward great = new Reward("三等", "1+2或者0+2或者", 3000);
+        mRewards.put(4 << 2 | 2, great);
+        mRewards.put(5 << 2, great);
+        final Reward omg = new Reward("二等", "1+2或者0+2或者", 200000);
+        mRewards.put(5 << 2 | 1, omg);
+        final Reward iAmRichNow = new Reward("一等", "1+2或者0+2或者", 10000000);
+        mRewards.put(5 << 2 | 2, iAmRichNow);
     }
 }

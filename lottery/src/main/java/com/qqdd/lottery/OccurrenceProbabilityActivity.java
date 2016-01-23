@@ -123,7 +123,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
     public void handleCalculateNumberClicked(View view) {
         mDrawerLayout.closeDrawer(GravityCompat.END);
         showProgress(R.string.picking_number);
-        NumberProducer.getInstance().calculate(mNormalNumbers, mSpecialNumbers,
+        NumberProducer.getInstance().calculateAsync(mNormalNumbers, mSpecialNumbers,
                 LotteryConfiguration.DLTConfiguration(), new DataLoadingCallback<Lottery>() {
                     @Override
                     public void onLoaded(Lottery result) {

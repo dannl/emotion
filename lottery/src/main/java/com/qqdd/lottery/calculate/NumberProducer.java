@@ -33,9 +33,9 @@ public class NumberProducer {
     }
 
 
-    public void calculate(@NotNull final NumberTable normals, @NotNull final NumberTable specials,
-                          @NotNull final LotteryConfiguration lotteryConfiguration,
-                          @NotNull final DataLoadingCallback<Lottery> callback) {
+    public void calculateAsync(@NotNull final NumberTable normals, @NotNull final NumberTable specials,
+                               @NotNull final LotteryConfiguration lotteryConfiguration,
+                               @NotNull final DataLoadingCallback<Lottery> callback) {
         if (mTask != null) {
             callback.onBusy();
             return;
@@ -46,6 +46,17 @@ public class NumberProducer {
         }
         mTask = new CalculateTask(normals, specials, lotteryConfiguration, callback);
         mTask.execute();
+    }
+
+    public Lottery calculateSync(@NotNull final NumberTable normals, @NotNull final NumberTable specials,
+                                 @NotNull final LotteryConfiguration lotteryConfiguration)  {
+        Set<Integer> normalValues = calculateValues(normals, lotteryConfiguration.getNormalSize());
+        Set<Integer> specialValues = calculateValues(specials, lotteryConfiguration.getSpecialSize());
+        final Lottery result = Lottery.newLotteryWithConfiguration(lotteryConfiguration);
+        assert result != null;
+        result.addNormals(normalValues);
+        result.addSpecials(specialValues);
+        return result;
     }
 
     private class CalculateTask extends AsyncTask<Void, Void, Lottery> {
@@ -66,13 +77,7 @@ public class NumberProducer {
 
         @Override
         protected Lottery doInBackground(Void... params) {
-            Set<Integer> normalValues = calculateValues(mNormals, mConfiguration.getNormalSize());
-            Set<Integer> specialValues = calculateValues(mSpecials, mConfiguration.getSpecialSize());
-            final Lottery result = Lottery.newLotteryWithConfiguration(mConfiguration);
-            assert result != null;
-            result.addNormals(normalValues);
-            result.addSpecials(specialValues);
-            return result;
+            return calculateSync(mNormals, mSpecials, mConfiguration);
         }
 
         @Override

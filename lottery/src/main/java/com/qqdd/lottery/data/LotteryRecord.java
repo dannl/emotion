@@ -47,6 +47,10 @@ public class LotteryRecord implements ILottery {
         return mDate;
     }
 
+    public String getDateDisplay() {
+        return DISPLAY_DATE_FORMAT.format(mDate);
+    }
+
     @Override
     public String toString() {
         return DISPLAY_DATE_FORMAT.format(mDate) + " " + mLottery.toString();
