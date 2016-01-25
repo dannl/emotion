@@ -16,7 +16,7 @@ import com.qqdd.lottery.calculate.CalculatorListAdapter;
 import com.qqdd.lottery.calculate.NumberProducer;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.CalculatorItem;
-import com.qqdd.lottery.calculate.data.calculator.SelectionIncreaseCalculator;
+import com.qqdd.lottery.calculate.data.calculators.SelectionIncreaseCalculator;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
@@ -101,7 +101,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         selectionIncrease.addNormal(26);
         selectionIncrease.addSpecial(1);
         selectionIncrease.addSpecial(4);
-//        mCalculators.add(new CalculatorItem(selectionIncrease));
+        mCalculators.add(new CalculatorItem(selectionIncrease));
         mCalculators.add(new CalculatorItem(CalculatorFactory.SameNumberCalculatorFactory.instance().createCalculator()));
         mCalculatorsView.setLayoutManager(new LinearLayoutManager(this));
         mCalculatorListAdapter = new CalculatorListAdapter(mCalculators);

@@ -1,7 +1,8 @@
-package com.qqdd.lottery.calculate.data.calculator;
+package com.qqdd.lottery.calculate.data.calculators;
 
 import com.qqdd.lottery.calculate.data.CalculatorImpl;
-import com.qqdd.lottery.data.*;
+import com.qqdd.lottery.data.LotteryRecord;
+import com.qqdd.lottery.data.NumberTable;
 
 import java.util.HashSet;
 import java.util.List;

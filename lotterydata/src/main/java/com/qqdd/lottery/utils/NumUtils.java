@@ -1,6 +1,7 @@
 package com.qqdd.lottery.utils;
 
-import com.qqdd.lottery.utils.data.NumberList;
+
+import com.qqdd.lottery.data.NumberList;
 
 import java.util.Random;
 

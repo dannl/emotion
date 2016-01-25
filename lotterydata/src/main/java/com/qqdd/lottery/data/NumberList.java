@@ -1,4 +1,4 @@
-package com.qqdd.lottery.utils.data;
+package com.qqdd.lottery.data;
 
 import java.util.ArrayList;
 

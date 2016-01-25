@@ -14,7 +14,7 @@ import com.qqdd.lottery.calculate.AlgorithmTester;
 import com.qqdd.lottery.calculate.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.CalculatorItem;
-import com.qqdd.lottery.calculate.data.calculator.SelectionIncreaseCalculator;
+import com.qqdd.lottery.calculate.data.calculators.SelectionIncreaseCalculator;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
@@ -39,9 +39,9 @@ public class MainActivity extends BaseActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                testAlg(view, msg);
-//                final Intent intent = new Intent(MainActivity.this, OccurrenceProbabilityActivity.class);
-//                startActivity(intent);
+//                testAlg(view, msg);
+                final Intent intent = new Intent(MainActivity.this, OccurrenceProbabilityActivity.class);
+                startActivity(intent);
             }
         });
     }

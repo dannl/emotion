@@ -1,4 +1,4 @@
-package com.qqdd.lottery.calculate.data.calculator;
+package com.qqdd.lottery.calculate.data.calculators;
 
 import com.qqdd.lottery.calculate.data.CalculatorImpl;
 import com.qqdd.lottery.data.LotteryRecord;

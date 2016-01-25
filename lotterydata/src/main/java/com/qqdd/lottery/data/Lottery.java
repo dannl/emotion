@@ -1,6 +1,5 @@
 package com.qqdd.lottery.data;
 
-import com.qqdd.lottery.utils.data.NumberList;
 
 import org.json.JSONArray;
 import org.json.JSONException;

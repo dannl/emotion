@@ -1,7 +1,5 @@
 package com.qqdd.lottery.data;
 
-import com.qqdd.lottery.utils.data.NumberList;
-
 /**
  * Created by danliu on 1/20/16.
  */

@@ -1,6 +1,5 @@
 package com.qqdd.lottery.data;
 
-import com.qqdd.lottery.utils.data.NumberList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +24,9 @@ public class LotteryRecord implements ILottery {
         mLottery = t;
     }
 
+    public RewardRule.RewardDetail getRewardDetail(final LotteryRecord record) {
+        return mLottery.getRewardDetail(record);
+    }
 
     @Override
     public NumberList getNormals() {

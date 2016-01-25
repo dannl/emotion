@@ -1,8 +1,7 @@
 package com.qqdd.lottery.data;
 
-import android.util.SparseArray;
 
-import com.qqdd.lottery.utils.data.NumberList;
+import java.util.HashMap;
 
 /**
  * Created by danliu on 1/20/16.
@@ -84,10 +83,10 @@ public class DLTRewardRule extends RewardRule {
         return new RewardDetail(reward, resultNormal, resultSpecial);
     }
 
-    private SparseArray<Reward> mRewards;
+    private HashMap<Integer, Reward> mRewards;
 
     private DLTRewardRule() {
-        mRewards = new SparseArray<>();
+        mRewards = new HashMap<>();
         final Reward notBad = new Reward("末等", "1+2或者0+2或者", 5);
         mRewards.put(2, notBad);
         mRewards.put(1 << 2 | 2, notBad);

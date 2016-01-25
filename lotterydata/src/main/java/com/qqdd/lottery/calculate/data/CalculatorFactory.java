@@ -1,8 +1,8 @@
 package com.qqdd.lottery.calculate.data;
 
-import com.qqdd.lottery.calculate.data.calculator.HistoryOccurrenceProbabilityCalculator;
-import com.qqdd.lottery.calculate.data.calculator.SameNumberCalculator;
-import com.qqdd.lottery.calculate.data.calculator.SelectionIncreaseCalculator;
+import com.qqdd.lottery.calculate.data.calculators.HistoryOccurrenceProbabilityCalculator;
+import com.qqdd.lottery.calculate.data.calculators.SameNumberCalculator;
+import com.qqdd.lottery.calculate.data.calculators.SelectionIncreaseCalculator;
 
 /**
  * Created by danliu on 1/21/16.
