@@ -21,8 +21,10 @@ import java.util.Set;
  */
 public class TestAlgorithm {
 
+    private static final String PATH = "H://environment/code/emotion/DLT";
+
     public static void main(String[] args) {
-        List<LotteryRecord> history = DataLoader.loadData("/home/niub/Desktop/DLT");
+        List<LotteryRecord> history = DataLoader.loadData(PATH);
         List<CalculatorItem> calculatorList = new ArrayList<>();
         calculatorList.add(new CalculatorItem(
                 CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
@@ -48,8 +50,8 @@ public class TestAlgorithm {
 
     }
 
-    public static final int TEST_TIME = 1000000;
-    public static final int TEST_SINCE = 200;
+    public static final int TEST_TIME = 50000;
+    public static final int TEST_SINCE = 3;
 
     private static final String RESULT_FORMAT = "%s：\n" +
             "正在基于%s测试" +
