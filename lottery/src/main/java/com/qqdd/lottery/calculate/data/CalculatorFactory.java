@@ -1,6 +1,7 @@
 package com.qqdd.lottery.calculate.data;
 
 import com.qqdd.lottery.calculate.data.calculator.HistoryOccurrenceProbabilityCalculator;
+import com.qqdd.lottery.calculate.data.calculator.SameNumberCalculator;
 import com.qqdd.lottery.calculate.data.calculator.SelectionIncreaseCalculator;
 
 /**
@@ -63,6 +64,26 @@ public abstract class CalculatorFactory<T extends CalculatorImpl> {
         @Override
         public SelectionIncreaseCalculator createCalculator() {
             return new SelectionIncreaseCalculator(getTitle(), getDesc());
+        }
+    }
+
+    public static final class SameNumberCalculatorFactory extends CalculatorFactory<SameNumberCalculator> {
+
+        private static class SingletonHolder {
+            private static final SameNumberCalculatorFactory INSTANCE = new SameNumberCalculatorFactory();
+        }
+
+        public static SameNumberCalculatorFactory instance() {
+            return SingletonHolder.INSTANCE;
+        }
+
+        private SameNumberCalculatorFactory() {
+            super("重复出现的号码增加概率", "根据历史数据，计算出重复号码个数出现的概率，再在上一期中根据个数的概率随机选出N个重复的号码,增加这些号码的出现概率.");
+        }
+
+        @Override
+        public SameNumberCalculator createCalculator() {
+            return new SameNumberCalculator(getTitle(), getDesc());
         }
     }
 

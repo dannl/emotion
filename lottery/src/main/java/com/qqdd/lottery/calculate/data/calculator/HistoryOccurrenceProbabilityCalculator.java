@@ -25,12 +25,14 @@ public class HistoryOccurrenceProbabilityCalculator extends CalculatorImpl {
                 normalSize);
         final int[] specialOcc = NumUtils.newEmptyIntArray(
                 specialSize);
-        for (LotteryRecord record : lts) {
-            for (int i : record.getNormals()) {
-                normalOcc[i]++;
+        for (int i = 0; i < lts
+                .size(); i++) {
+            LotteryRecord record = lts.get(i);
+            for (int v : record.getNormals()) {
+                normalOcc[v]++;
             }
-            for (int i : record.getSpecials()) {
-                specialOcc[i]++;
+            for (int v : record.getSpecials()) {
+                specialOcc[v]++;
             }
         }
         float totalNormalOcc = NumUtils.calculateTotalInIntArray(normalOcc);

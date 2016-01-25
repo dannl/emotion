@@ -2,8 +2,7 @@ package com.qqdd.lottery.data;
 
 import android.util.SparseArray;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.qqdd.lottery.utils.data.NumberList;
 
 /**
  * Created by danliu on 1/20/16.
@@ -26,10 +25,10 @@ public class DLTRewardRule extends RewardRule {
         if (num.getType() != record.getLottery().getType()) {
             return Reward.NO_REWARD;
         }
-        final Set<Integer> srcNormal = num.getNormals();
-        final Set<Integer> srcSpecial = num.getSpecials();
-        final Set<Integer> destNormal = record.getNormals();
-        final Set<Integer> destSpecial = record.getSpecials();
+        final NumberList srcNormal = num.getNormals();
+        final NumberList srcSpecial = num.getSpecials();
+        final NumberList destNormal = record.getNormals();
+        final NumberList destSpecial = record.getSpecials();
 
         int normalSame = 0;
         int specialSame = 0;
@@ -54,16 +53,15 @@ public class DLTRewardRule extends RewardRule {
     @Override
     public RewardDetail getRewardDetail(Lottery num, LotteryRecord record) {
         if (num.getType() != record.getLottery().getType()) {
-            return new RewardDetail(Reward.NO_REWARD, new HashSet<Integer>(0), new HashSet<Integer>(0));
+            return new RewardDetail(Reward.NO_REWARD, new NumberList(), new NumberList());
         }
-        final Set<Integer> srcNormal = num.getNormals();
-        final Set<Integer> srcSpecial = num.getSpecials();
-        final Set<Integer> destNormal = record.getNormals();
-        final Set<Integer> destSpecial = record.getSpecials();
+        final NumberList srcNormal = num.getNormals();
+        final NumberList srcSpecial = num.getSpecials();
+        final NumberList destNormal = record.getNormals();
+        final NumberList destSpecial = record.getSpecials();
 
-        final Set<Integer> resultNormal = new HashSet<>();
-        final Set<Integer> resultSpecial = new HashSet<>();
-
+        final NumberList resultNormal = new NumberList();
+        final NumberList resultSpecial = new NumberList();
         int normalSame = 0;
         int specialSame = 0;
         for (int v : srcNormal) {

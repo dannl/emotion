@@ -1,10 +1,11 @@
 package com.qqdd.lottery.data;
 
+import com.qqdd.lottery.utils.data.NumberList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -16,8 +17,8 @@ public class Lottery implements ILottery {
         DLT
     }
 
-    private final Set<Integer> mNormal = new HashSet<>();
-    private final Set<Integer> mSpecial = new HashSet<>();
+    private final NumberList mNormal = new NumberList();
+    private final NumberList mSpecial = new NumberList();
     private final Type mType;
     private RewardRule mRewardRule;
     private LotteryConfiguration mLotteryConfiguration;
@@ -57,12 +58,12 @@ public class Lottery implements ILottery {
     }
 
     @Override
-    public Set<Integer> getSpecials() {
+    public NumberList getSpecials() {
         return mSpecial;
     }
 
     @Override
-    public Set<Integer> getNormals() {
+    public NumberList getNormals() {
         return mNormal;
     }
 

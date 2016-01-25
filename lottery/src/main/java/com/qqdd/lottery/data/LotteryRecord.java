@@ -1,12 +1,13 @@
 package com.qqdd.lottery.data;
 
+import com.qqdd.lottery.utils.data.NumberList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * Created by danliu on 1/19/16.
@@ -26,12 +27,12 @@ public class LotteryRecord implements ILottery {
 
 
     @Override
-    public Set<Integer> getNormals() {
+    public NumberList getNormals() {
         return mLottery.getNormals();
     }
 
     @Override
-    public Set<Integer> getSpecials() {
+    public NumberList getSpecials() {
         return mLottery.getSpecials();
     }
 

@@ -1,15 +1,15 @@
 package com.qqdd.lottery.data;
 
-import java.util.Set;
+import com.qqdd.lottery.utils.data.NumberList;
 
 /**
  * Created by danliu on 1/19/16.
  */
 public interface ILottery {
 
-    public Set<Integer> getNormals();
+    public NumberList getNormals();
 
-    public Set<Integer> getSpecials();
+    public NumberList getSpecials();
 
     Lottery.Type getType();
 

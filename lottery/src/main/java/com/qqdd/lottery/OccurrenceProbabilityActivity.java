@@ -101,7 +101,8 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         selectionIncrease.addNormal(26);
         selectionIncrease.addSpecial(1);
         selectionIncrease.addSpecial(4);
-        mCalculators.add(new CalculatorItem(selectionIncrease));
+//        mCalculators.add(new CalculatorItem(selectionIncrease));
+        mCalculators.add(new CalculatorItem(CalculatorFactory.SameNumberCalculatorFactory.instance().createCalculator()));
         mCalculatorsView.setLayoutManager(new LinearLayoutManager(this));
         mCalculatorListAdapter = new CalculatorListAdapter(mCalculators);
         mCalculatorsView.setAdapter(mCalculatorListAdapter);

@@ -41,7 +41,7 @@ public class AlgorithmTester {
             "中奖金额累计：%s\n" +
             "详情：\n%s\n";
 
-    public static final int TEST_TIME = 50000;
+    public static final int TEST_TIME = 10;
     private Task mTask;
 
     public void test(@NotNull final LotteryConfiguration configuration,
@@ -116,14 +116,14 @@ public class AlgorithmTester {
             }*/
             totalTime = 0;
             for (int i = size / 2; i > 0; i--) {
-                normalTable = new NumberTable(mConfiguration.getNormalRange());
-                specialTable = new NumberTable(mConfiguration.getSpecialRange());
-                final List<LotteryRecord> subHistory = mHistory.subList(i, size);
-                for (int j = 0; j < mCalculators.size(); j++) {
-                    mCalculators.get(j).calculate(subHistory, normalTable, specialTable);
-                }
-                final LotteryRecord record = mHistory.get(i - 1);
+                final List<LotteryRecord> subHistory = mHistory.subList(i - 1, size);
+                final LotteryRecord record = mHistory.get(i);
                 for (int j = 0; j < TEST_TIME; j++) {
+                    normalTable = new NumberTable(mConfiguration.getNormalRange());
+                    specialTable = new NumberTable(mConfiguration.getSpecialRange());
+                    for (int k = 0; k < mCalculators.size(); k++) {
+                        mCalculators.get(k).calculate(subHistory, normalTable, specialTable);
+                    }
                     totalTime++;
                     final Lottery tempResult = NumberProducer.getInstance().calculateSync(normalTable, specialTable, mConfiguration);
                     final RewardRule.Reward reward = tempResult.getReward(record);

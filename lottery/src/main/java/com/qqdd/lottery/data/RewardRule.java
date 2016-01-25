@@ -1,6 +1,6 @@
 package com.qqdd.lottery.data;
 
-import java.util.Set;
+import com.qqdd.lottery.utils.data.NumberList;
 
 /**
  * Created by danliu on 1/20/16.
@@ -13,20 +13,20 @@ public abstract class RewardRule {
 
     public static class RewardDetail {
         private Reward mReward;
-        private Set<Integer> mNormals;
-        private Set<Integer> mSpecials;
+        private NumberList mNormals;
+        private NumberList mSpecials;
 
-        public RewardDetail(Reward reward, Set<Integer> normals, Set<Integer> specials) {
+        public RewardDetail(Reward reward, NumberList normals, NumberList specials) {
             mReward = reward;
             mNormals = normals;
             mSpecials = specials;
         }
 
-        public Set<Integer> getNormals() {
+        public NumberList getNormals() {
             return mNormals;
         }
 
-        public Set<Integer> getSpecials() {
+        public NumberList getSpecials() {
             return mSpecials;
         }
 
