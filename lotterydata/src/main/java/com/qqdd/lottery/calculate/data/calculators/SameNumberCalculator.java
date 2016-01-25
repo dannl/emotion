@@ -79,6 +79,12 @@ public class SameNumberCalculator extends CalculatorImpl {
         int[] specialSameFrc = NumUtils.newEmptyIntArray(
                 lotteryConfiguration.getSpecialRange() + 1);
         for (int i = 1; i < lts.size() - 1; i++) {
+            //            final NumberList normalList = lts.get(i).getNormals();
+            //            final NumberList specialList = lts.get(i).getSpecials();
+            //            final NumberList lastNormalList = lts.get(i + 1).getNormals();
+            //            final NumberList lastSpecialList = lts.get(i + 1).getSpecials();
+            //            final int normalSame = NumUtils.calculateSameCount(normalList, lastNormalList);
+            //            final int specialSame = NumUtils.calculateSameCount(specialList, lastSpecialList);
             final LotteryRecord src = lts.get(i);
             final LotteryRecord dest = lts.get(i + 1);
             final RewardRule.RewardDetail detail = src.getRewardDetail(dest);
