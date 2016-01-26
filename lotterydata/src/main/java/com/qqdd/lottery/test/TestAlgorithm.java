@@ -24,7 +24,7 @@ public class TestAlgorithm {
 
     //    private static final String PATH = "H://environment/code/emotion/DLT";
     private static final String PATH = "/home/niub/Desktop/DLT";
-    public static final int TEST_TIME = 50000;
+    public static final int TEST_TIME = 1000000;
     public static final int TEST_SINCE = 4;
 
     public static void main(String[] args) {
@@ -130,6 +130,9 @@ public class TestAlgorithm {
                     .append("\n");
             builder.append("总中奖率：")
                     .append(((double) totalRewardCount) / totalTestCount)
+                    .append("\n");
+            builder.append("测试速度：")
+                    .append(((double) totalTestCount) / (System.currentTimeMillis() - startTime) * 1000)
                     .append("\n");
             final Set<Map.Entry<RewardRule.Reward, Integer>> entrySet = detail.entrySet();
             for (Map.Entry<RewardRule.Reward, Integer> entry : entrySet) {
