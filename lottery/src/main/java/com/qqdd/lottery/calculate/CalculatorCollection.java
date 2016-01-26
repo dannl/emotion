@@ -3,12 +3,16 @@ package com.qqdd.lottery.calculate;
 import android.os.AsyncTask;
 
 import com.qqdd.lottery.calculate.data.CalculatorItem;
+import com.qqdd.lottery.data.Lottery;
+import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by danliu on 1/20/16.
@@ -17,42 +21,70 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
 
     private CalculateTask mCalculateTask;
 
-    public void calculate(final List<LotteryRecord> lts, final NumberTable normalTable, final NumberTable specialTable, final DataLoadingCallback<NumberTable> callback) {
+    private static final DecimalFormat PROGRESS_FORMAT = new DecimalFormat("###.0");
+
+    public void calculate(final List<LotteryRecord> lts, final int resultSize, final int loopCount, final DataLoadingCallback<List<Lottery>> callback) {
         if (mCalculateTask != null) {
             callback.onBusy();
             return;
         }
-        mCalculateTask = new CalculateTask(lts, normalTable, specialTable, callback);
+        mCalculateTask = new CalculateTask(lts, resultSize, loopCount, callback);
         mCalculateTask.execute();
     }
 
-    private class CalculateTask extends AsyncTask<Void, Void, Void> {
+    private class CalculateTask extends AsyncTask<Void, String, List<Lottery>> {
 
         private List<LotteryRecord> mHistory;
         private NumberTable mNormalTable;
         private NumberTable mSpecialTable;
-        private DataLoadingCallback<NumberTable> mCallback;
+        private DataLoadingCallback<List<Lottery>> mCallback;
+        private int mResultSize;
+        private int mLoopCount;
+        private NumberProducer mNumberProducer;
+        private LotteryConfiguration mConfiguration;
 
-        public CalculateTask(List<LotteryRecord> lts, NumberTable normalTable, NumberTable specialTable,
-                             DataLoadingCallback<NumberTable> callback) {
+        public CalculateTask(List<LotteryRecord> lts, int resultSize, int loopCount,
+                             DataLoadingCallback<List<Lottery>> callback) {
             mHistory = lts;
-            mNormalTable = normalTable;
-            mSpecialTable = specialTable;
+            mResultSize = resultSize;
+            mLoopCount = loopCount;
+            mConfiguration = lts.get(0).getLottery().getLotteryConfiguration();
+            mNormalTable = new NumberTable(mConfiguration.getNormalRange());
+            mSpecialTable = new NumberTable(mConfiguration.getSpecialRange());
             mCallback = callback;
+            mNumberProducer = NumberProducer.getInstance();
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            for (int i = 0; i < size(); i++) {
-                CalculatorCollection.this.get(i).calculate(mHistory, mNormalTable, mSpecialTable);
+        protected List<Lottery> doInBackground(Void... params) {
+            List<Lottery> tempBuffer = new ArrayList<>(mLoopCount);
+            for (int i = 0; i < mLoopCount; i++) {
+                publishProgress(PROGRESS_FORMAT.format(((float) i) / mLoopCount * 100) + "%");
+                mNormalTable.reset();
+                mSpecialTable.reset();
+                for (int j = 0; j < size(); j++) {
+                    CalculatorCollection.this.get(j).calculate(mHistory, mNormalTable, mSpecialTable);
+                }
+                final Lottery lottery = mNumberProducer.calculateSync(mNormalTable, mSpecialTable, mConfiguration);
+                tempBuffer.add(lottery);
             }
-            return null;
+            Random random = new Random();
+            final List<Lottery> result = new ArrayList<>();
+            while (result.size() < mResultSize) {
+                result.add(tempBuffer.remove(random.nextInt(tempBuffer.size())));
+            }
+            return result;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onProgressUpdate(String... values) {
+            mCallback.onProgressUpdate(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Lottery> result) {
             mCalculateTask = null;
-            mCallback.onLoaded(mNormalTable);
+            mCallback.onLoaded(result);
         }
     }
 }

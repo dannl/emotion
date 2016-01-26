@@ -3,20 +3,14 @@ package com.qqdd.lottery;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.qqdd.lottery.calculate.CalculatorCollection;
-import com.qqdd.lottery.calculate.CalculatorListAdapter;
-import com.qqdd.lottery.calculate.NumberProducer;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.CalculatorItem;
-import com.qqdd.lottery.calculate.data.calculators.SelectionIncreaseCalculator;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
@@ -37,11 +31,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
     private NumAreaAdapter mSpecialNumberAdapter;
     private NumberTable mNormalNumbers;
     private NumberTable mSpecialNumbers;
-    private DrawerLayout mDrawerLayout;
-    private RecyclerView mCalculatorsView;
     private CalculatorCollection mCalculators;
-    private CalculatorListAdapter mCalculatorListAdapter;
-    private View mFloatingButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +41,6 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         initViews();
-        setupFloating();
         setupNumberView(mNormalNumberView);
         setupNumberView(mSpecialNumberView);
         setupCalculatorsView();
@@ -61,21 +50,8 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
 
     private void initViews() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNormalNumberView = (GridView) findViewById(R.id.normal_num_area);
         mSpecialNumberView = (GridView) findViewById(R.id.special_num_area);
-        mCalculatorsView = (RecyclerView) findViewById(R.id.calculators);
-        mFloatingButton = findViewById(R.id.fab);
-    }
-
-
-    private void setupFloating() {
-        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.END);
-            }
-        });
     }
 
     private void setupNumberView(GridView v) {
@@ -90,10 +66,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
                 CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                         .createCalculator()));
         mCalculators.add(new CalculatorItem(CalculatorFactory.SameNumberCalculatorFactory.instance().createCalculator()));
-        mCalculators.add(new CalculatorItem(CalculatorFactory.Last4TimeOccurIncreaseCalculatorFactory.instance().createCalculator()));
-        mCalculatorsView.setLayoutManager(new LinearLayoutManager(this));
-        mCalculatorListAdapter = new CalculatorListAdapter(mCalculators);
-        mCalculatorsView.setAdapter(mCalculatorListAdapter);
+        mCalculators.add(new CalculatorItem(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance().createCalculator()));
     }
 
 
@@ -109,59 +82,47 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         mSpecialNumberView.setAdapter(mSpecialNumberAdapter);
     }
 
-    public void handleCalculateNumberClicked(View view) {
-        mDrawerLayout.closeDrawer(GravityCompat.END);
-        showProgress(R.string.picking_number);
-        NumberProducer.getInstance().calculateAsync(mNormalNumbers, mSpecialNumbers,
-                LotteryConfiguration.DLTConfiguration(), new DataLoadingCallback<Lottery>() {
-                    @Override
-                    public void onLoaded(Lottery result) {
-                        dismissProgress();
-                        new AlertDialog.Builder(OccurrenceProbabilityActivity.this)
-                                .setMessage(result.toString())
-                                .setNegativeButton(R.string.cancel, null)
-                                .show();
-                    }
-
-                    @Override
-                    public void onLoadFailed(String err) {
-                        dismissProgress();
-                        showSnakeBar(err);
-                    }
-
-                    @Override
-                    public void onBusy() {
-                        dismissProgress();
-                        showSnakeBar(getString(R.string.duplicated_operation));
-                    }
-
-                    @Override
-                    public void onProgressUpdate(Object... progress) {
-
-                    }
-                });
-    }
-
     public void handleCalculateClicked(View view) {
-        mDrawerLayout.closeDrawer(GravityCompat.END);
         showProgress(R.string.calculating);
+        final String countText = ((TextView) findViewById(R.id.pick_number_count)).getText().toString();
+        final String loopCountText = ((TextView) findViewById(R.id.calculate_count)).getText().toString();
         DataProvider.getInstance().loadDLT(new DataLoadingCallback<List<LotteryRecord>>() {
 
             @Override
             public void onLoaded(List<LotteryRecord> result) {
-                mCalculators.calculate(result, mNormalNumbers, mSpecialNumbers,
-                        new DataLoadingCallback<NumberTable>() {
+                int count = 5;
+                try {
+                    count = Math.max(1, Math.min(Integer.parseInt(countText), 10));
+                } catch (Exception ignore) {
+                }
+                int loop = 1000;
+                try {
+                    loop = Math.max(Integer.parseInt(loopCountText), loop);
+                } catch (Exception ignore) {
+                }
+                mCalculators.calculate(result, count, loop,
+                        new DataLoadingCallback<List<Lottery>>() {
                             @Override
-                            public void onLoaded(NumberTable result) {
+                            public void onLoaded(List<Lottery> result) {
                                 dismissProgress();
-                                mNormalNumberAdapter.notifyDataSetChanged();
-                                mSpecialNumberAdapter.notifyDataSetChanged();
+                                final StringBuilder builder = new StringBuilder();
+                                for (int i = 0; i < result.size(); i++) {
+                                    builder.append(result.get(i).toString()).append("\n");
+                                }
+                                new AlertDialog.Builder(OccurrenceProbabilityActivity.this)
+                                        .setMessage(builder.toString())
+                                        .setNegativeButton(R.string.cancel, null)
+                                        .setTitle(R.string.calculate_result)
+                                        .show();
                             }
 
                             @Override
                             public void onProgressUpdate(Object... progress) {
-
+                                if (progress != null && progress.length > 0) {
+                                    showProgress(getString(R.string.calculating) + progress[0]);
+                                }
                             }
+
                             @Override
                             public void onLoadFailed(String err) {
                                 dismissProgress();
@@ -196,11 +157,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
     }
 
     private void showSnakeBar(final String msg) {
-        Snackbar.make(mFloatingButton, msg, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(findViewById(R.id.drawer_layout), msg, Snackbar.LENGTH_LONG).show();
     }
 
-
-    public void handleIntroduceClicked(View view) {
-        mDrawerLayout.closeDrawer(GravityCompat.END);
-    }
 }

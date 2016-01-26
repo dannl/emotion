@@ -99,7 +99,7 @@ public class TestAlgorithm {
                 CalculatorFactory.SameNumberCalculatorFactory.instance()
                         .createCalculator()));
         calculatorList.add(new CalculatorItem(
-                CalculatorFactory.Last4TimeOccurIncreaseCalculatorFactory.instance()
+                CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
                         .createCalculator()));
         final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
                 calculatorList);

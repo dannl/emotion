@@ -41,6 +41,7 @@ public class NumberView extends LinearLayout {
         setGravity(Gravity.CENTER_HORIZONTAL);
         mNumber = (TextView) findViewById(R.id.number);
         mProbability = (TextView) findViewById(R.id.rate);
+        mProbability.setVisibility(GONE);
         setupDisplay(display);
     }
 

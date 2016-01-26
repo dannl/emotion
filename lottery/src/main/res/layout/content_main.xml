@@ -13,14 +13,12 @@
     tools:context="com.qqdd.lottery.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <ScrollView
+    <TextView
+        android:layout_centerInParent="true"
+        android:onClick="handleDLTClicked"
+        style="@style/AppButtonStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp"
+        android:text="@string/dlt"/>
 
-        <TextView
-            android:id="@+id/msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"/>
-    </ScrollView>
 </RelativeLayout>

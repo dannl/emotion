@@ -33,88 +33,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final TextView msg = (TextView) findViewById(R.id.msg);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-//                testAlg(view, msg);
-                final Intent intent = new Intent(MainActivity.this, OccurrenceProbabilityActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    private void testAlg(final View view, final TextView msg) {
-        showProgress("正在加载数据...");
-        DataProvider.getInstance().loadDLT(new DataLoadingCallback<List<LotteryRecord>>() {
-
-            @Override
-            public void onLoaded(List<LotteryRecord> result) {
-                dismissProgress();
-                CalculatorCollection calculatorList = new CalculatorCollection();
-                calculatorList.add(new CalculatorItem(
-                        CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                                .createCalculator()));
-                final SelectionIncreaseCalculator selectionIncrease = CalculatorFactory.SelectionIncreaseCalculatorFactory.instance()
-                        .createCalculator();
-                selectionIncrease.addNormal(4);
-                selectionIncrease.addNormal(15);
-                selectionIncrease.addNormal(10);
-                selectionIncrease.addNormal(22);
-                selectionIncrease.addNormal(8);
-                selectionIncrease.addNormal(29);
-                selectionIncrease.addNormal(6);
-                selectionIncrease.addNormal(26);
-                selectionIncrease.addSpecial(1);
-                selectionIncrease.addSpecial(4);
-                //calculatorList.add(new CalculatorItem(selectionIncrease));
-                calculatorList.add(new CalculatorItem(CalculatorFactory.SameNumberCalculatorFactory.instance().createCalculator()));
-                if (mTest == null) {
-                    mTest = new AlgorithmTester();
-                }
-                mTest.test(LotteryConfiguration.DLTConfiguration(), result, calculatorList, new DataLoadingCallback<String>() {
-                    @Override
-                    public void onLoaded(String result) {
-                        msg.setText(result);
-                        msg.append("测试完毕！");
-                    }
-
-                    @Override
-                    public void onLoadFailed(String err) {
-                        msg.append("测试失败!");
-                    }
-
-                    @Override
-                    public void onBusy() {
-                        Snackbar.make(view, "busy!", Snackbar.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onProgressUpdate(final Object... progress) {
-                        if (progress != null && progress.length > 0) {
-                            msg.setText(String.valueOf(progress[0]));
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onLoadFailed(String err) {
-                dismissProgress();
-            }
-
-            @Override
-            public void onBusy() {
-                dismissProgress();
-            }
-
-            @Override
-            public void onProgressUpdate(Object... progress) {
-
-            }
-        });
     }
 
     @Override
@@ -140,5 +59,10 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void handleDLTClicked(View view) {
+        final Intent intent = new Intent(MainActivity.this, OccurrenceProbabilityActivity.class);
+        startActivity(intent);
     }
 }

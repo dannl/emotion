@@ -33,25 +33,7 @@
 
         <include layout="@layout/content_occurrence_probability"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@android:drawable/ic_media_play"/>
     </android.support.design.widget.CoordinatorLayout>
 
-
-    <android.support.design.widget.NavigationView
-        android:id="@+id/navigation_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        >
-
-        <include layout="@layout/navigation_occurrence_probability"/>
-
-    </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
 

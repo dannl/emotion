@@ -1,16 +1,22 @@
 <resources>
     <string name="app_name">我的机选我做主</string>
     <string name="action_settings">Settings</string>
-    <string name="action_dlt_history">大乐透历史数据...</string>
+    <string name="action_dlt_history">大乐透历史数据…</string>
     <string name="title_activity_dlt">历史记录</string>
-    <string name="title_activity_occurrence_probability">概率计算器</string>
+    <string name="title_activity_occurrence_probability">算号器</string>
     <string name="normal_num_area">普通号码区:</string>
     <string name="special_num_area">特殊号码区:</string>
-    <string name="introduce">说明...</string>
-    <string name="calculate">计算概率</string>
+    <string name="introduce">说明…</string>
+    <string name="calculate">开始计算…</string>
     <string name="start_random">开始机选</string>
-    <string name="calculating">计算中...</string>
-    <string name="duplicated_operation">重复操作，请稍候...</string>
+    <string name="calculating">计算中…</string>
+    <string name="duplicated_operation">重复操作，请稍候…</string>
     <string name="cancel">取消</string>
-    <string name="picking_number">正在选号...</string>
+    <string name="picking_number">正在选号…</string>
+    <string name="number_count_hint">请输入需要生成的号码个数…默认5个</string>
+    <string name="calculate_count_hint">请输入需要计算的次数…默认1000次</string>
+    <string name="calculate_count_intro">说明：为了增加出号的概率，需要多次计算再从中选出。最小1000，输入数字小于1000或者不输入都会按1000计算. 建议不要太高…手机的性能无法支持快速的计算，超过10万的计算次数会耗时非常的久</string>
+    <string name="number_count_intro">一次计算最多生成10个串。输入超过10或者小于1神马的…我都是按10或者1处理哟！</string>
+    <string name="dlt">大乐透</string>
+    <string name="calculate_result">计算结果</string>
 </resources>
