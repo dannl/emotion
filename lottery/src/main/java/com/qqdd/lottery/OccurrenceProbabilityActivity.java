@@ -89,20 +89,8 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         mCalculators.add(new CalculatorItem(
                 CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                         .createCalculator()));
-        final SelectionIncreaseCalculator selectionIncrease = CalculatorFactory.SelectionIncreaseCalculatorFactory.instance()
-                .createCalculator();
-        selectionIncrease.addNormal(4);
-        selectionIncrease.addNormal(15);
-        selectionIncrease.addNormal(10);
-        selectionIncrease.addNormal(22);
-        selectionIncrease.addNormal(8);
-        selectionIncrease.addNormal(29);
-        selectionIncrease.addNormal(6);
-        selectionIncrease.addNormal(26);
-        selectionIncrease.addSpecial(1);
-        selectionIncrease.addSpecial(4);
-        mCalculators.add(new CalculatorItem(selectionIncrease));
         mCalculators.add(new CalculatorItem(CalculatorFactory.SameNumberCalculatorFactory.instance().createCalculator()));
+        mCalculators.add(new CalculatorItem(CalculatorFactory.Last4TimeOccurIncreaseCalculatorFactory.instance().createCalculator()));
         mCalculatorsView.setLayoutManager(new LinearLayoutManager(this));
         mCalculatorListAdapter = new CalculatorListAdapter(mCalculators);
         mCalculatorsView.setAdapter(mCalculatorListAdapter);

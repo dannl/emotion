@@ -22,8 +22,8 @@ import java.util.Set;
  */
 public class TestAlgorithm {
 
-    //    private static final String PATH = "H://environment/code/emotion/DLT";
-    private static final String PATH = "/home/niub/Desktop/DLT";
+        private static final String PATH = "H://environment/code/emotion/DLT";
+//    private static final String PATH = "/home/niub/Desktop/DLT";
     public static final int TEST_TIME = 1000000;
     public static final int TEST_SINCE = 4;
 

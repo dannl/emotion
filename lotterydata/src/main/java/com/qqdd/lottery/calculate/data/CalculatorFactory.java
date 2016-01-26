@@ -3,6 +3,7 @@ package com.qqdd.lottery.calculate.data;
 import com.qqdd.lottery.calculate.data.calculators.HistoryOccurrenceProbabilityCalculator;
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator;
 import com.qqdd.lottery.calculate.data.calculators.SameNumberCalculator;
+import com.qqdd.lottery.calculate.data.calculators.SameTailCalculator;
 import com.qqdd.lottery.calculate.data.calculators.SelectionIncreaseCalculator;
 
 /**
@@ -105,6 +106,27 @@ public abstract class CalculatorFactory<T extends CalculatorImpl> {
         @Override
         public LastNTimeOccurIncreaseCalculator createCalculator() {
             return new LastNTimeOccurIncreaseCalculator(getTitle(), getDesc());
+        }
+    }
+
+
+    public static final class SameTailCalculatorFactory extends CalculatorFactory<SameTailCalculator> {
+
+        private static class SingletonHolder {
+            private static final SameTailCalculatorFactory INSTANCE = new SameTailCalculatorFactory();
+        }
+
+        public static SameTailCalculatorFactory instance() {
+            return SingletonHolder.INSTANCE;
+        }
+
+        private SameTailCalculatorFactory() {
+            super("尾号相同增加概率","据说有尾号相同的情况而且比较频繁");
+        }
+
+        @Override
+        public SameTailCalculator createCalculator() {
+            return new SameTailCalculator(getTitle(), getDesc());
         }
     }
 
