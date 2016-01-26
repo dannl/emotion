@@ -72,4 +72,23 @@ public class NumUtils {
         }
         return 0;
     }
+
+    public static float[] newEmptyFloatArray(int i) {
+        float[] result = new float[i];
+        for (int j = 0; j < i; j++) {
+            result[j] = 1;
+        }
+        return result;
+    }
+
+    public static double C(int range, int index) {
+        double result = 1;
+        for (int i = 0; i < index; i++) {
+            result *= range - i;
+        }
+        for (int i = 1; i <= index; i++) {
+            result /= i;
+        }
+        return result;
+    }
 }

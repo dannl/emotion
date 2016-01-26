@@ -9,6 +9,7 @@ import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.RewardRule;
+import com.qqdd.lottery.utils.NumUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,9 +22,61 @@ import java.util.Set;
  */
 public class TestAlgorithm {
 
-    private static final String PATH = "H://environment/code/emotion/DLT";
+    //    private static final String PATH = "H://environment/code/emotion/DLT";
+    private static final String PATH = "/home/niub/Desktop/DLT";
+    public static final int TEST_TIME = 50000;
+    public static final int TEST_SINCE = 4;
 
     public static void main(String[] args) {
+        testARound();
+    }
+
+    private static void actualBuyingTest() {
+        double total = 0;
+        double max = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
+        final int testRound = 1000;
+        int earnCount = 0;
+        for (int i = 0; i < testRound; i++) {
+            final double v = actualBuyingARound();
+            total += v;
+            if (v > 0) {
+                earnCount++;
+            }
+            if (v > max) {
+                max = v;
+            }
+            if (v < min) {
+                min = v;
+            }
+        }
+        System.out.println(
+                "total: " + total + " avr: " + total / testRound + " max: " + max + " min: " + min + " earn count: " + earnCount + " earn rate: " + (((float) earnCount) / testRound));
+    }
+
+    private static double actualBuyingARound() {
+        final TestResult result = testAlgorithm();
+        System.out.println(result.toString());
+        return result.calculateTotal() - 2 * result.totalTestCount;
+    }
+
+    private static double testARound() {
+        final TestResult result = testAlgorithm();
+        System.out.println(result.toString());
+        return result.getExpectationOnBuying(5);
+    }
+
+    private static TestResult testRandom() {
+        List<LotteryRecord> history = DataLoader.loadData(PATH);
+        List<CalculatorItem> calculatorList = new ArrayList<>();
+        calculatorList.add(new CalculatorItem(new AverageProbabilityCalculator()));
+        final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
+                calculatorList);
+        final TestResult result = task.execute();
+        return result;
+    }
+
+    private static TestResult testAlgorithm() {
         List<LotteryRecord> history = DataLoader.loadData(PATH);
         List<CalculatorItem> calculatorList = new ArrayList<>();
         calculatorList.add(new CalculatorItem(
@@ -45,127 +98,183 @@ public class TestAlgorithm {
         calculatorList.add(new CalculatorItem(
                 CalculatorFactory.SameNumberCalculatorFactory.instance()
                         .createCalculator()));
-        final String result = new Task(LotteryConfiguration.DLTConfiguration(), history, calculatorList).doInBackground();
-        System.out.print("\r" + result + "\n测试完毕!");
-
+        calculatorList.add(new CalculatorItem(
+                CalculatorFactory.Last4TimeOccurIncreaseCalculatorFactory.instance()
+                        .createCalculator()));
+        final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
+                calculatorList);
+        final TestResult result = task.execute();
+        return result;
     }
 
-    public static final int TEST_TIME = 50000;
-    public static final int TEST_SINCE = 3;
+    private static final class TestResult {
+        String title = "神一般的算法";
+        long totalTestCount;
+        long totalRewardCount;
+        long totalMoney;
+        HashMap<RewardRule.Reward, Integer> detail = new HashMap<>();
+        HashMap<LotteryRecord, List<Integer>> goBackHomeRecord = new HashMap<>();
+        long startTime;
+        long endTime;
 
-    private static final String RESULT_FORMAT = "%s：\n" +
-            "正在基于%s测试" +
-            "\n" +
-            "计算速度(个/秒)：%s\n" +
-            "总次数: %s\n" +
-            "中奖率: %s\n" +
-            "中奖次数累计：%s\n" +
-            "中奖金额累计：%s\n" +
-            "详情：\n%s\n";
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(title)
+                    .append("\n");
+            builder.append("测试次数：")
+                    .append(totalTestCount)
+                    .append("\n");
+            builder.append("总金额：")
+                    .append(totalMoney)
+                    .append("\n");
+            builder.append("总中奖率：")
+                    .append(((double) totalRewardCount) / totalTestCount)
+                    .append("\n");
+            final Set<Map.Entry<RewardRule.Reward, Integer>> entrySet = detail.entrySet();
+            for (Map.Entry<RewardRule.Reward, Integer> entry : entrySet) {
+                final int value = entry.getValue();
+                final RewardRule.Reward key = entry.getKey();
+                totalMoney += value * key.getMoney();
+                builder.append(key.getTitle())
+                        .append(" 奖金：")
+                        .append(key.getMoney())
+                        .append(" 个数:")
+                        .append(value)
+                        .append(" 中奖率：")
+                        .append(((double) value) / totalTestCount)
+                        .append("\n");
+            }
+
+            builder.append("===========when we can go home===========\n");
+            for (Map.Entry<LotteryRecord, List<Integer>> entry : goBackHomeRecord.entrySet()) {
+                for (Integer v : entry.getValue()) {
+                    builder.append(entry.getKey()
+                            .toString())
+                            .append("第")
+                            .append(v)
+                            .append("次计算\n");
+                }
+            }
+            return builder.toString();
+        }
+
+        public double getExpectationOnBuying(int boughtAmount) {
+            double totalRate = ((double) totalRewardCount) / totalTestCount;
+            double expectation = calculateExpectation(detail);
+            double totalExpectation = 0;
+            for (int i = 1; i <= boughtAmount; i++) {
+                totalExpectation += NumUtils.C(boughtAmount, i) * expectation * i *
+                        Math.pow(totalRate, i) * Math.pow(1 - totalRate, boughtAmount - i);
+            }
+            double earnMoney = totalExpectation - boughtAmount * 2;
+            System.out.println("买" + boughtAmount + "个：赚" + earnMoney + "元");
+            return earnMoney;
+        }
+
+
+        private double calculateExpectation(HashMap<RewardRule.Reward, Integer> detail) {
+            final Set<Map.Entry<RewardRule.Reward, Integer>> entrySet = detail.entrySet();
+            int totalCount = 0;
+            for (Map.Entry<RewardRule.Reward, Integer> entry : entrySet) {
+                final int value = entry.getValue();
+                totalCount += value;
+            }
+            double result = 0;
+            for (Map.Entry<RewardRule.Reward, Integer> entry : entrySet) {
+                final float value = entry.getValue();
+                result += value / totalCount * entry.getKey()
+                        .getMoney();
+            }
+            return result;
+        }
+
+        private double calculateTotal() {
+            final Set<Map.Entry<RewardRule.Reward, Integer>> entrySet = detail.entrySet();
+            double result = 0;
+            for (Map.Entry<RewardRule.Reward, Integer> entry : entrySet) {
+                final float value = entry.getValue();
+                result += value * entry.getKey()
+                        .getMoney();
+            }
+            return result;
+        }
+    }
 
     private static class Task {
 
         private final List<LotteryRecord> mHistory;
         private final List<CalculatorItem> mCalculators;
-        private String mRandomResult;
-        private String mAlgorithmResult;
-        private HashMap<RewardRule.Reward, Integer> mRandomResultDetail;
-        private HashMap<RewardRule.Reward, Integer> mAlgorithmResultDetail;
         private LotteryConfiguration mConfiguration;
-        private long mStartTime;
+        private TestResult mResult;
 
-        public Task(LotteryConfiguration configuration, List<LotteryRecord> history, List<CalculatorItem> calculators) {
+        public Task(LotteryConfiguration configuration, List<LotteryRecord> history,
+                    List<CalculatorItem> calculators) {
             mHistory = history;
             mCalculators = calculators;
-            mRandomResult = String.format(RESULT_FORMAT, "全随机结果", "无", 0, 0, 0, 0, 0, "没有详情");
-            mAlgorithmResult = String.format(RESULT_FORMAT, "使用算法结果", "无", 0, 0, 0, 0, 0, "没有详情");
-            mRandomResultDetail = new HashMap<>();
-            mAlgorithmResultDetail = new HashMap<>();
             mConfiguration = configuration;
+            mResult = new TestResult();
         }
 
-        protected String doInBackground() {
-            mStartTime = System.currentTimeMillis();
+        protected TestResult execute() {
+            final TestResult result = mResult;
+            result.startTime = System.currentTimeMillis();
             NumberTable normalTable = new NumberTable(mConfiguration.getNormalRange());
             NumberTable specialTable = new NumberTable(mConfiguration.getSpecialRange());
             final AverageProbabilityCalculator randomCalculator = new AverageProbabilityCalculator();
             randomCalculator.calculate(mHistory, normalTable, specialTable);
             final int size = mHistory.size();
             //全随机算法。
-            long totalTime = 0;
-//            for (int i = size / TEST_SINCE; i > 0; i--) {
-//                final LotteryRecord record = mHistory.get(i - 1);
-//                for (int j = 0; j < TEST_TIME; j++) {
-//                    totalTime++;
-//                    final Lottery tempResult = NumberProducer.getInstance().calculateSync(normalTable, specialTable, mConfiguration);
-//                    final RewardRule.Reward reward = tempResult.getReward(record);
-//                    final int money = reward.getMoney();
-//                    if (money > 0) {
-//                        Integer value = mRandomResultDetail.get(reward);
-//                        if (value == null) {
-//                            value = 0;
-//                        }
-//                        value++;
-//                        mRandomResultDetail.put(reward, value);
-//                    }
-//                    mRandomResult = formatResult("全随机算法", totalTime, record, mRandomResultDetail);
-//                    publishProgressLocal();
-//                }
-//            }
-            totalTime = 0;
             for (int i = size / TEST_SINCE; i > 0; i--) {
                 final List<LotteryRecord> subHistory = mHistory.subList(i - 1, size);
                 final LotteryRecord record = mHistory.get(i);
                 for (int j = 0; j < TEST_TIME; j++) {
-                    normalTable = new NumberTable(mConfiguration.getNormalRange());
-                    specialTable = new NumberTable(mConfiguration.getSpecialRange());
+                    result.totalTestCount++;
+                    normalTable.reset();
+                    specialTable.reset();
                     for (int k = 0; k < mCalculators.size(); k++) {
-                        mCalculators.get(k).calculate(subHistory, normalTable, specialTable);
+                        mCalculators.get(k)
+                                .calculate(subHistory, normalTable, specialTable);
                     }
-                    totalTime++;
-                    final Lottery tempResult = NumberProducer.getInstance().calculateSync(normalTable, specialTable, mConfiguration);
+                    final Lottery tempResult = NumberProducer.getInstance()
+                            .calculateSync(normalTable, specialTable, mConfiguration);
                     final RewardRule.Reward reward = tempResult.getReward(record);
                     final int money = reward.getMoney();
                     if (money > 0) {
-                        Integer value = mAlgorithmResultDetail.get(reward);
+                        Integer value = result.detail.get(reward);
                         if (value == null) {
                             value = 0;
                         }
                         value++;
-                        mAlgorithmResultDetail.put(reward, value);
+                        result.detail.put(reward, value);
+                        result.totalRewardCount++;
+                        result.totalMoney += money;
+                        if (money == 10000000) {
+                            List<Integer> recordIt = result.goBackHomeRecord.get(record);
+                            if (recordIt == null) {
+                                recordIt = new ArrayList<>();
+                                result.goBackHomeRecord.put(record, recordIt);
+                            }
+                            recordIt.add(j);
+                        }
                     }
-                    mAlgorithmResult = formatResult("我的算法", totalTime, record, mAlgorithmResultDetail);
                     publishProgressLocal();
                 }
             }
-            return mRandomResult + mAlgorithmResult;
+            result.endTime = System.currentTimeMillis();
+            return result;
         }
 
         private long mLastPublishProgressTime = 0;
+
         private void publishProgressLocal() {
-            if(System.currentTimeMillis() - mLastPublishProgressTime < 5000) {
+            if (System.currentTimeMillis() - mLastPublishProgressTime < 5000) {
                 return;
             }
             mLastPublishProgressTime = System.currentTimeMillis();
-            System.out.print("\r[" + mRandomResult + mAlgorithmResult + "]");
+            System.out.print("=========================\n" + mResult.toString() + "\n");
         }
 
-
-        private String formatResult(String type, long totalTime, LotteryRecord record, HashMap<RewardRule.Reward, Integer> detail) {
-            StringBuilder builder = new StringBuilder();
-            final Set<Map.Entry<RewardRule.Reward, Integer>> entrySet = detail.entrySet();
-            int totalCount = 0;
-            long totalMoney = 0;
-            for (Map.Entry<RewardRule.Reward, Integer> entry : entrySet) {
-                final int value = entry.getValue();
-                totalCount += value;
-                final RewardRule.Reward key = entry.getKey();
-                totalMoney += value * key.getMoney();
-                builder.append(key.getTitle()).append(" 奖金：").append(key.getMoney()).append(" ---- 个数:").append(value).append("个\n");
-            }
-            return String.format(RESULT_FORMAT, type, record.toString(), ((double) totalTime) / (System.currentTimeMillis() - mStartTime) * 1000, totalTime, ((double) totalCount) / totalTime, totalCount, totalMoney, builder.toString());
-
-        }
     }
 
 }

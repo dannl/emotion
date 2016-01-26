@@ -6,10 +6,8 @@ import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.Number;
 import com.qqdd.lottery.data.NumberList;
 import com.qqdd.lottery.data.NumberTable;
-import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.utils.NumUtils;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -61,7 +59,7 @@ public class SameNumberCalculator extends CalculatorImpl {
             if (sameNormal.contains(number.getValue())) {
                 number.setWeight(number.getWeight() * 5);
             } else {
-                number.setWeight(number.getWeight() / 2);
+                number.setWeight(number.getWeight() * 2);
             }
         }
 
@@ -70,10 +68,9 @@ public class SameNumberCalculator extends CalculatorImpl {
             if (sameSpecial.contains(number.getValue())) {
                 number.setWeight(number.getWeight() * 5);
             } else {
-                number.setWeight(number.getWeight() / 2);
+                number.setWeight(number.getWeight() * 2);
             }
         }
-        //TODO minus weight of the left numbers?
     }
 
     private ProbabilityCache calculateDuplicateProbability(List<LotteryRecord> lts,
@@ -98,7 +95,7 @@ public class SameNumberCalculator extends CalculatorImpl {
         return result;
     }
 
-    private static final class ProbabilityCache {
+    public static final class ProbabilityCache {
         float[] normalProbability;
         float[] specialProbability;
     }

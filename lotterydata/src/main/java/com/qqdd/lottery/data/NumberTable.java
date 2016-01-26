@@ -32,6 +32,12 @@ public class NumberTable extends ArrayList<Number> {
         return get(number - 1);
     }
 
+    public void reset() {
+        for (int i = 0; i < size(); i++) {
+            get(i).setWeight(0);
+        }
+    }
+
     public int getRange() {
         return mRange;
     }

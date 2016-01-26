@@ -1,6 +1,7 @@
 package com.qqdd.lottery.calculate.data;
 
 import com.qqdd.lottery.calculate.data.calculators.HistoryOccurrenceProbabilityCalculator;
+import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator;
 import com.qqdd.lottery.calculate.data.calculators.SameNumberCalculator;
 import com.qqdd.lottery.calculate.data.calculators.SelectionIncreaseCalculator;
 
@@ -84,6 +85,26 @@ public abstract class CalculatorFactory<T extends CalculatorImpl> {
         @Override
         public SameNumberCalculator createCalculator() {
             return new SameNumberCalculator(getTitle(), getDesc());
+        }
+    }
+
+    public static final class Last4TimeOccurIncreaseCalculatorFactory extends CalculatorFactory<LastNTimeOccurIncreaseCalculator> {
+
+        private static class SingletonHolder {
+            private static final Last4TimeOccurIncreaseCalculatorFactory INSTANCE = new Last4TimeOccurIncreaseCalculatorFactory();
+        }
+
+        public static Last4TimeOccurIncreaseCalculatorFactory instance() {
+            return SingletonHolder.INSTANCE;
+        }
+
+        private Last4TimeOccurIncreaseCalculatorFactory() {
+            super("最近4次出现多的概率增加", "按最近4次出现的次数作为权值的倍数");
+        }
+
+        @Override
+        public LastNTimeOccurIncreaseCalculator createCalculator() {
+            return new LastNTimeOccurIncreaseCalculator(getTitle(), getDesc());
         }
     }
 
