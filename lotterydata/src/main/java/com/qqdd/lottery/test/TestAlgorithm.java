@@ -23,11 +23,13 @@ import java.util.Set;
 
 public class TestAlgorithm {
 
-    public static final int CALCULATE_TIMES = 50000;
+    public static final int CALCULATE_TIMES = 100000;
     public static final int TEST_SINCE = 4;
 
     public static void main(String[] args) {
-        testARound();
+        for (int i = 0; i < 5; i++) {
+            testARound();
+        }
 //        calculateResult();
     }
 
@@ -59,8 +61,7 @@ public class TestAlgorithm {
             tempBuffer.add(NumberProducer.getInstance().calculate(history, normalTable, specialTable,
                     configuration));
         }
-        List<Lottery> result = NumberProducer.getInstance().select(tempBuffer, count, loadTimeToGoHome(CALCULATE_TIMES));
-        return result;
+        return NumberProducer.getInstance().select(tempBuffer, count, loadTimeToGoHome(CALCULATE_TIMES));
     }
 
     private static void actualBuyingTest() {
@@ -95,6 +96,26 @@ public class TestAlgorithm {
     private static double testARound() {
         final TestResult result = testAlgorithm();
         System.out.println(result.toString());
+        float maxRate = 0;
+        float minRate = 1;
+        for (Map.Entry<LotteryRecord, Float> entry:
+             result.recordRate.entrySet()) {
+            if (entry.getValue() > maxRate) {
+                maxRate = entry.getValue();
+            }
+            if (entry.getValue() < minRate) {
+                minRate = entry.getValue();
+            }
+        }
+        System.out.println("max: " + maxRate + " min: " + minRate);
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("=============\n");
+        builder.append("回家次数统计：\n");
+        for (Map.Entry<LotteryRecord, Integer> entry : result.goHomeDistribute.entrySet()) {
+            builder.append(entry.getKey().toString()).append(": ").append(entry.getValue()).append("次")
+                    .append("\n");
+        }
         return result.getExpectationOnBuying(5);
     }
 
@@ -181,6 +202,7 @@ public class TestAlgorithm {
         long startTime;
         long endTime;
         private HashMap<LotteryRecord, Integer> goHomeDistribute = new HashMap<>();
+        HashMap<LotteryRecord, Float> recordRate = new HashMap<>();
 
         public TestResult(final int testTime) {
             mTimeToGoHome = loadTimeToGoHome(testTime);
@@ -204,14 +226,10 @@ public class TestAlgorithm {
                     .append(((double) totalTestCount) / (System.currentTimeMillis() - startTime) * 1000)
                     .append("\n");
             final Set<Map.Entry<RewardRule.Reward, Integer>> entrySet = detail.entrySet();
-            int totalGoHomeTime = 0;
             for (Map.Entry<RewardRule.Reward, Integer> entry : entrySet) {
                 final int value = entry.getValue();
                 final RewardRule.Reward key = entry.getKey();
                 totalMoney += value * key.getMoney();
-                if (key.getMoney() == 10000000) {
-                    totalGoHomeTime = value;
-                }
                 builder.append(key.getTitle())
                         .append(" 奖金：")
                         .append(key.getMoney())
@@ -221,15 +239,7 @@ public class TestAlgorithm {
                         .append(((double) value) / totalTestCount)
                         .append("\n");
             }
-            if (totalGoHomeTime == 0) {
-                return builder.toString();
-            }
-            builder.append("=============\n");
-            builder.append("回家次数统计：\n");
-            for (Map.Entry<LotteryRecord, Integer> entry : goHomeDistribute.entrySet()) {
-                builder.append(entry.getKey().toString()).append(": ").append(entry.getValue()).append("次")
-                        .append(" 概率：").append(((float) entry.getValue()) / totalGoHomeTime).append("\n");
-            }
+
             return builder.toString();
         }
 
@@ -302,6 +312,7 @@ public class TestAlgorithm {
             for (int i = size / TEST_SINCE; i > 0; i--) {
                 final List<LotteryRecord> subHistory = mHistory.subList(i - 1, size);
                 final LotteryRecord record = mHistory.get(i);
+                int roundRewardCount = 0;
                 for (int j = 0; j < CALCULATE_TIMES; j++) {
                     result.totalTestCount++;
                     normalTable.reset();
@@ -315,6 +326,7 @@ public class TestAlgorithm {
                     final RewardRule.Reward reward = tempResult.getReward(record);
                     final int money = reward.getMoney();
                     if (money > 0) {
+                        roundRewardCount ++;
                         Integer value = result.detail.get(reward);
                         if (value == null) {
                             value = 0;
@@ -336,6 +348,7 @@ public class TestAlgorithm {
                     }
                     publishProgressLocal();
                 }
+                mResult.recordRate.put(record, ((float) roundRewardCount) / CALCULATE_TIMES);
             }
             result.endTime = System.currentTimeMillis();
             return result;

@@ -2,17 +2,24 @@ package com.qqdd.lottery.calculate;
 
 import android.os.AsyncTask;
 
+import com.example.niub.utils.FileUtils;
 import com.qqdd.lottery.calculate.data.CalculatorItem;
 import com.qqdd.lottery.calculate.data.NumberProducer;
+import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import la.niub.util.utils.IOUtilities;
 
 /**
  * Created by danliu on 1/20/16.
@@ -69,8 +76,16 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
                         mConfiguration);
                 tempBuffer.add(lottery);
             }
+            final File cacheFile = new File(FileUtils.getCacheDir(), "GO_HOME_RECORD" + mLoopCount);
+            TimeToGoHome ttgh = null;
+            if (cacheFile.exists()) {
+                try {
+                    ttgh = TimeToGoHome.fromJson(IOUtilities.loadContent(new FileInputStream(cacheFile), "UTF-8"));
+                } catch (IOException e) {
+                }
+            }
             return mNumberProducer.select(tempBuffer, mResultSize,
-                    null);
+                    ttgh);
         }
 
         @Override
