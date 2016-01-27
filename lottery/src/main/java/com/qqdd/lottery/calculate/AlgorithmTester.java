@@ -97,9 +97,9 @@ public class AlgorithmTester {
             long totalTime = 0;
 /*            for (int i = size / 2; i > 0; i--) {
                 final LotteryRecord record = mHistory.get(i - 1);
-                for (int j = 0; j < TEST_TIME; j++) {
+                for (int j = 0; j < CALCULATE_TIMES; j++) {
                     totalTime++;
-                    final Lottery tempResult = NumberProducer.getInstance().calculateSync(normalTable, specialTable, mConfiguration);
+                    final Lottery tempResult = NumberProducer.getInstance().calculate(normalTable, specialTable, mConfiguration);
                     final RewardRule.Reward reward = tempResult.getReward(record);
                     final int money = reward.getMoney();
                     if (money > 0) {

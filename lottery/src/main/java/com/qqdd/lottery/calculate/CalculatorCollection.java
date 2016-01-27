@@ -3,6 +3,7 @@ package com.qqdd.lottery.calculate;
 import android.os.AsyncTask;
 
 import com.qqdd.lottery.calculate.data.CalculatorItem;
+import com.qqdd.lottery.calculate.data.NumberProducer;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
@@ -12,7 +13,6 @@ import com.qqdd.lottery.data.management.DataLoadingCallback;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by danliu on 1/20/16.
@@ -65,15 +65,11 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
                 for (int j = 0; j < size(); j++) {
                     CalculatorCollection.this.get(j).calculate(mHistory, mNormalTable, mSpecialTable);
                 }
-                final Lottery lottery = mNumberProducer.calculateSync(mNormalTable, mSpecialTable, mConfiguration);
+                final Lottery lottery = mNumberProducer.calculate(mNormalTable, mSpecialTable,
+                        mConfiguration);
                 tempBuffer.add(lottery);
             }
-            Random random = new Random();
-            final List<Lottery> result = new ArrayList<>();
-            while (result.size() < mResultSize) {
-                result.add(tempBuffer.remove(random.nextInt(tempBuffer.size())));
-            }
-            return result;
+            return mNumberProducer.select(tempBuffer, mResultSize);
         }
 
         @Override

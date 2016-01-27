@@ -1,11 +1,13 @@
-package com.qqdd.lottery.test;
+package com.qqdd.lottery.calculate.data;
 
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.Number;
 import com.qqdd.lottery.data.NumberTable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -27,8 +29,8 @@ public class NumberProducer {
     private NumberProducer() {
     }
 
-    public Lottery calculateSync( final NumberTable normals,  final NumberTable specials,
-                                  final LotteryConfiguration lotteryConfiguration)  {
+    public Lottery calculate(final NumberTable normals, final NumberTable specials,
+                             final LotteryConfiguration lotteryConfiguration)  {
         Set<Integer> normalValues = calculateValues(normals, lotteryConfiguration.getNormalSize());
         Set<Integer> specialValues = calculateValues(specials, lotteryConfiguration.getSpecialSize());
         final Lottery result = Lottery.newLotteryWithConfiguration(lotteryConfiguration);
@@ -37,6 +39,21 @@ public class NumberProducer {
         result.addSpecials(specialValues);
         return result;
     }
+
+    public List<Lottery> select(List<Lottery> tempBuffer, int count) {
+        if (tempBuffer == null || count < 0 || count > tempBuffer.size()) {
+            return null;
+        }
+        final List<Lottery> result = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            final int range = tempBuffer.size() / count;
+            final int startFrom = tempBuffer.size() / count * i;
+            final int index = RANDOM.nextInt(range) + startFrom;
+            result.add(tempBuffer.get(index));
+        }
+        return result;
+    }
+
 
     private Set<Integer> calculateValues(NumberTable table, int size) {
         float total = 0;

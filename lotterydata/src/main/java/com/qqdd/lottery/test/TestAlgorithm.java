@@ -1,7 +1,7 @@
 package com.qqdd.lottery.test;
 
-import com.qqdd.lottery.calculate.data.CalculatorFactory;
-import com.qqdd.lottery.calculate.data.CalculatorItem;
+import com.qqdd.lottery.calculate.data.*;
+import com.qqdd.lottery.calculate.data.NumberProducer;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
 import com.qqdd.lottery.calculate.data.calculators.SelectionIncreaseCalculator;
 import com.qqdd.lottery.data.Lottery;
@@ -22,13 +22,41 @@ import java.util.Set;
  */
 public class TestAlgorithm {
 
-        private static final String PATH = "H://environment/code/emotion/DLT";
-//    private static final String PATH = "/home/niub/Desktop/DLT";
-    public static final int TEST_TIME = 1000000;
+//        private static final String PATH = "H://environment/code/emotion/DLT";
+    private static final String PATH = "/home/niub/Desktop/DLT";
+    public static final int CALCULATE_TIMES = 100000;
     public static final int TEST_SINCE = 4;
 
     public static void main(String[] args) {
-        testARound();
+        final int resultCount = 5;
+        List<Lottery> result = calculate(resultCount);
+        System.out.println("\nresult is: ");
+        for (int i = 0; i < result.size(); i++) {
+            System.out.println(result.get(i).toString());
+        }
+    }
+
+    private static List<Lottery> calculate(final int count) {
+        List<LotteryRecord> history = DataLoader.loadData(PATH);
+        List<CalculatorItem> calculatorList = createCalculatorList();
+        final LotteryConfiguration configuration = LotteryConfiguration.DLTConfiguration();
+        final NumberTable normalTable = new NumberTable(configuration.getNormalRange());
+        final NumberTable specialTable = new NumberTable(configuration.getSpecialRange());
+        List<Lottery> tempBuffer = new ArrayList<>();
+        for (int i = 0; i < CALCULATE_TIMES; i++) {
+            if (i % (CALCULATE_TIMES / 100) == 0) {
+                System.out.print("\r progress: " + (((float) i) / CALCULATE_TIMES));
+            }
+            normalTable.reset();
+            specialTable.reset();
+            for (int j = 0; j < calculatorList.size(); j++) {
+                calculatorList.get(j).calculate(history, normalTable, specialTable);
+            }
+            tempBuffer.add(NumberProducer.getInstance().calculate(normalTable, specialTable,
+                    configuration));
+        }
+        List<Lottery> result = NumberProducer.getInstance().select(tempBuffer, count);
+        return result;
     }
 
     private static void actualBuyingTest() {
@@ -78,6 +106,14 @@ public class TestAlgorithm {
 
     private static TestResult testAlgorithm() {
         List<LotteryRecord> history = DataLoader.loadData(PATH);
+        List<CalculatorItem> calculatorList = createCalculatorList();
+        final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
+                calculatorList);
+        final TestResult result = task.execute();
+        return result;
+    }
+
+    private static List<CalculatorItem> createCalculatorList() {
         List<CalculatorItem> calculatorList = new ArrayList<>();
         calculatorList.add(new CalculatorItem(
                 CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
@@ -101,10 +137,7 @@ public class TestAlgorithm {
         calculatorList.add(new CalculatorItem(
                 CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
                         .createCalculator()));
-        final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
-                calculatorList);
-        final TestResult result = task.execute();
-        return result;
+        return calculatorList;
     }
 
     private static final class TestResult {
@@ -231,7 +264,7 @@ public class TestAlgorithm {
             for (int i = size / TEST_SINCE; i > 0; i--) {
                 final List<LotteryRecord> subHistory = mHistory.subList(i - 1, size);
                 final LotteryRecord record = mHistory.get(i);
-                for (int j = 0; j < TEST_TIME; j++) {
+                for (int j = 0; j < CALCULATE_TIMES; j++) {
                     result.totalTestCount++;
                     normalTable.reset();
                     specialTable.reset();
@@ -239,8 +272,8 @@ public class TestAlgorithm {
                         mCalculators.get(k)
                                 .calculate(subHistory, normalTable, specialTable);
                     }
-                    final Lottery tempResult = NumberProducer.getInstance()
-                            .calculateSync(normalTable, specialTable, mConfiguration);
+                    final Lottery tempResult = com.qqdd.lottery.calculate.data.NumberProducer.getInstance()
+                            .calculate(normalTable, specialTable, mConfiguration);
                     final RewardRule.Reward reward = tempResult.getReward(record);
                     final int money = reward.getMoney();
                     if (money > 0) {
