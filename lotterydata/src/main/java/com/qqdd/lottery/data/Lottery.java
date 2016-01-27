@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -64,6 +65,16 @@ public class Lottery implements ILottery {
     @Override
     public NumberList getNormals() {
         return mNormal;
+    }
+
+    public void replaceAllNormals(Collection<Integer> normals) {
+        mNormal.clear();
+        mNormal.addAll(normals);
+    }
+
+    public void replaceAllSpecials(Collection<Integer> specials) {
+        mSpecial.clear();
+        mSpecial.addAll(specials);
     }
 
     public void addNormals(final Set<Integer> values) {

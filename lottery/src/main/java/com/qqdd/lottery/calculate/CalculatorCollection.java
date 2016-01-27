@@ -21,7 +21,7 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
 
     private CalculateTask mCalculateTask;
 
-    private static final DecimalFormat PROGRESS_FORMAT = new DecimalFormat("###.0");
+    private static final DecimalFormat PROGRESS_FORMAT = new DecimalFormat("#.0");
 
     public void calculate(final List<LotteryRecord> lts, final int resultSize, final int loopCount, final DataLoadingCallback<List<Lottery>> callback) {
         if (mCalculateTask != null) {
@@ -65,11 +65,12 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
                 for (int j = 0; j < size(); j++) {
                     CalculatorCollection.this.get(j).calculate(mHistory, mNormalTable, mSpecialTable);
                 }
-                final Lottery lottery = mNumberProducer.calculate(mNormalTable, mSpecialTable,
+                final Lottery lottery = mNumberProducer.calculate(mHistory, mNormalTable, mSpecialTable,
                         mConfiguration);
                 tempBuffer.add(lottery);
             }
-            return mNumberProducer.select(tempBuffer, mResultSize);
+            return mNumberProducer.select(tempBuffer, mResultSize,
+                    null);
         }
 
         @Override

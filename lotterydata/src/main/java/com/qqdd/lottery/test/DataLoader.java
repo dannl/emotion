@@ -6,11 +6,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +25,7 @@ import cz.msebera.android.httpclient.util.CharArrayBuffer;
  */
 public class DataLoader {
 
-    public static List<LotteryRecord> loadData(String input) {
+    public static List<LotteryRecord> loadData(File input) {
         final JSONArray jsonArray;
         final List<LotteryRecord> records = new ArrayList<>();
         try {
@@ -44,8 +47,23 @@ public class DataLoader {
 
     private static int IO_BUFFER_SIZE = 4096;
 
+    public static void saveToFile(File file, String content, String encoding) throws IOException {
+        if (!file.getParentFile()
+                .exists()) {
+            file.getParentFile()
+                    .mkdirs();
+        }
+        OutputStreamWriter writer = null;
+        try {
+            writer = new OutputStreamWriter(new FileOutputStream(file), encoding);
+            writer.write(content);
+        } finally {
+            writer.close();
+        }
+    }
 
-    public static String loadContent(InputStream stream,String encoding) throws IOException {
+
+    public static String loadContent(InputStream stream, String encoding) throws IOException {
         if (encoding == null) {
             encoding = System.getProperty("file.encoding", "utf-8");
         }

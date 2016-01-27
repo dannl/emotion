@@ -1,9 +1,10 @@
 package com.qqdd.lottery.test;
 
-import com.qqdd.lottery.calculate.data.*;
+import com.qqdd.lottery.calculate.data.CalculatorFactory;
+import com.qqdd.lottery.calculate.data.CalculatorItem;
 import com.qqdd.lottery.calculate.data.NumberProducer;
+import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
-import com.qqdd.lottery.calculate.data.calculators.SelectionIncreaseCalculator;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
@@ -11,23 +12,26 @@ import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.utils.NumUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by danliu on 1/25/16.
- */
 public class TestAlgorithm {
 
-//        private static final String PATH = "H://environment/code/emotion/DLT";
-    private static final String PATH = "/home/niub/Desktop/DLT";
-    public static final int CALCULATE_TIMES = 100000;
+    public static final int CALCULATE_TIMES = 50000;
     public static final int TEST_SINCE = 4;
 
     public static void main(String[] args) {
+        testARound();
+//        calculateResult();
+    }
+
+    private static void calculateResult() {
         final int resultCount = 5;
         List<Lottery> result = calculate(resultCount);
         System.out.println("\nresult is: ");
@@ -37,7 +41,7 @@ public class TestAlgorithm {
     }
 
     private static List<Lottery> calculate(final int count) {
-        List<LotteryRecord> history = DataLoader.loadData(PATH);
+        List<LotteryRecord> history = DataLoader.loadData(getHistoryFile());
         List<CalculatorItem> calculatorList = createCalculatorList();
         final LotteryConfiguration configuration = LotteryConfiguration.DLTConfiguration();
         final NumberTable normalTable = new NumberTable(configuration.getNormalRange());
@@ -52,10 +56,10 @@ public class TestAlgorithm {
             for (int j = 0; j < calculatorList.size(); j++) {
                 calculatorList.get(j).calculate(history, normalTable, specialTable);
             }
-            tempBuffer.add(NumberProducer.getInstance().calculate(normalTable, specialTable,
+            tempBuffer.add(NumberProducer.getInstance().calculate(history, normalTable, specialTable,
                     configuration));
         }
-        List<Lottery> result = NumberProducer.getInstance().select(tempBuffer, count);
+        List<Lottery> result = NumberProducer.getInstance().select(tempBuffer, count, loadTimeToGoHome(CALCULATE_TIMES));
         return result;
     }
 
@@ -95,7 +99,7 @@ public class TestAlgorithm {
     }
 
     private static TestResult testRandom() {
-        List<LotteryRecord> history = DataLoader.loadData(PATH);
+        List<LotteryRecord> history = DataLoader.loadData(getHistoryFile());
         List<CalculatorItem> calculatorList = new ArrayList<>();
         calculatorList.add(new CalculatorItem(new AverageProbabilityCalculator()));
         final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
@@ -105,7 +109,7 @@ public class TestAlgorithm {
     }
 
     private static TestResult testAlgorithm() {
-        List<LotteryRecord> history = DataLoader.loadData(PATH);
+        List<LotteryRecord> history = DataLoader.loadData(getHistoryFile());
         List<CalculatorItem> calculatorList = createCalculatorList();
         final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
                 calculatorList);
@@ -113,26 +117,53 @@ public class TestAlgorithm {
         return result;
     }
 
+    private static File getHistoryFile() {
+        final File rootFolder = getProjectRoot();
+        final File history = new File(rootFolder, "DLT");
+        return history;
+    }
+
+    private static File getProjectRoot() {
+        final String file = TestAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        final String projectRoot = file.substring(0, file.indexOf("lotterydata"));
+        return new File(projectRoot);
+    }
+
+    private static File getGoHomeRecordFile(int testTime) {
+        return new File(getProjectRoot(), "GO_HOME_RECORD" + testTime);
+    }
+
+    private static TimeToGoHome loadTimeToGoHome(int testTime) {
+        try {
+            final String content = DataLoader.loadContent(new FileInputStream(getGoHomeRecordFile(testTime)), "UTF-8");
+            TimeToGoHome result = TimeToGoHome.fromJson(content);
+            if (result != null) {
+                return result;
+            }
+        } catch (IOException e) {
+        }
+        return new TimeToGoHome(testTime);
+    }
+
+
+    //        final SelectionIncreaseCalculator selectionIncrease = CalculatorFactory.SelectionIncreaseCalculatorFactory.instance()
+    //                .createCalculator();
+    //        selectionIncrease.addNormal(4);
+    //        selectionIncrease.addNormal(15);
+    //        selectionIncrease.addNormal(10);
+    //        selectionIncrease.addNormal(22);
+    //        selectionIncrease.addNormal(8);
+    //        selectionIncrease.addNormal(29);
+    //        selectionIncrease.addNormal(6);
+    //        selectionIncrease.addNormal(26);
+    //        selectionIncrease.addSpecial(1);
+    //        selectionIncrease.addSpecial(4);
+    //calculatorList.add(new CalculatorItem(selectionIncrease));
+
     private static List<CalculatorItem> createCalculatorList() {
         List<CalculatorItem> calculatorList = new ArrayList<>();
         calculatorList.add(new CalculatorItem(
                 CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                        .createCalculator()));
-        final SelectionIncreaseCalculator selectionIncrease = CalculatorFactory.SelectionIncreaseCalculatorFactory.instance()
-                .createCalculator();
-        selectionIncrease.addNormal(4);
-        selectionIncrease.addNormal(15);
-        selectionIncrease.addNormal(10);
-        selectionIncrease.addNormal(22);
-        selectionIncrease.addNormal(8);
-        selectionIncrease.addNormal(29);
-        selectionIncrease.addNormal(6);
-        selectionIncrease.addNormal(26);
-        selectionIncrease.addSpecial(1);
-        selectionIncrease.addSpecial(4);
-        //calculatorList.add(new CalculatorItem(selectionIncrease));
-        calculatorList.add(new CalculatorItem(
-                CalculatorFactory.SameNumberCalculatorFactory.instance()
                         .createCalculator()));
         calculatorList.add(new CalculatorItem(
                 CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
@@ -141,14 +172,19 @@ public class TestAlgorithm {
     }
 
     private static final class TestResult {
-        String title = "神一般的算法";
+        String title = "我的算法";
         long totalTestCount;
         long totalRewardCount;
         long totalMoney;
         HashMap<RewardRule.Reward, Integer> detail = new HashMap<>();
-        HashMap<LotteryRecord, List<Integer>> goBackHomeRecord = new HashMap<>();
+        TimeToGoHome mTimeToGoHome;
         long startTime;
         long endTime;
+        private HashMap<LotteryRecord, Integer> goHomeDistribute = new HashMap<>();
+
+        public TestResult(final int testTime) {
+            mTimeToGoHome = loadTimeToGoHome(testTime);
+        }
 
         @Override
         public String toString() {
@@ -168,10 +204,14 @@ public class TestAlgorithm {
                     .append(((double) totalTestCount) / (System.currentTimeMillis() - startTime) * 1000)
                     .append("\n");
             final Set<Map.Entry<RewardRule.Reward, Integer>> entrySet = detail.entrySet();
+            int totalGoHomeTime = 0;
             for (Map.Entry<RewardRule.Reward, Integer> entry : entrySet) {
                 final int value = entry.getValue();
                 final RewardRule.Reward key = entry.getKey();
                 totalMoney += value * key.getMoney();
+                if (key.getMoney() == 10000000) {
+                    totalGoHomeTime = value;
+                }
                 builder.append(key.getTitle())
                         .append(" 奖金：")
                         .append(key.getMoney())
@@ -181,16 +221,14 @@ public class TestAlgorithm {
                         .append(((double) value) / totalTestCount)
                         .append("\n");
             }
-
-            builder.append("===========when we can go home===========\n");
-            for (Map.Entry<LotteryRecord, List<Integer>> entry : goBackHomeRecord.entrySet()) {
-                for (Integer v : entry.getValue()) {
-                    builder.append(entry.getKey()
-                            .toString())
-                            .append("第")
-                            .append(v)
-                            .append("次计算\n");
-                }
+            if (totalGoHomeTime == 0) {
+                return builder.toString();
+            }
+            builder.append("=============\n");
+            builder.append("回家次数统计：\n");
+            for (Map.Entry<LotteryRecord, Integer> entry : goHomeDistribute.entrySet()) {
+                builder.append(entry.getKey().toString()).append(": ").append(entry.getValue()).append("次")
+                        .append(" 概率：").append(((float) entry.getValue()) / totalGoHomeTime).append("\n");
             }
             return builder.toString();
         }
@@ -249,7 +287,7 @@ public class TestAlgorithm {
             mHistory = history;
             mCalculators = calculators;
             mConfiguration = configuration;
-            mResult = new TestResult();
+            mResult = new TestResult(CALCULATE_TIMES);
         }
 
         protected TestResult execute() {
@@ -273,7 +311,7 @@ public class TestAlgorithm {
                                 .calculate(subHistory, normalTable, specialTable);
                     }
                     final Lottery tempResult = com.qqdd.lottery.calculate.data.NumberProducer.getInstance()
-                            .calculate(normalTable, specialTable, mConfiguration);
+                            .calculate(subHistory, normalTable, specialTable, mConfiguration);
                     final RewardRule.Reward reward = tempResult.getReward(record);
                     final int money = reward.getMoney();
                     if (money > 0) {
@@ -286,12 +324,14 @@ public class TestAlgorithm {
                         result.totalRewardCount++;
                         result.totalMoney += money;
                         if (money == 10000000) {
-                            List<Integer> recordIt = result.goBackHomeRecord.get(record);
-                            if (recordIt == null) {
-                                recordIt = new ArrayList<>();
-                                result.goBackHomeRecord.put(record, recordIt);
+                            mResult.mTimeToGoHome.add(j);
+                            updateGoHomeRecord();
+                            Integer v = mResult.goHomeDistribute.get(record);
+                            if (v == null) {
+                                v = 0;
                             }
-                            recordIt.add(j);
+                            v++;
+                            mResult.goHomeDistribute.put(record, v);
                         }
                     }
                     publishProgressLocal();
@@ -299,6 +339,14 @@ public class TestAlgorithm {
             }
             result.endTime = System.currentTimeMillis();
             return result;
+        }
+
+        private void updateGoHomeRecord() {
+            final File file = getGoHomeRecordFile(CALCULATE_TIMES);
+            try {
+                DataLoader.saveToFile(file, mResult.mTimeToGoHome.toJson().toString(), "UTF8");
+            } catch (IOException e) {
+            }
         }
 
         private long mLastPublishProgressTime = 0;
