@@ -30,7 +30,7 @@ public class SameNumberCalculator extends CalculatorImpl {
         Probability probabilities = PROBABILITY_CACHE.get(record.hashCode());
         if (probabilities == null) {
             probabilities = calculateDuplicateProbability(lts, record.getLottery()
-                    .getLotteryConfiguration());
+                    .getConfiguration());
             PROBABILITY_CACHE.put(record.hashCode(), probabilities);
         }
 
@@ -69,7 +69,7 @@ public class SameNumberCalculator extends CalculatorImpl {
             //                        final int specialSame = NumUtils.calculateSameCount(specialList, lastSpecialList);
             LotteryRecord record = lts.get(i);
             LotteryRecord recordOther = lts.get(i + 1);
-            RewardRule.RewardDetail detail = record.getRewardDetail(recordOther);
+            RewardRule.RewardDetail detail = record.calculateRewardDetail(recordOther);
             final NumberList normalSames = detail.getNormals();
             final NumberList specialSames = detail.getSpecials();
             for (int j = 0; j < normalSames.size(); j++) {

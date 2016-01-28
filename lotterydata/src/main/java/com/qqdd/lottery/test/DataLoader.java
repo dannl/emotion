@@ -1,5 +1,6 @@
 package com.qqdd.lottery.test;
 
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.LotteryRecord;
 
 import org.json.JSONArray;
@@ -33,7 +34,8 @@ public class DataLoader {
             jsonArray = new JSONArray(content);
             for (int i = 0; i < jsonArray.length(); i++) {
                 final JSONObject json = jsonArray.getJSONObject(i);
-                final LotteryRecord record = LotteryRecord.fromJson(json);
+                //FIXME type here should be history item??
+                final LotteryRecord record = HistoryItem.fromJson(json);
                 if (record != null) {
                     records.add(record);
                 }

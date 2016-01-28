@@ -1,4 +1,4 @@
-package com.qqdd.lottery;
+package com.qqdd.lottery.activities;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.qqdd.lottery.BaseActivity;
+import com.qqdd.lottery.activities.adapters.NumAreaAdapter;
+import com.qqdd.lottery.R;
 import com.qqdd.lottery.calculate.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.CalculatorItem;

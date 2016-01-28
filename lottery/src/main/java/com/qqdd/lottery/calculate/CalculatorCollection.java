@@ -55,7 +55,7 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
             mHistory = lts;
             mResultSize = resultSize;
             mLoopCount = loopCount;
-            mConfiguration = lts.get(0).getLottery().getLotteryConfiguration();
+            mConfiguration = lts.get(0).getLottery().getConfiguration();
             mNormalTable = new NumberTable(mConfiguration.getNormalRange());
             mSpecialTable = new NumberTable(mConfiguration.getSpecialRange());
             mCallback = callback;

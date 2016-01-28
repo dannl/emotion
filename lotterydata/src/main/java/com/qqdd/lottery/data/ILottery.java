@@ -14,4 +14,7 @@ public interface ILottery {
 
     void sort();
 
+    LotteryConfiguration getConfiguration();
+
+    boolean isValid();
 }

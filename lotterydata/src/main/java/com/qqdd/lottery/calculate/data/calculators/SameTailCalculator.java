@@ -32,7 +32,7 @@ public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
 //            return;
 //        }
 //        final LotteryRecord record = history.get(0);
-//        final LotteryConfiguration configuration = record.getLottery().getLotteryConfiguration();
+//        final LotteryConfiguration configuration = record.getLottery().getConfiguration();
 //        Probabilities cache = CACHE.get(record);
 //        if (cache == null) {
 //            cache = calculateProbability(history);
@@ -43,7 +43,7 @@ public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
     @Override
     public void calculate(List<LotteryRecord> lts, NumberTable normalTable, NumberTable specialTable) {
         final LotteryRecord record = lts.get(0);
-        final LotteryConfiguration configuration = record.getLottery().getLotteryConfiguration();
+        final LotteryConfiguration configuration = record.getLottery().getConfiguration();
         Probabilities cache = CACHE.get(record);
         if (cache == null) {
             cache = calculateProbability(lts);
@@ -75,7 +75,7 @@ public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
 
     private Probabilities calculateProbability(List<LotteryRecord> lts) {
         Probabilities result = new Probabilities();
-        LotteryConfiguration configuration = lts.get(0).getLottery().getLotteryConfiguration();
+        LotteryConfiguration configuration = lts.get(0).getLottery().getConfiguration();
         result.normalOccTimeRate = NumUtils.newEmptyFloatArray(configuration.getNormalSize() / 2 + 1);
         result.specialOccTimeRate = NumUtils.newEmptyFloatArray(configuration.getSpecialSize() / 2 + 1);
         int[] normalSameCount = NumUtils.newEmptyIntArray(configuration.getNormalSize() / 2 + 1);

@@ -45,11 +45,11 @@ public class LastNTimeOccurIncreaseCalculator extends CalculatorImpl {
         final Probability result = new Probability();
         float[] normalOccurrence = NumUtils.newEmptyFloatArray(lts.get(0)
                 .getLottery()
-                .getLotteryConfiguration()
+                .getConfiguration()
                 .getNormalRange() + 1);
         float[] specialOccurrence = NumUtils.newEmptyFloatArray(lts.get(0)
                 .getLottery()
-                .getLotteryConfiguration()
+                .getConfiguration()
                 .getSpecialRange() + 1);
         for (int i = 0; i < N; i++) {
             final NumberList normalList = lts.get(i)

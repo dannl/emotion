@@ -30,19 +30,19 @@ public class Lottery implements ILottery {
         mLotteryConfiguration = lotteryConfiguration;
     }
 
-    public RewardRule.RewardDetail getRewardDetail(final LotteryRecord record) {
-        return mRewardRule.getRewardDetail(this, record);
+    public RewardRule.RewardDetail calculateRewardDetail(final LotteryRecord record) {
+        return mRewardRule.calculateRewardDetail(this, record);
     }
 
-    public RewardRule.Reward getReward(final LotteryRecord record) {
-        return mRewardRule.getReward(this, record);
+    public RewardRule.Reward calculateReward(final LotteryRecord record) {
+        return mRewardRule.calculateReward(this, record);
     }
 
     public Type getType() {
         return mType;
     }
 
-    public LotteryConfiguration getLotteryConfiguration() {
+    public LotteryConfiguration getConfiguration() {
         return mLotteryConfiguration;
     }
 

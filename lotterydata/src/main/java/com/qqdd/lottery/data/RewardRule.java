@@ -5,9 +5,9 @@ package com.qqdd.lottery.data;
  */
 public abstract class RewardRule {
 
-    public abstract RewardDetail getRewardDetail(Lottery num, LotteryRecord record);
+    public abstract RewardDetail calculateRewardDetail(Lottery num, LotteryRecord record);
 
-    public abstract Reward getReward(Lottery num, LotteryRecord record);
+    public abstract Reward calculateReward(Lottery num, LotteryRecord record);
 
     public static class RewardDetail {
         private Reward mReward;

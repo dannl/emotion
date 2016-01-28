@@ -3,6 +3,7 @@ package com.qqdd.lottery.calculate;
 import android.os.AsyncTask;
 
 import com.qqdd.lottery.calculate.data.CalculatorItem;
+import com.qqdd.lottery.calculate.data.NumberProducer;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -100,7 +101,7 @@ public class AlgorithmTester {
                 for (int j = 0; j < CALCULATE_TIMES; j++) {
                     totalTime++;
                     final Lottery tempResult = NumberProducer.getInstance().calculate(normalTable, specialTable, mConfiguration);
-                    final RewardRule.Reward reward = tempResult.getReward(record);
+                    final RewardRule.Reward reward = tempResult.calculateReward(record);
                     final int money = reward.getMoney();
                     if (money > 0) {
                         Integer value = mRandomResultDetail.get(reward);
@@ -125,8 +126,8 @@ public class AlgorithmTester {
                         mCalculators.get(k).calculate(subHistory, normalTable, specialTable);
                     }
                     totalTime++;
-                    final Lottery tempResult = NumberProducer.getInstance().calculateSync(normalTable, specialTable, mConfiguration);
-                    final RewardRule.Reward reward = tempResult.getReward(record);
+                    final Lottery tempResult = NumberProducer.getInstance().calculate(subHistory, normalTable, specialTable, mConfiguration);
+                    final RewardRule.Reward reward = tempResult.calculateReward(record);
                     final int money = reward.getMoney();
                     if (money > 0) {
                         Integer value = mAlgorithmResultDetail.get(reward);

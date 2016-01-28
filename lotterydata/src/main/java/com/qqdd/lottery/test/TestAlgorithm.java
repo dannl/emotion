@@ -333,7 +333,7 @@ public class TestAlgorithm {
                     }
                     final Lottery tempResult = com.qqdd.lottery.calculate.data.NumberProducer.getInstance()
                             .calculate(subHistory, normalTable, specialTable, mConfiguration);
-                    final RewardRule.Reward reward = tempResult.getReward(record);
+                    final RewardRule.Reward reward = tempResult.calculateReward(record);
                     final int money = reward.getMoney();
                     if (money > 0) {
                         roundRewardCount++;

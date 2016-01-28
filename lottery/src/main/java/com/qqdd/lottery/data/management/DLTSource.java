@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.loopj.android.http.SyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryRecord;
 
@@ -184,7 +185,8 @@ public class DLTSource extends DataSource {
         int day = Integer.parseInt(dateMatcher.group(3));
         CALENDAR.set(year, month - 1, day, 23, 59, 59);
         Date date = CALENDAR.getTime();
-        final LotteryRecord record = new LotteryRecord(lt);
+        //FIXME we should
+        final LotteryRecord record = new HistoryItem(lt);
         record.setDate(date);
         return record;
     }

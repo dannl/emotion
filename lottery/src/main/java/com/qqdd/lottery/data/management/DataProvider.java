@@ -2,6 +2,7 @@ package com.qqdd.lottery.data.management;
 
 import android.os.AsyncTask;
 
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryRecord;
 
@@ -136,7 +137,7 @@ public class DataProvider {
                     final List<LotteryRecord> records = new ArrayList<>();
                     for (int i = 0; i < jsonArray.length(); i++) {
                         final JSONObject json = jsonArray.getJSONObject(i);
-                        final LotteryRecord record = LotteryRecord.fromJson(json);
+                        final LotteryRecord record = HistoryItem.fromJson(json);
                         if (record != null) {
                             records.add(record);
                         }

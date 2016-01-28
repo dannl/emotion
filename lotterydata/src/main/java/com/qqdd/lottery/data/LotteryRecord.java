@@ -11,7 +11,7 @@ import java.util.Date;
 /**
  * Created by danliu on 1/19/16.
  */
-public class LotteryRecord implements ILottery {
+public abstract class LotteryRecord implements ILottery {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
 
@@ -24,8 +24,15 @@ public class LotteryRecord implements ILottery {
         mLottery = t;
     }
 
-    public RewardRule.RewardDetail getRewardDetail(final LotteryRecord record) {
-        return mLottery.getRewardDetail(record);
+    protected LotteryRecord() {}
+
+    public RewardRule.RewardDetail calculateRewardDetail(final LotteryRecord record) {
+        return mLottery.calculateRewardDetail(record);
+    }
+
+    @Override
+    public LotteryConfiguration getConfiguration() {
+        return mLottery.getConfiguration();
     }
 
     @Override
@@ -55,6 +62,11 @@ public class LotteryRecord implements ILottery {
     }
 
     @Override
+    public boolean isValid() {
+        return mLottery.isValid();
+    }
+
+    @Override
     public void sort() {
         mLottery.sort();
     }
@@ -72,25 +84,6 @@ public class LotteryRecord implements ILottery {
         } catch (JSONException e) {
         }
         return json;
-    }
-
-    public static LotteryRecord fromJson(final JSONObject json) {
-        if (json == null) {
-            return null;
-        }
-        try {
-            final JSONObject lottery = json.getJSONObject("lottery");
-            final Lottery lt = Lottery.fromJson(lottery);
-            if (lt == null) {
-                return null;
-            }
-            final LotteryRecord result = new LotteryRecord(lt);
-            result.setDate(DATE_FORMAT.parse(json.getString("date")));
-            return result;
-        } catch (JSONException e) {
-        } catch (ParseException e) {
-        }
-        return null;
     }
 
     @Override
@@ -115,5 +108,22 @@ public class LotteryRecord implements ILottery {
     @Override
     public Lottery.Type getType() {
         return mLottery.getType();
+    }
+
+    public static void loadBaseData(final LotteryRecord record, final JSONObject json) throws JSONException {
+        if (record == null || json
+                 == null) {
+            return;
+        }
+        try {
+            final JSONObject lottery = json.getJSONObject("lottery");
+            final Lottery lt = Lottery.fromJson(lottery);
+            if (lt == null) {
+                throw new JSONException("failed to parse lottery.");
+            }
+            record.mLottery = lt;
+            record.setDate(DATE_FORMAT.parse(json.getString("date")));
+        } catch (ParseException ignored) {
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.qqdd.lottery.dlt;
+package com.qqdd.lottery.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -43,7 +43,7 @@ public class DLTHistoryActivity extends AppCompatActivity {
                                 }
                                 LotteryConfiguration lotteryConfiguration = result.get(0)
                                         .getLottery()
-                                        .getLotteryConfiguration();
+                                        .getConfiguration();
                                 final int[] normalOcc = NumUtils.newEmptyIntArray(
                                         lotteryConfiguration.getNormalRange() + 1);
                                 final int[] specialOcc = NumUtils.newEmptyIntArray(

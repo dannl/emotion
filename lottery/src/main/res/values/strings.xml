@@ -19,4 +19,7 @@
     <string name="number_count_intro">一次计算最多生成10个串。输入超过10或者小于1神马的…我都是按10或者1处理哟！</string>
     <string name="dlt">大乐透</string>
     <string name="calculate_result">计算结果</string>
+    <string name="title_activity_selection_history">SelectionHistoryActivity</string>
+    <string name="delete">删除</string>
+    <string name="add_record">手动添加号码...</string>
 </resources>

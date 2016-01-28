@@ -1,4 +1,4 @@
-package com.qqdd.lottery;
+package com.qqdd.lottery.activities.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -36,7 +36,7 @@ public class NumAreaAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = new NumberView(parent.getContext(), mDisplayToApply);
         }
-        ((NumberView) convertView).setNumber(getItem(position), mNumberTable);
+        ((NumberView) convertView).setNumber(getItem(position).getValue());
         return convertView;
     }
 
@@ -45,14 +45,5 @@ public class NumAreaAdapter extends BaseAdapter {
         return position;
     }
 
-    public static class NumItemViewHolder extends RecyclerView.ViewHolder {
-
-        private NumberView numberView;
-
-        public NumItemViewHolder(View itemView) {
-            super(itemView);
-            numberView = (NumberView) itemView;
-        }
-    }
 
 }

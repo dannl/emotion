@@ -20,7 +20,7 @@ public class DLTRewardRule extends RewardRule {
     }
 
     @Override
-    public Reward getReward(Lottery num, LotteryRecord record) {
+    public Reward calculateReward(Lottery num, LotteryRecord record) {
         if (num.getType() != record.getLottery().getType()) {
             return Reward.NO_REWARD;
         }
@@ -50,7 +50,7 @@ public class DLTRewardRule extends RewardRule {
     }
 
     @Override
-    public RewardDetail getRewardDetail(Lottery num, LotteryRecord record) {
+    public RewardDetail calculateRewardDetail(Lottery num, LotteryRecord record) {
         if (num.getType() != record.getLottery().getType()) {
             return new RewardDetail(Reward.NO_REWARD, new NumberList(), new NumberList());
         }

@@ -1,27 +1,15 @@
-package com.qqdd.lottery;
+package com.qqdd.lottery.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
+import com.qqdd.lottery.BaseActivity;
+import com.qqdd.lottery.R;
 import com.qqdd.lottery.calculate.AlgorithmTester;
-import com.qqdd.lottery.calculate.CalculatorCollection;
-import com.qqdd.lottery.calculate.data.CalculatorFactory;
-import com.qqdd.lottery.calculate.data.CalculatorItem;
-import com.qqdd.lottery.calculate.data.calculators.SelectionIncreaseCalculator;
-import com.qqdd.lottery.data.LotteryConfiguration;
-import com.qqdd.lottery.data.LotteryRecord;
-import com.qqdd.lottery.data.management.DataLoadingCallback;
-import com.qqdd.lottery.data.management.DataProvider;
-import com.qqdd.lottery.dlt.DLTHistoryActivity;
-
-import java.util.List;
 
 public class MainActivity extends BaseActivity {
 
