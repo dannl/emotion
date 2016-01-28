@@ -23,11 +23,13 @@ import java.util.Set;
 
 public class TestAlgorithm {
 
-    public static final int CALCULATE_TIMES = 1000000;
+    public static final int CALCULATE_TIMES = 100000;
     public static final int TEST_SINCE = 4;
 
     public static void main(String[] args) {
-        testARound();
+        for (int i = 0; i < 10; i++) {
+            testARound();
+        }
 //                calculateResult();
     }
 
