@@ -23,14 +23,12 @@ import java.util.Set;
 
 public class TestAlgorithm {
 
-    public static final int CALCULATE_TIMES = 100000;
+    public static final int CALCULATE_TIMES = 1000000;
     public static final int TEST_SINCE = 4;
 
     public static void main(String[] args) {
-        for (int i = 0; i < 5; i++) {
-            testARound();
-        }
-//        calculateResult();
+        testARound();
+//                calculateResult();
     }
 
     private static void calculateResult() {
@@ -38,7 +36,8 @@ public class TestAlgorithm {
         List<Lottery> result = calculate(resultCount);
         System.out.println("\nresult is: ");
         for (int i = 0; i < result.size(); i++) {
-            System.out.println(result.get(i).toString());
+            System.out.println(result.get(i)
+                    .toString());
         }
     }
 
@@ -56,12 +55,14 @@ public class TestAlgorithm {
             normalTable.reset();
             specialTable.reset();
             for (int j = 0; j < calculatorList.size(); j++) {
-                calculatorList.get(j).calculate(history, normalTable, specialTable);
+                calculatorList.get(j)
+                        .calculate(history, normalTable, specialTable);
             }
-            tempBuffer.add(NumberProducer.getInstance().calculate(history, normalTable, specialTable,
-                    configuration));
+            tempBuffer.add(NumberProducer.getInstance()
+                    .calculate(history, normalTable, specialTable, configuration));
         }
-        return NumberProducer.getInstance().select(tempBuffer, count, loadTimeToGoHome(CALCULATE_TIMES));
+        return NumberProducer.getInstance()
+                .select(tempBuffer, count, loadTimeToGoHome(CALCULATE_TIMES));
     }
 
     private static void actualBuyingTest() {
@@ -98,8 +99,7 @@ public class TestAlgorithm {
         System.out.println(result.toString());
         float maxRate = 0;
         float minRate = 1;
-        for (Map.Entry<LotteryRecord, Float> entry:
-             result.recordRate.entrySet()) {
+        for (Map.Entry<LotteryRecord, Float> entry : result.recordRate.entrySet()) {
             if (entry.getValue() > maxRate) {
                 maxRate = entry.getValue();
             }
@@ -113,7 +113,11 @@ public class TestAlgorithm {
         builder.append("=============\n");
         builder.append("回家次数统计：\n");
         for (Map.Entry<LotteryRecord, Integer> entry : result.goHomeDistribute.entrySet()) {
-            builder.append(entry.getKey().toString()).append(": ").append(entry.getValue()).append("次")
+            builder.append(entry.getKey()
+                    .toString())
+                    .append(": ")
+                    .append(entry.getValue())
+                    .append("次")
                     .append("\n");
         }
         return result.getExpectationOnBuying(5);
@@ -145,7 +149,10 @@ public class TestAlgorithm {
     }
 
     private static File getProjectRoot() {
-        final String file = TestAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        final String file = TestAlgorithm.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getFile();
         final String projectRoot = file.substring(0, file.indexOf("lotterydata"));
         return new File(projectRoot);
     }
@@ -156,7 +163,8 @@ public class TestAlgorithm {
 
     private static TimeToGoHome loadTimeToGoHome(int testTime) {
         try {
-            final String content = DataLoader.loadContent(new FileInputStream(getGoHomeRecordFile(testTime)), "UTF-8");
+            final String content = DataLoader.loadContent(
+                    new FileInputStream(getGoHomeRecordFile(testTime)), "UTF-8");
             TimeToGoHome result = TimeToGoHome.fromJson(content);
             if (result != null) {
                 return result;
@@ -326,7 +334,7 @@ public class TestAlgorithm {
                     final RewardRule.Reward reward = tempResult.getReward(record);
                     final int money = reward.getMoney();
                     if (money > 0) {
-                        roundRewardCount ++;
+                        roundRewardCount++;
                         Integer value = result.detail.get(reward);
                         if (value == null) {
                             value = 0;
@@ -357,7 +365,8 @@ public class TestAlgorithm {
         private void updateGoHomeRecord() {
             final File file = getGoHomeRecordFile(CALCULATE_TIMES);
             try {
-                DataLoader.saveToFile(file, mResult.mTimeToGoHome.toJson().toString(), "UTF8");
+                DataLoader.saveToFile(file, mResult.mTimeToGoHome.toJson()
+                        .toString(), "UTF8");
             } catch (IOException e) {
             }
         }

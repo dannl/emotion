@@ -12,4 +12,6 @@ public interface ILottery {
 
     Lottery.Type getType();
 
+    void sort();
+
 }

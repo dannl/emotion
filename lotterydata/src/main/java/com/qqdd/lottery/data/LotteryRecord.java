@@ -55,6 +55,11 @@ public class LotteryRecord implements ILottery {
     }
 
     @Override
+    public void sort() {
+        mLottery.sort();
+    }
+
+    @Override
     public String toString() {
         return DISPLAY_DATE_FORMAT.format(mDate) + " " + mLottery.toString();
     }

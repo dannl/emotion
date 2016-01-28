@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -51,6 +52,12 @@ public class Lottery implements ILottery {
 
     public void addSpecial(final int number) {
         mSpecial.add(number);
+    }
+
+    @Override
+    public void sort() {
+        Collections.sort(mNormal);
+        Collections.sort(mSpecial);
     }
 
     public boolean isValid() {
