@@ -1,6 +1,6 @@
 package com.qqdd.lottery.calculate.data;
 
-import com.qqdd.lottery.data.LotteryRecord;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.NumberTable;
 
 import java.util.List;
@@ -14,5 +14,5 @@ public interface Calculator {
 
     String getDesc();
 
-    void calculate(List<LotteryRecord> lts, NumberTable normalTable, NumberTable specialTable);
+    void calculate(List<HistoryItem> lts, NumberTable normalTable, NumberTable specialTable);
 }

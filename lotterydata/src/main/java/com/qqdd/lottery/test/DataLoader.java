@@ -1,7 +1,6 @@
 package com.qqdd.lottery.test;
 
 import com.qqdd.lottery.data.HistoryItem;
-import com.qqdd.lottery.data.LotteryRecord;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,16 +25,16 @@ import cz.msebera.android.httpclient.util.CharArrayBuffer;
  */
 public class DataLoader {
 
-    public static List<LotteryRecord> loadData(File input) {
+    public static List<HistoryItem> loadData(File input) {
         final JSONArray jsonArray;
-        final List<LotteryRecord> records = new ArrayList<>();
+        final List<HistoryItem> records = new ArrayList<>();
         try {
             final String content = loadContent(new FileInputStream(input), "UTF-8");
             jsonArray = new JSONArray(content);
             for (int i = 0; i < jsonArray.length(); i++) {
                 final JSONObject json = jsonArray.getJSONObject(i);
                 //FIXME type here should be history item??
-                final LotteryRecord record = HistoryItem.fromJson(json);
+                final HistoryItem record = HistoryItem.fromJson(json);
                 if (record != null) {
                     records.add(record);
                 }

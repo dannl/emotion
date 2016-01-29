@@ -1,6 +1,8 @@
 package com.qqdd.lottery.data;
 
 
+import com.qqdd.lottery.utils.NumUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,10 +27,6 @@ public abstract class LotteryRecord implements ILottery {
     }
 
     protected LotteryRecord() {}
-
-    public RewardRule.RewardDetail calculateRewardDetail(final LotteryRecord record) {
-        return mLottery.calculateRewardDetail(record);
-    }
 
     @Override
     public LotteryConfiguration getConfiguration() {
@@ -101,7 +99,21 @@ public abstract class LotteryRecord implements ILottery {
         if (super.equals(o)) {
             return true;
         } else {
-            return hashCode() == o.hashCode();
+            if (o.getClass() != getClass()) {
+                return false;
+            }
+            if (hashCode() != o.hashCode()) {
+                return false;
+            }
+            final int sameNormal = NumUtils.calculateSameCount(getNormals(), ((LotteryRecord) o).getNormals());
+            if (sameNormal < getNormals().size()) {
+                return false;
+            }
+            final int sameSpecial = NumUtils.calculateSameCount(getSpecials(), ((LotteryRecord) o).getSpecials());
+            if (sameSpecial < getSpecials().size()) {
+                return false;
+            }
+            return true;
         }
     }
 
@@ -126,4 +138,5 @@ public abstract class LotteryRecord implements ILottery {
         } catch (ParseException ignored) {
         }
     }
+
 }

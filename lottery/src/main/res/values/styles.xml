@@ -19,11 +19,14 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppButtonStyle">
+    <style name="AppPrimaryTextStyle" >
         <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/red_round_corner_bg</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/clickable_primary</item>
+    </style>
+
+    <style name="AppButtonStyle" parent="AppPrimaryTextStyle">
+        <item name="android:background">@drawable/red_round_corner_bg</item>
     </style>
 
 </resources>

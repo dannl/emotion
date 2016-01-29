@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import com.qqdd.lottery.calculate.data.CalculatorItem;
 import com.qqdd.lottery.calculate.data.NumberProducer;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
@@ -46,7 +47,7 @@ public class AlgorithmTester {
     private Task mTask;
 
     public void test(@NotNull final LotteryConfiguration configuration,
-                     @NotNull final List<LotteryRecord> mHistory,
+                     @NotNull final List<HistoryItem> mHistory,
                      @NotNull final List<CalculatorItem> calculators,
                      @NotNull DataLoadingCallback<String> callback) {
         if (mTask != null) {
@@ -59,7 +60,7 @@ public class AlgorithmTester {
 
     private class Task extends AsyncTask<Void, Void, String> {
 
-        private final List<LotteryRecord> mHistory;
+        private final List<HistoryItem> mHistory;
         private final List<CalculatorItem> mCalculators;
         private final DataLoadingCallback<String> mCallback;
         private String mRandomResult;
@@ -69,7 +70,7 @@ public class AlgorithmTester {
         private LotteryConfiguration mConfiguration;
         private long mStartTime;
 
-        public Task(LotteryConfiguration configuration, List<LotteryRecord> history, List<CalculatorItem> calculators, DataLoadingCallback<String> callback) {
+        public Task(LotteryConfiguration configuration, List<HistoryItem> history, List<CalculatorItem> calculators, DataLoadingCallback<String> callback) {
             mHistory = history;
             mCalculators = calculators;
             mCallback = callback;
@@ -117,8 +118,8 @@ public class AlgorithmTester {
             }*/
             totalTime = 0;
             for (int i = size / 2; i > 0; i--) {
-                final List<LotteryRecord> subHistory = mHistory.subList(i - 1, size);
-                final LotteryRecord record = mHistory.get(i);
+                final List<HistoryItem> subHistory = mHistory.subList(i - 1, size);
+                final HistoryItem record = mHistory.get(i);
                 for (int j = 0; j < TEST_TIME; j++) {
                     normalTable = new NumberTable(mConfiguration.getNormalRange());
                     specialTable = new NumberTable(mConfiguration.getSpecialRange());
@@ -127,7 +128,7 @@ public class AlgorithmTester {
                     }
                     totalTime++;
                     final Lottery tempResult = NumberProducer.getInstance().calculate(subHistory, normalTable, specialTable, mConfiguration);
-                    final RewardRule.Reward reward = tempResult.calculateReward(record);
+                    final RewardRule.Reward reward = record.calculateReward(tempResult);
                     final int money = reward.getMoney();
                     if (money > 0) {
                         Integer value = mAlgorithmResultDetail.get(reward);

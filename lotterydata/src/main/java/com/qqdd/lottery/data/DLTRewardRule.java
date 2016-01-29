@@ -1,6 +1,9 @@
 package com.qqdd.lottery.data;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 /**
@@ -8,19 +11,41 @@ import java.util.HashMap;
  */
 public class DLTRewardRule extends RewardRule {
 
-    private static final int NORMAL_NUM_MASK = 0xff00;
-    private static final int SPECIAL_NUM_MASK = 0x00ff;
-
-    private static class SingletonHolder {
-        private static final DLTRewardRule INSTANCE = new DLTRewardRule();
+    @Override
+    public JSONObject toJson() {
+        final JSONObject result = new JSONObject();
+        final JSONObject specialReward = new JSONObject();
+        try {
+            specialReward.put("goHome", mRewards.get(5<<2|2).toJson());
+            specialReward.put("buyHouse", mRewards.get(5<<2|1).toJson());
+            result.put("type", Lottery.Type.DLT.toString());
+            result.put("data", specialReward);
+        } catch (JSONException ignored) {
+        }
+        return result;
     }
 
-    public static DLTRewardRule getInstance() {
-        return SingletonHolder.INSTANCE;
+    public static DLTRewardRule fromJson(final JSONObject jsonObject) {
+        if (jsonObject == null) {
+            return null;
+        }
+        DLTRewardRule result = new DLTRewardRule();
+        final JSONObject goHome;
+        try {
+            final JSONObject specialReward = jsonObject.getJSONObject("data");
+            goHome = specialReward.getJSONObject("goHome");
+            final JSONObject buyHouse = specialReward.getJSONObject("buyHouse");
+            final Reward goHomeR = Reward.fromJson(goHome);
+            final Reward buyHouseR = Reward.fromJson(buyHouse);
+            result.putReward(5<<2|2, goHomeR);
+            result.putReward(5<<2|1, buyHouseR);
+        } catch (JSONException ignored) {
+        }
+        return result;
     }
 
     @Override
-    public Reward calculateReward(Lottery num, LotteryRecord record) {
+    public Reward calculateReward(ILottery num, LotteryRecord record) {
         if (num.getType() != record.getLottery().getType()) {
             return Reward.NO_REWARD;
         }
@@ -50,7 +75,7 @@ public class DLTRewardRule extends RewardRule {
     }
 
     @Override
-    public RewardDetail calculateRewardDetail(Lottery num, LotteryRecord record) {
+    public RewardDetail calculateRewardDetail(ILottery num, LotteryRecord record) {
         if (num.getType() != record.getLottery().getType()) {
             return new RewardDetail(Reward.NO_REWARD, new NumberList(), new NumberList());
         }
@@ -85,7 +110,7 @@ public class DLTRewardRule extends RewardRule {
 
     private HashMap<Integer, Reward> mRewards;
 
-    private DLTRewardRule() {
+    public DLTRewardRule() {
         mRewards = new HashMap<>();
         final Reward notBad = new Reward("末等", "1+2或者0+2或者", 5);
         mRewards.put(2, notBad);
@@ -106,5 +131,9 @@ public class DLTRewardRule extends RewardRule {
         mRewards.put(5 << 2 | 1, omg);
         final Reward iAmRichNow = new Reward("一等", "1+2或者0+2或者", 10000000);
         mRewards.put(5 << 2 | 2, iAmRichNow);
+    }
+
+    public void putReward(final int key, final Reward reward) {
+        mRewards.put(key, reward);
     }
 }

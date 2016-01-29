@@ -2,6 +2,7 @@ package com.qqdd.lottery.calculate.data.calculators;
 
 import com.qqdd.lottery.calculate.data.CalculatorImpl;
 import com.qqdd.lottery.calculate.data.NumberPicker;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
@@ -22,12 +23,12 @@ public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
         super(title, desc);
     }
 
-    private static HashMap<LotteryRecord, Probabilities> CACHE = new HashMap<>();
+    private static HashMap<HistoryItem, Probabilities> CACHE = new HashMap<>();
     private static final Random RANDOM = new Random();
     private static final float POWER = 2;
 
     @Override
-    public void pick(List<LotteryRecord> history, Lottery picked) {
+    public void pick(List<HistoryItem> history, Lottery picked) {
 //        if (picked.getNormals().size() == 0 || picked.getSpecials().size() == 0) {
 //            return;
 //        }
@@ -41,8 +42,8 @@ public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
     }
 
     @Override
-    public void calculate(List<LotteryRecord> lts, NumberTable normalTable, NumberTable specialTable) {
-        final LotteryRecord record = lts.get(0);
+    public void calculate(List<HistoryItem> lts, NumberTable normalTable, NumberTable specialTable) {
+        final HistoryItem record = lts.get(0);
         final LotteryConfiguration configuration = record.getLottery().getConfiguration();
         Probabilities cache = CACHE.get(record);
         if (cache == null) {
@@ -73,7 +74,7 @@ public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
         }
     }
 
-    private Probabilities calculateProbability(List<LotteryRecord> lts) {
+    private Probabilities calculateProbability(List<HistoryItem> lts) {
         Probabilities result = new Probabilities();
         LotteryConfiguration configuration = lts.get(0).getLottery().getConfiguration();
         result.normalOccTimeRate = NumUtils.newEmptyFloatArray(configuration.getNormalSize() / 2 + 1);

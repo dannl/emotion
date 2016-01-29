@@ -1,6 +1,7 @@
 package com.qqdd.lottery.calculate.data.calculators;
 
 import com.qqdd.lottery.calculate.data.CalculatorImpl;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.utils.NumUtils;
@@ -17,7 +18,7 @@ public class HistoryOccurrenceProbabilityCalculator extends CalculatorImpl {
     }
 
     @Override
-    public void calculate(List<LotteryRecord> lts, NumberTable normalTable, NumberTable specialTable) {
+    public void calculate(List<HistoryItem> lts, NumberTable normalTable, NumberTable specialTable) {
         //数字是从1开始而不是0,为了方便数组计算，数组中加入0.
         final int normalSize =normalTable.getRange() + 1;
         final int specialSize = specialTable.getRange() + 1;

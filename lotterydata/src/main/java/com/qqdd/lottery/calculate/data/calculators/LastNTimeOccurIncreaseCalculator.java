@@ -1,7 +1,7 @@
 package com.qqdd.lottery.calculate.data.calculators;
 
 import com.qqdd.lottery.calculate.data.CalculatorImpl;
-import com.qqdd.lottery.data.LotteryRecord;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.NumberList;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.utils.NumUtils;
@@ -18,12 +18,12 @@ public class LastNTimeOccurIncreaseCalculator extends CalculatorImpl {
     private static final int N = 3;
     private static final float POWER = 1f;
 
-    private static HashMap<LotteryRecord, Probability> CACHE = new HashMap<>();
+    private static HashMap<HistoryItem, Probability> CACHE = new HashMap<>();
 
     @Override
-    public void calculate(List<LotteryRecord> lts, NumberTable normalTable,
+    public void calculate(List<HistoryItem> lts, NumberTable normalTable,
                           NumberTable specialTable) {
-        final LotteryRecord record = lts.get(0);
+        final HistoryItem record = lts.get(0);
         Probability cache = CACHE.get(record);
         if (cache == null) {
             cache = calculateProbability(lts);
@@ -41,7 +41,7 @@ public class LastNTimeOccurIncreaseCalculator extends CalculatorImpl {
         }
     }
 
-    private Probability calculateProbability(List<LotteryRecord> lts) {
+    private Probability calculateProbability(List<HistoryItem> lts) {
         final Probability result = new Probability();
         float[] normalOccurrence = NumUtils.newEmptyFloatArray(lts.get(0)
                 .getLottery()

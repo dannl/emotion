@@ -1,6 +1,7 @@
 package com.qqdd.lottery.calculate.data.calculators;
 
 import com.qqdd.lottery.calculate.data.CalculatorImpl;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.Number;
@@ -24,7 +25,7 @@ public class SameNumberCalculator extends CalculatorImpl {
     }
 
     @Override
-    public void calculate(List<LotteryRecord> lts, NumberTable normalTable,
+    public void calculate(List<HistoryItem> lts, NumberTable normalTable,
                           NumberTable specialTable) {
         final LotteryRecord record = lts.get(0);
         Probability probabilities = PROBABILITY_CACHE.get(record.hashCode());
@@ -51,7 +52,7 @@ public class SameNumberCalculator extends CalculatorImpl {
         }
     }
 
-    private Probability calculateDuplicateProbability(List<LotteryRecord> lts,
+    private Probability calculateDuplicateProbability(List<HistoryItem> lts,
                                                       LotteryConfiguration lotteryConfiguration) {
         Probability result = new Probability();
         int[] normalSameCountRecord = NumUtils.newEmptyIntArray(
@@ -67,8 +68,8 @@ public class SameNumberCalculator extends CalculatorImpl {
             //                        final NumberList lastSpecialList = lts.get(i + 1).getSpecials();
             //                        final int normalSame = NumUtils.calculateSameCount(normalList, lastNormalList);
             //                        final int specialSame = NumUtils.calculateSameCount(specialList, lastSpecialList);
-            LotteryRecord record = lts.get(i);
-            LotteryRecord recordOther = lts.get(i + 1);
+            HistoryItem record = lts.get(i);
+            HistoryItem recordOther = lts.get(i + 1);
             RewardRule.RewardDetail detail = record.calculateRewardDetail(recordOther);
             final NumberList normalSames = detail.getNormals();
             final NumberList specialSames = detail.getSpecials();

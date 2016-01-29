@@ -9,14 +9,14 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.qqdd.lottery.BaseActivity;
-import com.qqdd.lottery.activities.adapters.NumAreaAdapter;
 import com.qqdd.lottery.R;
+import com.qqdd.lottery.activities.adapters.NumAreaAdapter;
 import com.qqdd.lottery.calculate.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.CalculatorItem;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
-import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 import com.qqdd.lottery.data.management.DataProvider;
@@ -89,10 +89,10 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         showProgress(R.string.calculating);
         final String countText = ((TextView) findViewById(R.id.pick_number_count)).getText().toString();
         final String loopCountText = ((TextView) findViewById(R.id.calculate_count)).getText().toString();
-        DataProvider.getInstance().loadDLT(new DataLoadingCallback<List<LotteryRecord>>() {
+        DataProvider.getInstance().loadDLT(new DataLoadingCallback<List<HistoryItem>>() {
 
             @Override
-            public void onLoaded(List<LotteryRecord> result) {
+            public void onLoaded(List<HistoryItem> result) {
                 int count = 5;
                 try {
                     count = Math.max(1, Math.min(Integer.parseInt(countText), 10));

@@ -5,11 +5,15 @@ import com.qqdd.lottery.calculate.data.CalculatorItem;
 import com.qqdd.lottery.calculate.data.NumberProducer;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.RewardRule;
+import com.qqdd.lottery.data.UserSelection;
+import com.qqdd.lottery.data.management.UserSelectionOperationResult;
+import com.qqdd.lottery.data.management.UserSelectionManager;
 import com.qqdd.lottery.utils.NumUtils;
 
 import java.io.File;
@@ -23,17 +27,14 @@ import java.util.Set;
 
 public class TestAlgorithm {
 
-    public static final int CALCULATE_TIMES = 100000;
+    public static final int CALCULATE_TIMES = 1000;
     public static final int TEST_SINCE = 4;
 
     public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
-            testARound();
-        }
-//                calculateResult();
+        testLocalCache();
     }
 
-    private static void calculateResult() {
+    private static List<Lottery> calculateResult() {
         final int resultCount = 5;
         List<Lottery> result = calculate(resultCount);
         System.out.println("\nresult is: ");
@@ -41,10 +42,48 @@ public class TestAlgorithm {
             System.out.println(result.get(i)
                     .toString());
         }
+        return result;
+    }
+
+    private static void testLocalCache() {
+        final List<HistoryItem> history = DataLoader.loadData(getHistoryFile());
+        List<Lottery> result = calculateResult();
+        //        Lottery temp = Lottery.newDLT();
+        //        temp.addNormal(6);
+        //        temp.addNormal(7);
+        //        temp.addNormal(20);
+        //        temp.addNormal(29);
+        //        temp.addNormal(32);
+        //        temp.addSpecial(1);
+        //        temp.addSpecial(12);
+        //        result.add(temp);
+        final List<UserSelection> userSelections = new ArrayList<>(result.size());
+        for (int i = 0; i < result.size(); i++) {
+            final UserSelection useSelection = new UserSelection(result.get(i));
+            //            final long l = 24 * 60 * 60 * 1000 * 50l;
+            //            useSelection.setDate(new Date(System.currentTimeMillis() - l));
+            userSelections.add(useSelection);
+        }
+        UserSelectionManager manager = new UserSelectionManager(new File(getProjectRoot(), "selection"));
+        manager.getUserSelectionList(history);
+        manager.addUserSelection(userSelections);
+        manager.flushCache(history);
+        UserSelectionOperationResult list = manager.getUserSelectionList(history);
+        System.out.println("has more: " + list.hasMore());
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i).getClass() + list.get(i).toString());
+        }
+        System.out.println(list.getSummary().toString());
+        list = manager.delete((UserSelection) list.get(list.size() - 1));
+        System.out.println("===================");
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i).getClass() + list.get(i).toString());
+        }
+        System.out.println(list.getSummary().toString());
     }
 
     private static List<Lottery> calculate(final int count) {
-        List<LotteryRecord> history = DataLoader.loadData(getHistoryFile());
+        List<HistoryItem> history = DataLoader.loadData(getHistoryFile());
         List<CalculatorItem> calculatorList = createCalculatorList();
         final LotteryConfiguration configuration = LotteryConfiguration.DLTConfiguration();
         final NumberTable normalTable = new NumberTable(configuration.getNormalRange());
@@ -126,7 +165,7 @@ public class TestAlgorithm {
     }
 
     private static TestResult testRandom() {
-        List<LotteryRecord> history = DataLoader.loadData(getHistoryFile());
+        List<HistoryItem> history = DataLoader.loadData(getHistoryFile());
         List<CalculatorItem> calculatorList = new ArrayList<>();
         calculatorList.add(new CalculatorItem(new AverageProbabilityCalculator()));
         final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
@@ -136,7 +175,7 @@ public class TestAlgorithm {
     }
 
     private static TestResult testAlgorithm() {
-        List<LotteryRecord> history = DataLoader.loadData(getHistoryFile());
+        List<HistoryItem> history = DataLoader.loadData(getHistoryFile());
         List<CalculatorItem> calculatorList = createCalculatorList();
         final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
                 calculatorList);
@@ -297,12 +336,12 @@ public class TestAlgorithm {
 
     private static class Task {
 
-        private final List<LotteryRecord> mHistory;
+        private final List<HistoryItem> mHistory;
         private final List<CalculatorItem> mCalculators;
         private LotteryConfiguration mConfiguration;
         private TestResult mResult;
 
-        public Task(LotteryConfiguration configuration, List<LotteryRecord> history,
+        public Task(LotteryConfiguration configuration, List<HistoryItem> history,
                     List<CalculatorItem> calculators) {
             mHistory = history;
             mCalculators = calculators;
@@ -320,8 +359,8 @@ public class TestAlgorithm {
             final int size = mHistory.size();
             //全随机算法。
             for (int i = size / TEST_SINCE; i > 0; i--) {
-                final List<LotteryRecord> subHistory = mHistory.subList(i - 1, size);
-                final LotteryRecord record = mHistory.get(i);
+                final List<HistoryItem> subHistory = mHistory.subList(i - 1, size);
+                final HistoryItem record = mHistory.get(i);
                 int roundRewardCount = 0;
                 for (int j = 0; j < CALCULATE_TIMES; j++) {
                     result.totalTestCount++;
@@ -333,7 +372,7 @@ public class TestAlgorithm {
                     }
                     final Lottery tempResult = com.qqdd.lottery.calculate.data.NumberProducer.getInstance()
                             .calculate(subHistory, normalTable, specialTable, mConfiguration);
-                    final RewardRule.Reward reward = tempResult.calculateReward(record);
+                    final RewardRule.Reward reward = record.calculateReward(tempResult);
                     final int money = reward.getMoney();
                     if (money > 0) {
                         roundRewardCount++;
@@ -345,7 +384,7 @@ public class TestAlgorithm {
                         result.detail.put(reward, value);
                         result.totalRewardCount++;
                         result.totalMoney += money;
-                        if (money == 10000000) {
+                        if (reward.isGoHome()) {
                             mResult.mTimeToGoHome.add(j);
                             updateGoHomeRecord();
                             Integer v = mResult.goHomeDistribute.get(record);

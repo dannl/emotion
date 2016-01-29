@@ -1,8 +1,8 @@
 package com.qqdd.lottery.calculate.data;
 
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
-import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.Number;
 import com.qqdd.lottery.data.NumberList;
 import com.qqdd.lottery.data.NumberTable;
@@ -34,7 +34,7 @@ public class NumberProducer {
     private NumberProducer() {
     }
 
-    public Lottery calculate(List<LotteryRecord> history, final NumberTable normals, final NumberTable specials,
+    public Lottery calculate(List<HistoryItem> history, final NumberTable normals, final NumberTable specials,
                              final LotteryConfiguration lotteryConfiguration)  {
         Lottery result = Lottery.newLotteryWithConfiguration(lotteryConfiguration);
         Set<Integer> normalValues = calculateValues(normals, result.getNormals(),

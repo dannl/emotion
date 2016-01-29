@@ -7,9 +7,11 @@ import android.util.Log;
 
 import com.loopj.android.http.SyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
+import com.qqdd.lottery.data.DLTRewardRule;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryRecord;
+import com.qqdd.lottery.data.RewardRule;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,6 +36,32 @@ public class DLTSource extends DataSource {
             "<FONT class='FontRed'>([0-9 ]+)</FONT> \\+ <FONT class='FontBlue'>([0-9 ]+)</FONT>");
     private static final Pattern COLUMN_PATTERN = Pattern.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})");
     private static final Pattern TOTAL_PAGE_PATTERN = Pattern.compile("<span id=\"ContentPlaceHolderDefault_LabelTotalPages\">(\\d+)</span>");
+    private static final String TEST = "<td bgcolor=\"#fff3db\">\n" +
+            "                                3\n" +
+            "                            </td>\n" +
+            "                            <td bgcolor=\"#fff3db\">\n" +
+            "                                9927745\n" +
+            "                            </td>\n" +
+            "                            <td bgcolor=\"#fff3db\">\n" +
+            "                                1\n" +
+            "                            </td>\n" +
+            "                            <td bgcolor=\"#fff3db\">\n" +
+            "                                5956647\n" +
+            "                            </td>\n" +
+            "                            <td bgcolor=\"#eeffee\">\n" +
+            "                                68\n" +
+            "                            </td>\n" +
+            "                            <td bgcolor=\"#eeffee\">\n" +
+            "                                120953\n" +
+            "                            </td>\n" +
+            "                            <td bgcolor=\"#eeffee\">\n" +
+            "                                20\n" +
+            "                            </td>\n" +
+            "                            <td bgcolor=\"#eeffee\">\n" +
+            "                                72571\n" +
+            "                            </td>";
+    private static final Pattern GO_HOME_MONEY_PATTERN = Pattern.compile("<td bgcolor=\"#fff3db\">\\s+(\\d+)\\s+</td>");
+    private static final Pattern BUY_HOUSE_MONEY_PATTERN = Pattern.compile("<td bgcolor=\"#eeffee\">\\s+(\\d+)\\s+</td>");
     private LoadTask mRequestTask;
 
     @Override
@@ -183,10 +211,47 @@ public class DLTSource extends DataSource {
         int year = Integer.parseInt(dateMatcher.group(1));
         int month = Integer.parseInt(dateMatcher.group(2));
         int day = Integer.parseInt(dateMatcher.group(3));
-        CALENDAR.set(year, month - 1, day, 23, 59, 59);
+        CALENDAR.set(year, month - 1, day, 20, 30, 0);
         Date date = CALENDAR.getTime();
-        //FIXME we should
-        final LotteryRecord record = new HistoryItem(lt);
+
+        final Matcher goHomeMatcher = GO_HOME_MONEY_PATTERN.matcher(line);
+
+        int index = 0;
+        String goHomeMoney = null;
+        while(goHomeMatcher.find()) {
+            if (index == 1) {
+                goHomeMoney = goHomeMatcher.group(1);
+                break;
+            }
+            index ++;
+        }
+
+        final Matcher buyHouseMatcher = BUY_HOUSE_MONEY_PATTERN.matcher(line);
+
+        index = 0;
+        String buyHouseMoney = null;
+        while (buyHouseMatcher.find()) {
+            if (index == 1) {
+                buyHouseMoney = buyHouseMatcher.group(1);
+                break;
+            }
+            index ++;
+        }
+
+        final DLTRewardRule rewardRule = new DLTRewardRule();
+
+        if (!TextUtils.isEmpty(goHomeMoney)) {
+            final RewardRule.Reward reward = new RewardRule.Reward("一等","5+2", Integer.parseInt(goHomeMoney));
+            reward.setGoHome(true);
+            rewardRule.putReward(5<<2 | 2, reward);
+        }
+        if (!TextUtils.isEmpty(buyHouseMoney)) {
+            final RewardRule.Reward reward = new RewardRule.Reward("二等", "5+1", Integer.parseInt(buyHouseMoney));
+            reward.setBuyHouse(true);
+            rewardRule.putReward(5<<2 | 1, reward);
+        }
+
+        final LotteryRecord record = new HistoryItem(lt, rewardRule);
         record.setDate(date);
         return record;
     }

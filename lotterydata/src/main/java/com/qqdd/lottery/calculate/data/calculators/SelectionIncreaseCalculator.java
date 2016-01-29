@@ -1,7 +1,7 @@
 package com.qqdd.lottery.calculate.data.calculators;
 
 import com.qqdd.lottery.calculate.data.CalculatorImpl;
-import com.qqdd.lottery.data.LotteryRecord;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.NumberTable;
 
 import java.util.HashSet;
@@ -39,7 +39,7 @@ public class SelectionIncreaseCalculator extends CalculatorImpl {
     }
 
     @Override
-    public void calculate(List<LotteryRecord> lts, NumberTable normalTable,
+    public void calculate(List<HistoryItem> lts, NumberTable normalTable,
                           NumberTable specialTable) {
         calculateWeight(mNormals, normalTable);
         calculateWeight(mSpecials, specialTable);

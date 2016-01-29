@@ -6,9 +6,9 @@ import com.example.niub.utils.FileUtils;
 import com.qqdd.lottery.calculate.data.CalculatorItem;
 import com.qqdd.lottery.calculate.data.NumberProducer;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
-import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 
@@ -30,7 +30,7 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
 
     private static final DecimalFormat PROGRESS_FORMAT = new DecimalFormat("#.0");
 
-    public void calculate(final List<LotteryRecord> lts, final int resultSize, final int loopCount, final DataLoadingCallback<List<Lottery>> callback) {
+    public void calculate(final List<HistoryItem> lts, final int resultSize, final int loopCount, final DataLoadingCallback<List<Lottery>> callback) {
         if (mCalculateTask != null) {
             callback.onBusy();
             return;
@@ -41,7 +41,7 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
 
     private class CalculateTask extends AsyncTask<Void, String, List<Lottery>> {
 
-        private List<LotteryRecord> mHistory;
+        private List<HistoryItem> mHistory;
         private NumberTable mNormalTable;
         private NumberTable mSpecialTable;
         private DataLoadingCallback<List<Lottery>> mCallback;
@@ -50,7 +50,7 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
         private NumberProducer mNumberProducer;
         private LotteryConfiguration mConfiguration;
 
-        public CalculateTask(List<LotteryRecord> lts, int resultSize, int loopCount,
+        public CalculateTask(List<HistoryItem> lts, int resultSize, int loopCount,
                              DataLoadingCallback<List<Lottery>> callback) {
             mHistory = lts;
             mResultSize = resultSize;

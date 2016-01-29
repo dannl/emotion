@@ -1,7 +1,7 @@
 package com.qqdd.lottery.calculate.data;
 
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
-import com.qqdd.lottery.data.LotteryRecord;
 
 import java.util.List;
 
@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface NumberPicker {
 
-    void pick(List<LotteryRecord> history, Lottery picked);
+    void pick(List<HistoryItem> history, Lottery picked);
 
 }

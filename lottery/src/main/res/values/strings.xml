@@ -22,4 +22,5 @@
     <string name="title_activity_selection_history">SelectionHistoryActivity</string>
     <string name="delete">删除</string>
     <string name="add_record">手动添加号码...</string>
+    <string name="operation_failed">操作失败.</string>
 </resources>

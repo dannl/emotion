@@ -21,21 +21,11 @@ public class Lottery implements ILottery {
     private final NumberList mNormal = new NumberList();
     private final NumberList mSpecial = new NumberList();
     private final Type mType;
-    private RewardRule mRewardRule;
     private LotteryConfiguration mLotteryConfiguration;
 
-    private Lottery(Type type, DLTRewardRule rewardRule,  LotteryConfiguration lotteryConfiguration) {
+    private Lottery(Type type, LotteryConfiguration lotteryConfiguration) {
         mType = type;
-        mRewardRule = rewardRule;
         mLotteryConfiguration = lotteryConfiguration;
-    }
-
-    public RewardRule.RewardDetail calculateRewardDetail(final LotteryRecord record) {
-        return mRewardRule.calculateRewardDetail(this, record);
-    }
-
-    public RewardRule.Reward calculateReward(final LotteryRecord record) {
-        return mRewardRule.calculateReward(this, record);
     }
 
     public Type getType() {
@@ -133,13 +123,13 @@ public class Lottery implements ILottery {
     }
 
     public static Lottery newDLT() {
-        return new Lottery(Type.DLT, DLTRewardRule.getInstance(), LotteryConfiguration.DLTConfiguration());
+        return new Lottery(Type.DLT, LotteryConfiguration.DLTConfiguration());
     }
 
 
     public static Lottery newLotteryWithConfiguration(LotteryConfiguration configuration) {
         if (configuration == LotteryConfiguration.DLTConfiguration()) {
-            return new Lottery(Type.DLT, DLTRewardRule.getInstance(), configuration);
+            return new Lottery(Type.DLT, configuration);
         }
         return null;
     }

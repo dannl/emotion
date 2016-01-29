@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
-import com.qqdd.lottery.data.LotteryRecord;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -36,7 +35,7 @@ public class DataProvider {
     private DataProvider() {
     }
 
-    private List<LotteryRecord> mDLTs;
+    private List<HistoryItem> mDLTs;
     private LoadTask mLoadTask;
 
     public void loadDLT(@NotNull final DataLoadingCallback callback) {
@@ -75,9 +74,9 @@ public class DataProvider {
             if (cacheFile.exists()) {
                 mLoadFromLocalTask.execute();
             } else {
-                mDataSource.getAll(new DataLoadingCallback<List<LotteryRecord>>() {
+                mDataSource.getAll(new DataLoadingCallback<List<HistoryItem>>() {
                     @Override
-                    public void onLoaded(List<LotteryRecord> result) {
+                    public void onLoaded(List<HistoryItem> result) {
                         mDLTs = result;
                         mSaveToLocalTask.execute();
                     }
@@ -105,7 +104,7 @@ public class DataProvider {
         private AsyncTask<Void, Void, Void> mSaveToLocalTask = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                final List<LotteryRecord> records = mDLTs;
+                final List<HistoryItem> records = mDLTs;
                 final JSONArray jsonArray = new JSONArray();
                 for (int i = 0; i < records.size(); i++) {
                     jsonArray.put(records.get(i)
@@ -126,18 +125,18 @@ public class DataProvider {
             }
         };
 
-        private AsyncTask<Void, Void, List<LotteryRecord>> mLoadFromLocalTask = new AsyncTask<Void, Void, List<LotteryRecord>>() {
+        private AsyncTask<Void, Void, List<HistoryItem>> mLoadFromLocalTask = new AsyncTask<Void, Void, List<HistoryItem>>() {
             @Override
-            protected List<LotteryRecord> doInBackground(Void... params) {
+            protected List<HistoryItem> doInBackground(Void... params) {
                 final File cacheFile = getCacheFile(mType);
                 try {
                     final String content = IOUtilities.loadContent(new FileInputStream(cacheFile),
                             "UTF-8");
                     final JSONArray jsonArray = new JSONArray(content);
-                    final List<LotteryRecord> records = new ArrayList<>();
+                    final List<HistoryItem> records = new ArrayList<>();
                     for (int i = 0; i < jsonArray.length(); i++) {
                         final JSONObject json = jsonArray.getJSONObject(i);
-                        final LotteryRecord record = HistoryItem.fromJson(json);
+                        final HistoryItem record = HistoryItem.fromJson(json);
                         if (record != null) {
                             records.add(record);
                         }
@@ -150,14 +149,14 @@ public class DataProvider {
             }
 
             @Override
-            protected void onPostExecute(final List<LotteryRecord> lotteryRecords) {
+            protected void onPostExecute(final List<HistoryItem> lotteryRecords) {
                 if (lotteryRecords == null || lotteryRecords.isEmpty()) {
                     mCallback.onLoadFailed("load from local failed.");
                     mLoadTask = null;
                 } else {
-                    mDataSource.getNewSince(lotteryRecords.get(0), new DataLoadingCallback<List<LotteryRecord>>() {
+                    mDataSource.getNewSince(lotteryRecords.get(0), new DataLoadingCallback<List<HistoryItem>>() {
                         @Override
-                        public void onLoaded(List<LotteryRecord> result) {
+                        public void onLoaded(List<HistoryItem> result) {
                             lotteryRecords.addAll(0, result);
                             mDLTs = lotteryRecords;
                             mSaveToLocalTask.execute();

@@ -17,10 +17,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/main_margin"
+            android:paddingLeft="@dimen/main_margin"
+            android:paddingRight="@dimen/main_margin"
+            android:paddingTop="@dimen/main_margin"
             android:orientation="vertical">
 
             <LinearLayout
@@ -39,7 +39,7 @@
                     android:id="@+id/normal_num_area"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginTop="@dimen/main_margin"
                     android:gravity="center"
                     android:numColumns="8"
                     android:stretchMode="columnWidth"/>
@@ -47,14 +47,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginTop="@dimen/main_margin"
                     android:text="@string/special_num_area"/>
 
                 <com.qqdd.lottery.ui.view.MatchHeightGridView
                     android:id="@+id/special_num_area"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginTop="@dimen/main_margin"
                     android:gravity="center"
                     android:numColumns="8"
                     android:stretchMode="columnWidth"
@@ -71,14 +71,14 @@
                 android:hint="@string/number_count_hint"
                 />
             <TextView
-                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/main_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/number_count_intro"/>
 
 
             <EditText
-                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/main_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/calculate_count"
@@ -88,14 +88,14 @@
                 />
 
             <TextView
-                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/main_margin"
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/calculate_count_intro"/>
 
             <TextView
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/main_margin"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 style="@style/AppButtonStyle"

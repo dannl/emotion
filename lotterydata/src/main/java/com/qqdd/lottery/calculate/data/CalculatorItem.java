@@ -1,6 +1,6 @@
 package com.qqdd.lottery.calculate.data;
 
-import com.qqdd.lottery.data.LotteryRecord;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.NumberTable;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class CalculatorItem implements Calculator {
     }
 
     @Override
-    public void calculate(List<LotteryRecord> lts, NumberTable normalTable, NumberTable specialTable) {
+    public void calculate(List<HistoryItem> lts, NumberTable normalTable, NumberTable specialTable) {
         if (mCalculator != null) {
             mCalculator.calculate(lts, normalTable, specialTable);
         }
