@@ -21,6 +21,17 @@
     <string name="calculate_result">计算结果</string>
     <string name="title_activity_selection_history">SelectionHistoryActivity</string>
     <string name="delete">删除</string>
-    <string name="add_record">手动添加号码...</string>
+    <string name="add_record">手动添加号码…</string>
     <string name="operation_failed">操作失败.</string>
+    <string name="loading">正在加载…</string>
+    <string name="load_more">加载更多…</string>
+    <string name="no_more">~已经到底了~</string>
+    <string name="history_item_text_format">
+        开奖日期：%1$s\n
+        开奖号码：%2$s\n</string>
+    <string name="load_failed">加载失败，请检查网络之后重试…</string>
+    <string name="view_selection">查看选号中奖纪录…</string>
+    <string name="save_calculate_result">保存计算结果</string>
+    <string name="view_selection_hint">已保存，请到“选号中奖纪录”中查看。</string>
+    <string name="view_it">查看</string>
 </resources>

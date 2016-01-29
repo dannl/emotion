@@ -38,7 +38,7 @@ public class DataProvider {
     private List<HistoryItem> mDLTs;
     private LoadTask mLoadTask;
 
-    public void loadDLT(@NotNull final DataLoadingCallback callback) {
+    public void loadDLT(@NotNull final DataLoadingCallback<List<HistoryItem>> callback) {
         if (mDLTs != null) {
             callback.onLoaded(mDLTs);
             return;

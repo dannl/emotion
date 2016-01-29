@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.qqdd.lottery.R;
+import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
@@ -35,9 +36,9 @@ public class DLTHistoryActivity extends AppCompatActivity {
             @Override
             public void onClick(final View view) {
                 DataProvider.getInstance()
-                        .loadDLT(new DataLoadingCallback<List<LotteryRecord>>() {
+                        .loadDLT(new DataLoadingCallback<List<HistoryItem>>() {
                             @Override
-                            public void onLoaded(List<LotteryRecord> result) {
+                            public void onLoaded(List<HistoryItem> result) {
                                 if (result == null || result.isEmpty()) {
                                     return;
                                 }
@@ -91,9 +92,9 @@ public class DLTHistoryActivity extends AppCompatActivity {
             }
         });
         final ListView listView = (ListView) findViewById(R.id.list);
-        DataProvider.getInstance().loadDLT(new DataLoadingCallback<List<LotteryRecord>>() {
+        DataProvider.getInstance().loadDLT(new DataLoadingCallback<List<HistoryItem>>() {
             @Override
-            public void onLoaded(final List<LotteryRecord> result) {
+            public void onLoaded(final List<HistoryItem> result) {
                 listView.setAdapter(new BaseAdapter() {
                     @Override
                     public int getCount() {

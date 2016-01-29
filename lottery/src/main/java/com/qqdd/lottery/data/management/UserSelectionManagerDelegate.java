@@ -12,22 +12,22 @@ import java.util.List;
 
 import la.niub.util.utils.AppContext;
 
-public class UserSelectionProvider {
+public class UserSelectionManagerDelegate {
 
-    private static final String CACHE_DIR = "selections";
+    private static final String CACHE_DIR = "selection";
 
     private static class SingletonHolder {
-        private static UserSelectionProvider INSTANCE = new UserSelectionProvider();
+        private static UserSelectionManagerDelegate INSTANCE = new UserSelectionManagerDelegate();
     }
 
-    public static UserSelectionProvider getInstance() {
+    public static UserSelectionManagerDelegate getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
     private UserSelectionManager mDataManager;
     private Task mTask;
 
-    private UserSelectionProvider() {
+    private UserSelectionManagerDelegate() {
         mDataManager = new UserSelectionManager(new File(FileUtils.getCacheDir(), CACHE_DIR));
     }
 

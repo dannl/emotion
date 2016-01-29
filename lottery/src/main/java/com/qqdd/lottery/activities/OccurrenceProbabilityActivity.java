@@ -1,6 +1,8 @@
 package com.qqdd.lottery.activities;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -18,10 +20,14 @@ import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.NumberTable;
+import com.qqdd.lottery.data.UserSelection;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 import com.qqdd.lottery.data.management.DataProvider;
+import com.qqdd.lottery.data.management.UserSelectionOperationResult;
+import com.qqdd.lottery.data.management.UserSelectionManagerDelegate;
 import com.qqdd.lottery.ui.view.NumberView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import la.niub.util.display.DisplayManager;
@@ -106,7 +112,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
                 mCalculators.calculate(result, count, loop,
                         new DataLoadingCallback<List<Lottery>>() {
                             @Override
-                            public void onLoaded(List<Lottery> result) {
+                            public void onLoaded(final List<Lottery> result) {
                                 dismissProgress();
                                 final StringBuilder builder = new StringBuilder();
                                 for (int i = 0; i < result.size(); i++) {
@@ -116,6 +122,12 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
                                         .setMessage(builder.toString())
                                         .setNegativeButton(R.string.cancel, null)
                                         .setTitle(R.string.calculate_result)
+                                        .setPositiveButton(R.string.save_calculate_result, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                saveResult(result);
+                                            }
+                                        })
                                         .show();
                             }
 
@@ -161,6 +173,49 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
     private void showSnakeBar(final String msg) {
         Snackbar.make(findViewById(R.id.drawer_layout), msg, Snackbar.LENGTH_LONG).show();
+    }
+
+    private void saveResult(List<Lottery> result) {
+        final List<UserSelection> userSelections = new ArrayList<>(result.size());
+        for (int i = 0; i < result.size(); i++) {
+            userSelections.add(new UserSelection(result.get(i)));
+        }
+        UserSelectionManagerDelegate.getInstance().addUserSelections(userSelections, new DataLoadingCallback<UserSelectionOperationResult>() {
+            @Override
+            public void onLoaded(UserSelectionOperationResult result) {
+                new AlertDialog.Builder(OccurrenceProbabilityActivity.this)
+                        .setMessage(R.string.view_selection_hint)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.view_it, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                handleViewSelectionClicked(null);
+                            }
+                        })
+                        .show();
+            }
+
+            @Override
+            public void onLoadFailed(String err) {
+                showSnakeBar(err);
+            }
+
+            @Override
+            public void onBusy() {
+                showSnakeBar(getString(R.string.duplicated_operation));
+            }
+
+            @Override
+            public void onProgressUpdate(Object... progress) {
+
+            }
+        });
+    }
+
+
+    public void handleViewSelectionClicked(View view) {
+        final Intent intent = new Intent(this, SelectionHistoryActivity.class);
+        startActivity(intent);
     }
 
 }

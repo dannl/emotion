@@ -44,7 +44,7 @@ public class UserSelectionManager {
     }
 
     public UserSelectionOperationResult getUserSelectionList(List<HistoryItem> history) {
-        loadSummaryIfNeeded(history);
+        loadSummaryIfNeeded();
         if (mCache == null) {
             mCache = getLatest(history, mRootFile);
         }
@@ -74,6 +74,7 @@ public class UserSelectionManager {
     }
 
     public UserSelectionOperationResult addUserSelection(List<UserSelection> userSelections) {
+        loadSummaryIfNeeded();
         final File notRedeemedFile = new File(mRootFile, NOT_REDEEMED_FILE);
         final List<UserSelection> alreadyAdded = new ArrayList<>(userSelections);
         if (notRedeemedFile.exists()) {
@@ -82,7 +83,9 @@ public class UserSelectionManager {
         saveUserSelection(notRedeemedFile, alreadyAdded);
         for (int i = 0; i < userSelections.size(); i++) {
             final UserSelection userSelection = userSelections.get(i);
-            mCache.add(0, userSelection);
+            if (mCache != null) {
+                mCache.add(0, userSelection);
+            }
             mSummary.totalBoughtCount++;
             mSummary.totalCost += userSelection.getConfiguration()
                     .getCost();
@@ -129,7 +132,10 @@ public class UserSelectionManager {
         return new UserSelectionOperationResult(mCache, ResultType.SUCCESS);
     }
 
-    private void loadSummaryIfNeeded(List<HistoryItem> history) {
+    private void loadSummaryIfNeeded() {
+        if (mSummary != null) {
+            return;
+        }
         final File summaryFile = new File(mRootFile, SUMMARY_FILE);
         if (summaryFile.exists()) {
             try {
@@ -139,34 +145,35 @@ public class UserSelectionManager {
             }
         }
         if (mSummary == null) {
-            UserSelectionOperationResult list = getLatest(history, mRootFile);
             UserSelectionSummary summary = new UserSelectionSummary();
-            do {
-                if (list.isEmpty()) {
-                    break;
-                }
-                for (int i = 0; i < list.size(); i++) {
-                    LotteryRecord record = list.get(i);
-                    if (record instanceof UserSelection) {
-                        final RewardRule.RewardDetail detail = ((UserSelection) record).getRewardDetail();
-                        if (detail != null) {
-                            final int money = detail.getReward()
-                                    .getMoney();
-                            if (money > 0) {
-                                summary.totalReward += money;
-                                summary.totalRewardTime++;
-                            }
-                        }
-                        summary.totalCost += record.getLottery()
-                                .getConfiguration()
-                                .getCost();
-                        summary.totalBoughtCount++;
-                    }
-                }
-                list = loadMoreImpl(history, list.get(list.size() - 1)
-                        .getDate()
-                        .getTime());
-            } while (list.hasMore());
+            //FIXME what to do if user deleted the file...
+//            UserSelectionOperationResult list = getLatest(history, mRootFile);
+//            do {
+//                if (list.isEmpty()) {
+//                    break;
+//                }
+//                for (int i = 0; i < list.size(); i++) {
+//                    LotteryRecord record = list.get(i);
+//                    if (record instanceof UserSelection) {
+//                        final RewardRule.RewardDetail detail = ((UserSelection) record).getRewardDetail();
+//                        if (detail != null) {
+//                            final int money = detail.getReward()
+//                                    .getMoney();
+//                            if (money > 0) {
+//                                summary.totalReward += money;
+//                                summary.totalRewardTime++;
+//                            }
+//                        }
+//                        summary.totalCost += record.getLottery()
+//                                .getConfiguration()
+//                                .getCost();
+//                        summary.totalBoughtCount++;
+//                    }
+//                }
+//                list = loadMoreImpl(history, list.get(list.size() - 1)
+//                        .getDate()
+//                        .getTime());
+//            } while (list.hasMore());
             saveSummary(summary);
             mSummary = summary;
         }

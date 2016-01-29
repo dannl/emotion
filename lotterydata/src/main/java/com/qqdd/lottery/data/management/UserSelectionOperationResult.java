@@ -22,9 +22,12 @@ public class UserSelectionOperationResult extends ArrayList<LotteryRecord> {
     }
 
     public UserSelectionOperationResult(UserSelectionOperationResult src, ResultType type) {
-        super(src);
-        mHasMore = src.hasMore();
-        mSummary = src.getSummary();
+        super();
+        if (src != null) {
+            addAll(src);
+            mHasMore = src.hasMore();
+            mSummary = src.getSummary();
+        }
         mResultType = type;
     }
 

@@ -27,7 +27,7 @@ import java.util.Set;
 
 public class TestAlgorithm {
 
-    public static final int CALCULATE_TIMES = 1000;
+    public static final int CALCULATE_TIMES = 1000000;
     public static final int TEST_SINCE = 4;
 
     public static void main(String[] args) {
@@ -60,26 +60,16 @@ public class TestAlgorithm {
         final List<UserSelection> userSelections = new ArrayList<>(result.size());
         for (int i = 0; i < result.size(); i++) {
             final UserSelection useSelection = new UserSelection(result.get(i));
-            //            final long l = 24 * 60 * 60 * 1000 * 50l;
-            //            useSelection.setDate(new Date(System.currentTimeMillis() - l));
+            useSelection.sort();
             userSelections.add(useSelection);
         }
         UserSelectionManager manager = new UserSelectionManager(new File(getProjectRoot(), "selection"));
-        manager.getUserSelectionList(history);
         manager.addUserSelection(userSelections);
-        manager.flushCache(history);
         UserSelectionOperationResult list = manager.getUserSelectionList(history);
         System.out.println("has more: " + list.hasMore());
         for (int i = 0; i < list.size(); i++) {
             System.out.println(list.get(i).getClass() + list.get(i).toString());
         }
-        System.out.println(list.getSummary().toString());
-        list = manager.delete((UserSelection) list.get(list.size() - 1));
-        System.out.println("===================");
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i).getClass() + list.get(i).toString());
-        }
-        System.out.println(list.getSummary().toString());
     }
 
     private static List<Lottery> calculate(final int count) {

@@ -101,6 +101,14 @@
                 style="@style/AppButtonStyle"
                 android:text="@string/calculate"
                 android:onClick="handleCalculateClicked"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="@dimen/main_margin"
+                style="@style/AppButtonStyle"
+                android:text="@string/view_selection"
+                android:onClick="handleViewSelectionClicked"/>
         </LinearLayout>
     </ScrollView>
 

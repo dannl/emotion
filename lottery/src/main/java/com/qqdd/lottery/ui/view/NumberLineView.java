@@ -15,20 +15,23 @@ import com.qqdd.lottery.data.Number;
 public class NumberLineView extends LinearLayout {
     public NumberLineView(Context context) {
         super(context);
+        setOrientation(HORIZONTAL);
     }
 
     public NumberLineView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setOrientation(HORIZONTAL);
     }
 
     public NumberLineView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setOrientation(HORIZONTAL);
     }
 
     private LotteryConfiguration mConfiguration;
 
     public void setLottery(final ILottery lottery) {
-        if (lottery == null || lottery.isValid()) {
+        if (lottery == null || !lottery.isValid()) {
             removeAllViews();
             return;
         }
@@ -63,7 +66,7 @@ public class NumberLineView extends LinearLayout {
 
     @NonNull
     private static LayoutParams newLayoutParam() {
-        final LayoutParams params = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+        final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
         params.weight = 1;
         return params;
     }

@@ -9,14 +9,23 @@
     tools:context=".activities.SelectionHistoryActivity"
     tools:showIn="@layout/activity_selection_history">
 
+    <TextView
+        style="@style/AppPrimaryTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/main_margin"
+        android:id="@+id/summary"
+        />
+
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/summary"
+        android:id="@+id/history_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:paddingBottom="@dimen/main_margin"
         android:paddingLeft="@dimen/main_margin"
         android:paddingRight="@dimen/main_margin"
-        android:paddingTop="@dimen/main_margin"
-        android:clipToPadding="false"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/history_list"/>
+         />
 
 </RelativeLayout>
