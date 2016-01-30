@@ -22,45 +22,6 @@
             android:paddingRight="@dimen/main_margin"
             android:paddingTop="@dimen/main_margin"
             android:orientation="vertical">
-
-            <LinearLayout
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/normal_num_area"/>
-
-                <com.qqdd.lottery.ui.view.MatchHeightGridView
-                    android:id="@+id/normal_num_area"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/main_margin"
-                    android:gravity="center"
-                    android:numColumns="8"
-                    android:stretchMode="columnWidth"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/main_margin"
-                    android:text="@string/special_num_area"/>
-
-                <com.qqdd.lottery.ui.view.MatchHeightGridView
-                    android:id="@+id/special_num_area"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/main_margin"
-                    android:gravity="center"
-                    android:numColumns="8"
-                    android:stretchMode="columnWidth"
-                    />
-
-            </LinearLayout>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

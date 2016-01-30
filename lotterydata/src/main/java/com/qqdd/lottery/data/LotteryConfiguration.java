@@ -15,6 +15,13 @@ public class LotteryConfiguration {
         return DLTInstanceHolder.INSTANCE;
     }
 
+    public static LotteryConfiguration getWithType(final Lottery.Type type) {
+        if (type == Lottery.Type.DLT) {
+            return DLTConfiguration();
+        }
+        return null;
+    }
+
     private final int mNormalSize;
     private final int mSpecialSize;
     private final int mNormalRange;

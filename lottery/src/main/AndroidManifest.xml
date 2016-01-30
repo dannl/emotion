@@ -26,14 +26,18 @@
         <activity
             android:name=".activities.DLTHistoryActivity"
             android:label="@string/title_activity_dlt"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.OccurrenceProbabilityActivity"
             android:label="@string/title_activity_occurrence_probability"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.SelectionHistoryActivity"
             android:label="@string/title_activity_selection_history"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.ManualSelectionActivity"
+            android:label="@string/title_activity_manual_selection"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

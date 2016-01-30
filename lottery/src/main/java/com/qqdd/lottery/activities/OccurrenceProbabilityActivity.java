@@ -33,11 +33,6 @@ import java.util.List;
 import la.niub.util.display.DisplayManager;
 
 public class OccurrenceProbabilityActivity extends BaseActivity {
-
-    private GridView mNormalNumberView;
-    private GridView mSpecialNumberView;
-    private NumAreaAdapter mNormalNumberAdapter;
-    private NumAreaAdapter mSpecialNumberAdapter;
     private NumberTable mNormalNumbers;
     private NumberTable mSpecialNumbers;
     private CalculatorCollection mCalculators;
@@ -49,25 +44,11 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        initViews();
-        setupNumberView(mNormalNumberView);
-        setupNumberView(mSpecialNumberView);
         setupCalculatorsView();
 
         setupData();
     }
 
-
-    private void initViews() {
-        mNormalNumberView = (GridView) findViewById(R.id.normal_num_area);
-        mSpecialNumberView = (GridView) findViewById(R.id.special_num_area);
-    }
-
-    private void setupNumberView(GridView v) {
-        final int screenWidth = DisplayManager.screenWidthPixel(this);
-        final int columns = (int) (screenWidth / (getResources().getDimensionPixelSize(R.dimen.number_item_size) * 1.3));
-        v.setNumColumns(columns);
-    }
 
     private void setupCalculatorsView() {
         mCalculators = new CalculatorCollection();
@@ -83,12 +64,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         LotteryConfiguration lotteryConfiguration = LotteryConfiguration.DLTConfiguration();
         mNormalNumbers = new NumberTable(lotteryConfiguration.getNormalRange());
         mSpecialNumbers = new NumberTable(lotteryConfiguration.getSpecialRange());
-        mNormalNumberAdapter = new NumAreaAdapter(mNormalNumbers,
-                NumberView.Display.NORMAL);
-        mNormalNumberView.setAdapter(mNormalNumberAdapter);
-        mSpecialNumberAdapter = new NumAreaAdapter(mSpecialNumbers,
-                NumberView.Display.SPECIAL);
-        mSpecialNumberView.setAdapter(mSpecialNumberAdapter);
+
     }
 
     public void handleCalculateClicked(View view) {

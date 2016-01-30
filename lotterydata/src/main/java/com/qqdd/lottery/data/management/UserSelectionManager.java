@@ -455,7 +455,7 @@ public class UserSelectionManager {
 
         @Override
         public String toString() {
-            return "购买：" + totalBoughtCount + " 消费：" + totalCost + " 奖金：" + totalReward + " 中奖次数：" + totalRewardTime;
+            return "购买个数：" + totalBoughtCount + "\t总花费：" + totalCost + "\n获得奖金：" + totalReward + "\t中奖次数：" + totalRewardTime;
         }
     }
 }

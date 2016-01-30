@@ -28,9 +28,9 @@
 
     <TextView
         android:id="@+id/reward_msg"
-        style="@style/AppButtonStyle"
+        style="@style/AppPrimaryTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/main_margin"
-        android:background="@android:color/white" />
+        android:gravity="left"
+        />
 </LinearLayout>

@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import la.niub.util.utils.IOUtilities;
@@ -23,6 +24,8 @@ import la.niub.util.utils.StorageHelper;
  * Created by danliu on 2016/1/19.
  */
 public class DataProvider {
+
+    private static final long ONE_DAY = 24 * 60 * 60 * 1000;
 
     private static class SingletonHolder {
         private static final DataProvider INSTANCE = new DataProvider();
@@ -60,10 +63,10 @@ public class DataProvider {
 
         private DataSource mDataSource;
         private Lottery.Type mType;
-        private DataLoadingCallback mCallback;
+        private DataLoadingCallback<List<HistoryItem>> mCallback;
 
         LoadTask(final Lottery.Type type, final DataSource dataSource,
-                 DataLoadingCallback callback) {
+                 DataLoadingCallback<List<HistoryItem>> callback) {
             mType = type;
             mDataSource = dataSource;
             mCallback = callback;
@@ -154,6 +157,17 @@ public class DataProvider {
                     mCallback.onLoadFailed("load from local failed.");
                     mLoadTask = null;
                 } else {
+                    final HistoryItem firstCache = lotteryRecords.get(0);
+                    final Date date = firstCache.getDate();
+                    final long deltaTime = System.currentTimeMillis() - date.getTime();
+                    if (deltaTime < 2 * ONE_DAY
+                            //周3是3.
+                            || (date.getDay() == 3 && deltaTime < 3 * ONE_DAY)) {
+                        mDLTs = lotteryRecords;
+                        mCallback.onLoaded(mDLTs);
+                        mLoadTask = null;
+                        return;
+                    }
                     mDataSource.getNewSince(lotteryRecords.get(0), new DataLoadingCallback<List<HistoryItem>>() {
                         @Override
                         public void onLoaded(List<HistoryItem> result) {

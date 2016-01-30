@@ -7,4 +7,6 @@ public class Constants {
 
     public static final String DLT_REPO_URL_FORMAT = "http://www.lottery.gov.cn/lottery/dlt/History.aspx?p=28";
 
+    public static final String KEY_LOTTERY = "lottery";
+    public static final String KEY_TYPE = "type";
 }

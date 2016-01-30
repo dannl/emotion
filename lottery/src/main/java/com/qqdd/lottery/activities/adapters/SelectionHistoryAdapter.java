@@ -7,11 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.qqdd.lottery.BaseActivity;
 import com.qqdd.lottery.R;
+import com.qqdd.lottery.activities.SelectionHistoryActivity;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.UserSelection;
+import com.qqdd.lottery.data.management.DataLoadingCallback;
+import com.qqdd.lottery.data.management.UserSelectionManagerDelegate;
 import com.qqdd.lottery.data.management.UserSelectionOperationResult;
 import com.qqdd.lottery.ui.view.NumberLineView;
 
@@ -31,21 +35,23 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private UserSelectionOperationResult mData;
     private boolean mIsLoading = false;
+    private SelectionHistoryActivity mActivity;
 
-    public SelectionHistoryAdapter() {
+    public SelectionHistoryAdapter(SelectionHistoryActivity activity) {
+        mActivity = activity;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == VIEW_TYPE_SELECTION) {
-            return new SelectionItemViewHolder(inflater.inflate(R.layout.selection_history_item, parent, false));
+            return new SelectionItemViewHolder(mActivity, inflater.inflate(R.layout.selection_history_item, parent, false));
         } else if (viewType == VIEW_TYPE_ADD) {
-            return new AddManualSelectionViewHolder(inflater.inflate(R.layout.add_record_item, parent, false));
+            return new AddManualSelectionViewHolder(mActivity, inflater.inflate(R.layout.add_record_item, parent, false));
         } else if (viewType == VIEW_TYPE_HISTORY_RECORD) {
             return new HistoryRecordViewHolder(inflater.inflate(R.layout.history_record_item, parent, false));
         } else {
-            return new LoadMoreViewHolder(inflater.inflate(R.layout.load_more_item, parent, false));
+            return new LoadMoreViewHolder(mActivity, inflater.inflate(R.layout.load_more_item, parent, false));
         }
     }
 
@@ -67,6 +73,7 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
             final LoadMoreViewHolder loadMoreHolder = (LoadMoreViewHolder) holder;
             loadMoreHolder.setIsLoading(mIsLoading);
             loadMoreHolder.setHasMore(mData.hasMore());
+            loadMoreHolder.setData(mData);
         } else {
             ((MyViewHolder) holder).bind(mData.get(position - 1));
         }
@@ -113,8 +120,18 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private static class AddManualSelectionViewHolder extends RecyclerView.ViewHolder {
 
-        public AddManualSelectionViewHolder(View itemView) {
+        private SelectionHistoryActivity mActivity;
+
+        public AddManualSelectionViewHolder(SelectionHistoryActivity activity, View itemView) {
             super(itemView);
+            mActivity = activity;
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mActivity.addUserSelection();
+                }
+            });
         }
 
     }
@@ -124,35 +141,44 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
         private NumberLineView mNumberLineView;
         private TextView mDeleteView;
         private TextView mRewardMsgView;
+        private SelectionHistoryActivity mActivity;
 
-        public SelectionItemViewHolder(View itemView) {
+        public SelectionItemViewHolder(SelectionHistoryActivity activity, View itemView) {
             super(itemView);
+            this.mActivity = activity;
             mNumberLineView = (NumberLineView) itemView.findViewById(R.id.number_line);
             mDeleteView = (TextView) itemView.findViewById(R.id.delete);
             mRewardMsgView = (TextView) itemView.findViewById(R.id.reward_msg);
         }
 
         @Override
-        protected void bind(LotteryRecord record) {
+        protected void bind(final LotteryRecord record) {
             final UserSelection userSelection = (UserSelection) record;
             mNumberLineView.setLottery(userSelection.getLottery());
             mDeleteView.setVisibility(userSelection.isRedeemed() ? View.GONE : View.VISIBLE);
             mDeleteView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO delete logic.
+                    mActivity.deleteUserSelection(userSelection);
                 }
             });
             final RewardRule.RewardDetail rewardDetail = userSelection.getRewardDetail();
-            if (rewardDetail == null) {
+            if (rewardDetail == null || rewardDetail.getReward().getMoney() <= 0) {
                 mRewardMsgView.setVisibility(View.GONE);
             } else {
                 mRewardMsgView.setVisibility(View.VISIBLE);
-                //FIXME display it!!
-                mRewardMsgView.setText(rewardDetail.getReward().getMoney());
+                final Resources resources = mRewardMsgView.getResources();
+                mRewardMsgView.setText(resources.getString(R.string.reward_hint_format, rewardDetail.getReward().getMoney()));
+            }
+            if (rewardDetail == null) {
+                mNumberLineView.setAlpha(1.0f);
+            } else {
+                mNumberLineView.setAlpha(0.5f);
             }
         }
+
     }
+
 
     private static class HistoryRecordViewHolder extends MyViewHolder {
 
@@ -160,7 +186,7 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         public HistoryRecordViewHolder(View itemView) {
             super(itemView);
-            contentView = (TextView) itemView;
+            contentView = (TextView) itemView.findViewById(R.id.history_record_content);
         }
 
         @Override
@@ -174,11 +200,14 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         private View progress;
         private TextView textView;
+        private SelectionHistoryActivity mActivity;
 
-        public LoadMoreViewHolder(View itemView) {
+        public LoadMoreViewHolder(SelectionHistoryActivity activity, View itemView) {
             super(itemView);
+            mActivity = activity;
             progress = itemView.findViewById(R.id.progress);
             textView = (TextView) itemView.findViewById(R.id.load_more_text);
+
         }
 
         public void setHasMore(boolean hasMore) {
@@ -196,6 +225,18 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
                 textView.setVisibility(View.VISIBLE);
             }
 
+        }
+
+        public void setData(final UserSelectionOperationResult data) {
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (data != null && data.hasMore()) {
+                        final LotteryRecord last = data.get(data.size() - 1);
+                        mActivity.loadMore(last);
+                    }
+                }
+            });
         }
     }
 }

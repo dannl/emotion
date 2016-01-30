@@ -28,10 +28,11 @@ import java.util.Set;
 public class TestAlgorithm {
 
     public static final int CALCULATE_TIMES = 1000000;
-    public static final int TEST_SINCE = 4;
+    public static final int TEST_SINCE = 1000;
 
     public static void main(String[] args) {
-        testLocalCache();
+//        testLocalCache();
+        testARound();
     }
 
     private static List<Lottery> calculateResult() {

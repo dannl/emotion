@@ -3,6 +3,7 @@ package com.qqdd.lottery.ui.view;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
@@ -15,17 +16,22 @@ import com.qqdd.lottery.data.Number;
 public class NumberLineView extends LinearLayout {
     public NumberLineView(Context context) {
         super(context);
-        setOrientation(HORIZONTAL);
+        init();
     }
 
     public NumberLineView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setOrientation(HORIZONTAL);
+        init();
     }
 
     public NumberLineView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
         setOrientation(HORIZONTAL);
+        setGravity(Gravity.CENTER_VERTICAL);
     }
 
     private LotteryConfiguration mConfiguration;
