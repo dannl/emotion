@@ -35,7 +35,7 @@
     <string name="view_it">查看</string>
     <string name="reward_hint_format">恭喜中奖！中奖金额%s元！！</string>
     <string name="deleting">正在删除…</string>
-    <string name="title_activity_manual_selection">ManualSelectionActivity</string>
+    <string name="title_activity_manual_selection">手选</string>
     <string name="adding">添加中…</string>
     <string name="confirm">确认</string>
 </resources>

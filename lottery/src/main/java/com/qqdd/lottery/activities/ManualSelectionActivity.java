@@ -101,7 +101,7 @@ public class ManualSelectionActivity extends AppCompatActivity {
                     lottery.addNormal(normal.get(i).getValue());
                 }
                 for (int i = 0; i < specials.size(); i++) {
-                    lottery.addSpecial(normal.get(i).getValue());
+                    lottery.addSpecial(specials.get(i).getValue());
                 }
                 final Intent intent = new Intent();
                 intent.putExtra(Constants.KEY_LOTTERY, lottery.toJson().toString());
