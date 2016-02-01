@@ -76,7 +76,7 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
                         mConfiguration);
                 tempBuffer.add(lottery);
             }
-            final File cacheFile = new File(FileUtils.getCacheDir(), "GO_HOME_RECORD" + mLoopCount);
+            final File cacheFile = new File(FileUtils.getCacheDir(), "GO_HOME_RECORD_" + mConfiguration.getType() + mLoopCount);
             TimeToGoHome ttgh = null;
             if (cacheFile.exists()) {
                 try {

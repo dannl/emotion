@@ -33,10 +33,15 @@ public class SelectionsActivity extends BaseActivity implements SelectionHistory
     private static final int REQUEST_ADD_MANUAL_SELECTION = 0x1;
     private RecyclerView mList;
     private SelectionHistoryAdapter mAdapter;
+    private Lottery.Type mType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mType = (Lottery.Type) getIntent().getSerializableExtra(Constants.KEY_TYPE);
+        if (mType == null) {
+            mType = Lottery.Type.DLT;
+        }
         setContentView(R.layout.activity_selections);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -52,30 +57,32 @@ public class SelectionsActivity extends BaseActivity implements SelectionHistory
     private void loadData() {
         mAdapter.setIsLoading(true);
         showProgress(R.string.loading);
-        DataProvider.getInstance().loadDLT(new DataLoadingCallback<List<HistoryItem>>() {
+        DataProvider.getInstance().load(mType,new DataLoadingCallback<List<HistoryItem>>() {
             @Override
             public void onLoaded(List<HistoryItem> result) {
-                UserSelectionManagerDelegate.getInstance().loadNotRedeemed(result, new DataLoadingCallback<UserSelectionOperationResult>() {
-                    @Override
-                    public void onLoaded(UserSelectionOperationResult result) {
-                        operationSucceeded(result);
-                    }
+                UserSelectionManagerDelegate.getInstance()
+                        .loadNotRedeemed(mType, result,
+                                new DataLoadingCallback<UserSelectionOperationResult>() {
+                                    @Override
+                                    public void onLoaded(UserSelectionOperationResult result) {
+                                        operationSucceeded(result);
+                                    }
 
-                    @Override
-                    public void onLoadFailed(String err) {
-                        loadFailed();
-                    }
+                                    @Override
+                                    public void onLoadFailed(String err) {
+                                        loadFailed();
+                                    }
 
-                    @Override
-                    public void onBusy() {
-                        loadFailed();
-                    }
+                                    @Override
+                                    public void onBusy() {
+                                        loadFailed();
+                                    }
 
-                    @Override
-                    public void onProgressUpdate(Object... progress) {
+                                    @Override
+                                    public void onProgressUpdate(Object... progress) {
 
-                    }
-                });
+                                    }
+                                });
             }
 
             @Override
@@ -109,7 +116,7 @@ public class SelectionsActivity extends BaseActivity implements SelectionHistory
 
     public void deleteUserSelection(UserSelection userSelection) {
         showProgress(R.string.deleting);
-        UserSelectionManagerDelegate.getInstance().delete(userSelection, new DataLoadingCallback<UserSelectionOperationResult>() {
+        UserSelectionManagerDelegate.getInstance().delete(mType, userSelection, new DataLoadingCallback<UserSelectionOperationResult>() {
             @Override
             public void onLoaded(UserSelectionOperationResult result) {
                 operationSucceeded(result);
@@ -135,32 +142,35 @@ public class SelectionsActivity extends BaseActivity implements SelectionHistory
     }
 
     public void loadMore(final LotteryRecord last) {
-        DataProvider.getInstance().loadDLT(new DataLoadingCallback<List<HistoryItem>>() {
+        DataProvider.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
             @Override
             public void onLoaded(List<HistoryItem> result) {
-                UserSelectionManagerDelegate.getInstance().loadMore(result, last.getDate().getTime(), new DataLoadingCallback<UserSelectionOperationResult>() {
-                    @Override
-                    public void onLoaded(UserSelectionOperationResult result) {
-                        operationSucceeded(result);
-                    }
+                UserSelectionManagerDelegate.getInstance()
+                        .loadMore(mType, result, last.getDate()
+                                .getTime(),
+                                new DataLoadingCallback<UserSelectionOperationResult>() {
+                                    @Override
+                                    public void onLoaded(UserSelectionOperationResult result) {
+                                        operationSucceeded(result);
+                                    }
 
-                    @Override
-                    public void onLoadFailed(String err) {
-                        dismissProgress();
-                        showSnackBar(err);
-                    }
+                                    @Override
+                                    public void onLoadFailed(String err) {
+                                        dismissProgress();
+                                        showSnackBar(err);
+                                    }
 
-                    @Override
-                    public void onBusy() {
-                        dismissProgress();
-                        showSnackBar(getString(R.string.duplicated_operation));
-                    }
+                                    @Override
+                                    public void onBusy() {
+                                        dismissProgress();
+                                        showSnackBar(getString(R.string.duplicated_operation));
+                                    }
 
-                    @Override
-                    public void onProgressUpdate(Object... progress) {
+                                    @Override
+                                    public void onProgressUpdate(Object... progress) {
 
-                    }
-                });
+                                    }
+                                });
             }
 
             @Override
@@ -182,7 +192,7 @@ public class SelectionsActivity extends BaseActivity implements SelectionHistory
 
     public void addUserSelection() {
         final Intent intent = new Intent(this, ManualSelectionActivity.class);
-        intent.putExtra(Constants.KEY_TYPE, Lottery.Type.DLT);
+        intent.putExtra(Constants.KEY_TYPE, mType);
         startActivityForResult(intent, REQUEST_ADD_MANUAL_SELECTION);
     }
 
@@ -196,7 +206,7 @@ public class SelectionsActivity extends BaseActivity implements SelectionHistory
                     final Lottery lottery = Lottery.fromJson(new JSONObject(json));
                     UserSelection userSelection = new UserSelection(lottery);
                     showProgress(R.string.adding);
-                    UserSelectionManagerDelegate.getInstance().addUserSelection(userSelection, new DataLoadingCallback<UserSelectionOperationResult>() {
+                    UserSelectionManagerDelegate.getInstance().addUserSelection(mType, userSelection, new DataLoadingCallback<UserSelectionOperationResult>() {
                         @Override
                         public void onLoaded(UserSelectionOperationResult result) {
                             operationSucceeded(result);

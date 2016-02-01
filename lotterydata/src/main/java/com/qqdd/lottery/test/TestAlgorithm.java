@@ -31,12 +31,13 @@ public class TestAlgorithm {
 
     public static void main(String[] args) {
 //        testLocalCache();
-        testARound();
+//        testARound(Lottery.Type.SSQ);
+        testRandom(Lottery.Type.SSQ);
     }
 
-    private static List<Lottery> calculateResult() {
+    private static List<Lottery> calculateResult(Lottery.Type type) {
         final int resultCount = 5;
-        List<Lottery> result = calculate(resultCount);
+        List<Lottery> result = calculate(type, resultCount);
         System.out.println("\nresult is: ");
         for (int i = 0; i < result.size(); i++) {
             System.out.println(result.get(i)
@@ -45,30 +46,20 @@ public class TestAlgorithm {
         return result;
     }
 
-    private static void testLocalCache() {
-        final List<HistoryItem> history = DataLoader.loadData(getHistoryFile());
-        List<Lottery> result = calculateResult();
-        //        Lottery temp = Lottery.newDLT();
-        //        temp.addNormal(6);
-        //        temp.addNormal(7);
-        //        temp.addNormal(20);
-        //        temp.addNormal(29);
-        //        temp.addNormal(32);
-        //        temp.addSpecial(1);
-        //        temp.addSpecial(12);
-        //        result.add(temp);
+    private static void testLocalCache(Lottery.Type type) {
+        List<Lottery> result = calculateResult(type);
         final List<UserSelection> userSelections = new ArrayList<>(result.size());
         for (int i = 0; i < result.size(); i++) {
             final UserSelection useSelection = new UserSelection(result.get(i));
             useSelection.sort();
             userSelections.add(useSelection);
         }
-        UserSelectionManager manager = new UserSelectionManager(new File(getProjectRoot(), "selection"));
+        UserSelectionManager manager = new UserSelectionManager(new File(getProjectRoot(), UserSelectionManager.getCacheFolderWithType(type)));
         manager.addUserSelection(userSelections);
     }
 
-    private static List<Lottery> calculate(final int count) {
-        List<HistoryItem> history = DataLoader.loadData(getHistoryFile());
+    private static List<Lottery> calculate(Lottery.Type type, final int count) {
+        List<HistoryItem> history = DataLoader.loadData(getHistoryFile(type));
         List<CalculatorItem> calculatorList = createCalculatorList();
         final LotteryConfiguration configuration = LotteryConfiguration.DLTConfiguration();
         final NumberTable normalTable = new NumberTable(configuration.getNormalRange());
@@ -88,17 +79,17 @@ public class TestAlgorithm {
                     .calculate(history, normalTable, specialTable, configuration));
         }
         return NumberProducer.getInstance()
-                .select(tempBuffer, count, loadTimeToGoHome(CALCULATE_TIMES));
+                .select(tempBuffer, count, loadTimeToGoHome(type, CALCULATE_TIMES));
     }
 
-    private static void actualBuyingTest() {
+    private static void actualBuyingTest(Lottery.Type type) {
         double total = 0;
         double max = Double.MIN_VALUE;
         double min = Double.MAX_VALUE;
         final int testRound = 1000;
         int earnCount = 0;
         for (int i = 0; i < testRound; i++) {
-            final double v = actualBuyingARound();
+            final double v = actualBuyingARound(type);
             total += v;
             if (v > 0) {
                 earnCount++;
@@ -114,14 +105,14 @@ public class TestAlgorithm {
                 "total: " + total + " avr: " + total / testRound + " max: " + max + " min: " + min + " earn count: " + earnCount + " earn rate: " + (((float) earnCount) / testRound));
     }
 
-    private static double actualBuyingARound() {
-        final TestResult result = testAlgorithm();
+    private static double actualBuyingARound(Lottery.Type type) {
+        final TestResult result = testAlgorithm(type);
         System.out.println(result.toString());
         return result.calculateTotal() - 2 * result.totalTestCount;
     }
 
-    private static double testARound() {
-        final TestResult result = testAlgorithm();
+    private static double testARound(Lottery.Type type) {
+        final TestResult result = testAlgorithm(type);
         System.out.println(result.toString());
         float maxRate = 0;
         float minRate = 1;
@@ -149,28 +140,28 @@ public class TestAlgorithm {
         return result.getExpectationOnBuying(5);
     }
 
-    private static TestResult testRandom() {
-        List<HistoryItem> history = DataLoader.loadData(getHistoryFile());
+    private static TestResult testRandom(Lottery.Type type) {
+        List<HistoryItem> history = DataLoader.loadData(getHistoryFile(type));
         List<CalculatorItem> calculatorList = new ArrayList<>();
         calculatorList.add(new CalculatorItem(new AverageProbabilityCalculator()));
-        final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
+        final Task task = new Task(type, history,
                 calculatorList);
         final TestResult result = task.execute();
         return result;
     }
 
-    private static TestResult testAlgorithm() {
-        List<HistoryItem> history = DataLoader.loadData(getHistoryFile());
+    private static TestResult testAlgorithm(Lottery.Type type) {
+        List<HistoryItem> history = DataLoader.loadData(getHistoryFile(type));
         List<CalculatorItem> calculatorList = createCalculatorList();
-        final Task task = new Task(LotteryConfiguration.DLTConfiguration(), history,
+        final Task task = new Task(type, history,
                 calculatorList);
         final TestResult result = task.execute();
         return result;
     }
 
-    private static File getHistoryFile() {
+    private static File getHistoryFile(Lottery.Type type) {
         final File rootFolder = getProjectRoot();
-        final File history = new File(rootFolder, "DLT");
+        final File history = new File(rootFolder,type.toString());
         return history;
     }
 
@@ -183,14 +174,14 @@ public class TestAlgorithm {
         return new File(projectRoot);
     }
 
-    private static File getGoHomeRecordFile(int testTime) {
-        return new File(getProjectRoot(), "GO_HOME_RECORD" + testTime);
+    private static File getGoHomeRecordFile(Lottery.Type type, int testTime) {
+        return new File(getProjectRoot(), "GO_HOME_RECORD_" + type.toString() + testTime);
     }
 
-    private static TimeToGoHome loadTimeToGoHome(int testTime) {
+    private static TimeToGoHome loadTimeToGoHome(Lottery.Type type, int testTime) {
         try {
             final String content = DataLoader.loadContent(
-                    new FileInputStream(getGoHomeRecordFile(testTime)), "UTF-8");
+                    new FileInputStream(getGoHomeRecordFile(type, testTime)), "UTF-8");
             TimeToGoHome result = TimeToGoHome.fromJson(content);
             if (result != null) {
                 return result;
@@ -239,8 +230,8 @@ public class TestAlgorithm {
         private HashMap<LotteryRecord, Integer> goHomeDistribute = new HashMap<>();
         HashMap<LotteryRecord, Float> recordRate = new HashMap<>();
 
-        public TestResult(final int testTime) {
-            mTimeToGoHome = loadTimeToGoHome(testTime);
+        public TestResult(final Lottery.Type type, final int testTime) {
+            mTimeToGoHome = loadTimeToGoHome(type, testTime);
         }
 
         @Override
@@ -326,13 +317,15 @@ public class TestAlgorithm {
         private final List<CalculatorItem> mCalculators;
         private LotteryConfiguration mConfiguration;
         private TestResult mResult;
+        private Lottery.Type mType;
 
-        public Task(LotteryConfiguration configuration, List<HistoryItem> history,
+        public Task(Lottery.Type type, List<HistoryItem> history,
                     List<CalculatorItem> calculators) {
             mHistory = history;
             mCalculators = calculators;
-            mConfiguration = configuration;
-            mResult = new TestResult(CALCULATE_TIMES);
+            mConfiguration = LotteryConfiguration.getWithType(type);
+            mType = type;
+            mResult = new TestResult(type, CALCULATE_TIMES);
         }
 
         protected TestResult execute() {
@@ -390,7 +383,7 @@ public class TestAlgorithm {
         }
 
         private void updateGoHomeRecord() {
-            final File file = getGoHomeRecordFile(CALCULATE_TIMES);
+            final File file = getGoHomeRecordFile(mType, CALCULATE_TIMES);
             try {
                 DataLoader.saveToFile(file, mResult.mTimeToGoHome.toJson()
                         .toString(), "UTF8");

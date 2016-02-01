@@ -10,7 +10,7 @@ public class HistoryItem extends LotteryRecord {
 
     private RewardRule mRewardRule;
 
-    public HistoryItem(Lottery t, final DLTRewardRule rewardRule) {
+    public HistoryItem(Lottery t, final RewardRule rewardRule) {
         super(t);
         mRewardRule = rewardRule;
     }

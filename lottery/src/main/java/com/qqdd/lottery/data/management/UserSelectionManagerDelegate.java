@@ -5,16 +5,16 @@ import android.os.AsyncTask;
 import com.example.niub.utils.FileUtils;
 import com.qqdd.lottery.R;
 import com.qqdd.lottery.data.HistoryItem;
+import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.UserSelection;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import la.niub.util.utils.AppContext;
 
 public class UserSelectionManagerDelegate {
-
-    private static final String CACHE_DIR = "selection";
 
 
     private static class SingletonHolder {
@@ -25,86 +25,94 @@ public class UserSelectionManagerDelegate {
         return SingletonHolder.INSTANCE;
     }
 
-    private UserSelectionManager mDataManager;
-    private Task mTask;
+    private HashMap<Lottery.Type, UserSelectionManager> mManagers;
+    private HashMap<Lottery.Type, Task> mTaskCache;
 
     private UserSelectionManagerDelegate() {
-        mDataManager = new UserSelectionManager(new File(FileUtils.getCacheDir(), CACHE_DIR));
+        mManagers = new HashMap<>();
+        mManagers.put(Lottery.Type.DLT, new UserSelectionManager(new File(FileUtils.getCacheDir(),
+                UserSelectionManager.getCacheFolderWithType(Lottery.Type.DLT))));
+        mManagers.put(Lottery.Type.SSQ, new UserSelectionManager(new File(FileUtils.getCacheDir(),
+                UserSelectionManager.getCacheFolderWithType(Lottery.Type.SSQ))));
+        mTaskCache = new HashMap<>();
     }
 
 
-    public void loadNotRedeemed(final List<HistoryItem> history,
+    public void loadNotRedeemed(final Lottery.Type type, final List<HistoryItem> history,
                                 DataLoadingCallback<UserSelectionOperationResult> callback) {
-        executeRunnable(new Runnable() {
+        executeRunnable(type, new Runnable() {
             @Override
             public UserSelectionOperationResult execute() {
-                return mDataManager.getNotRedeemed(history);
+                return mManagers.get(type).getNotRedeemed(history);
             }
         }, callback);
 
     }
 
-    public void load(final List<HistoryItem> history, final DataLoadingCallback<UserSelectionOperationResult> callback) {
-        executeRunnable(new Runnable() {
+    public void load(final Lottery.Type type, final List<HistoryItem> history, final DataLoadingCallback<UserSelectionOperationResult> callback) {
+        executeRunnable(type, new Runnable() {
             @Override
             public UserSelectionOperationResult execute() {
-                return mDataManager.getUserSelectionList(history);
+                return mManagers.get(type).getUserSelectionList(history);
             }
         }, callback);
     }
 
-    public void loadMore(final List<HistoryItem> history, final long since, final DataLoadingCallback<UserSelectionOperationResult> callback) {
-        executeRunnable(new Runnable() {
+    public void loadMore(final Lottery.Type type, final List<HistoryItem> history, final long since, final DataLoadingCallback<UserSelectionOperationResult> callback) {
+        executeRunnable(type, new Runnable() {
             @Override
             public UserSelectionOperationResult execute() {
-                return mDataManager.loadMore(history, since);
+                return mManagers.get(type).loadMore(history, since);
             }
         }, callback);
     }
 
-    public void addUserSelection(final UserSelection userSelection, final DataLoadingCallback<UserSelectionOperationResult> callback) {
-        executeRunnable(new Runnable() {
+    public void addUserSelection(final Lottery.Type type,final UserSelection userSelection, final DataLoadingCallback<UserSelectionOperationResult> callback) {
+        executeRunnable(type, new Runnable() {
             @Override
             public UserSelectionOperationResult execute() {
-                return mDataManager.addUserSelection(userSelection);
+                return mManagers.get(type).addUserSelection(userSelection);
             }
         }, callback);
     }
-    public void addUserSelections(final List<UserSelection> userSelection, final DataLoadingCallback<UserSelectionOperationResult> callback) {
-        executeRunnable(new Runnable() {
+    public void addUserSelections(final Lottery.Type type,final List<UserSelection> userSelection, final DataLoadingCallback<UserSelectionOperationResult> callback) {
+        executeRunnable(type, new Runnable() {
             @Override
             public UserSelectionOperationResult execute() {
-                return mDataManager.addUserSelection(userSelection);
-            }
-        }, callback);
-    }
-
-    public void delete(final UserSelection userSelection, final DataLoadingCallback<UserSelectionOperationResult> callback) {
-        executeRunnable(new Runnable() {
-            @Override
-            public UserSelectionOperationResult execute() {
-                return mDataManager.delete(userSelection);
+                return mManagers.get(type).addUserSelection(userSelection);
             }
         }, callback);
     }
 
-    private void executeRunnable(Runnable runnable, DataLoadingCallback<UserSelectionOperationResult> callback) {
-        if (mTask != null) {
+    public void delete(final Lottery.Type type, final UserSelection userSelection, final DataLoadingCallback<UserSelectionOperationResult> callback) {
+        executeRunnable(type, new Runnable() {
+            @Override
+            public UserSelectionOperationResult execute() {
+                return mManagers.get(type).delete(userSelection);
+            }
+        }, callback);
+    }
+
+    private void executeRunnable(Lottery.Type type, Runnable runnable, DataLoadingCallback<UserSelectionOperationResult> callback) {
+        if (mTaskCache.get(type) != null) {
             callback.onBusy();
             return;
         }
-        mTask = new Task(runnable, callback);
-        mTask.execute();
+        final Task task = new Task(type, runnable, callback);
+        mTaskCache.put(type, task);
+        task.execute();
     }
 
     private class Task extends AsyncTask<Void,Void,UserSelectionOperationResult> {
 
         private final DataLoadingCallback<UserSelectionOperationResult> mCallback;
         private Runnable mRunnable;
+        private Lottery.Type mType;
 
-        Task(Runnable runnable, DataLoadingCallback<UserSelectionOperationResult> callback){
+        Task(Lottery.Type type, Runnable runnable, DataLoadingCallback<UserSelectionOperationResult> callback){
             mRunnable = runnable;
             mCallback = callback;
+            mType = type;
         }
 
         @Override
@@ -121,7 +129,7 @@ public class UserSelectionManagerDelegate {
                     mCallback.onLoadFailed(AppContext.getInstance().getResources().getString(R.string.operation_failed));
                 }
             }
-            mTask = null;
+            mTaskCache.remove(mType);
         }
     }
 

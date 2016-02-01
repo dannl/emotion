@@ -19,6 +19,8 @@ public abstract class RewardRule {
             final Lottery.Type type = Lottery.Type.valueOf(rewards.getString("type"));
             if (type == Lottery.Type.DLT) {
                 return DLTRewardRule.fromJson(rewards);
+            } else if (type == Lottery.Type.SSQ) {
+                return SSQRewardRule.fromJson(rewards);
             }
         } catch (JSONException ignored) {
         }

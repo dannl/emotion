@@ -15,7 +15,7 @@ import java.util.Set;
 public class Lottery implements ILottery {
 
     public enum Type {
-        DLT
+        SSQ, mType, NONE, DLT
     }
 
     private final NumberList mNormal = new NumberList();
@@ -122,16 +122,13 @@ public class Lottery implements ILottery {
         return result;
     }
 
-    public static Lottery newDLT() {
-        return new Lottery(Type.DLT, LotteryConfiguration.DLTConfiguration());
-    }
-
-
     public static Lottery newLotteryWithConfiguration(LotteryConfiguration configuration) {
         if (configuration == LotteryConfiguration.DLTConfiguration()) {
             return new Lottery(Type.DLT, configuration);
+        } else if (configuration == LotteryConfiguration.SSQConfiguration()) {
+            return new Lottery(Type.SSQ, configuration);
         }
-        return null;
+        return new Lottery(Type.NONE, configuration);
     }
 
 
@@ -146,7 +143,7 @@ public class Lottery implements ILottery {
             final JSONArray specials = lottery.getJSONArray("specials");
             Lottery result;
             if (type == Type.DLT) {
-                result = newDLT();
+                result = newLotteryWithConfiguration(LotteryConfiguration.DLTConfiguration());
                 for (int i = 0; i < normals.length(); i++) {
                     result.addNormal(normals.getInt(i));
                 }
@@ -154,7 +151,17 @@ public class Lottery implements ILottery {
                     result.addSpecial(specials.getInt(i));
                 }
                 return result;
-            } else {
+            } else if (type == Type.SSQ) {
+                result = newLotteryWithConfiguration(LotteryConfiguration.SSQConfiguration());
+                for (int i = 0; i < normals.length(); i++) {
+                    result.addNormal(normals.getInt(i));
+                }
+                for (int i = 0; i < specials.length(); i++) {
+                    result.addSpecial(specials.getInt(i));
+                }
+                return result;
+            }
+            else {
                 return null;
             }
         } catch (JSONException e) {

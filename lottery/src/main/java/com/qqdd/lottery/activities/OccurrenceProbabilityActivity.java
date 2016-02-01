@@ -14,6 +14,7 @@ import com.qqdd.lottery.R;
 import com.qqdd.lottery.calculate.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.CalculatorItem;
+import com.qqdd.lottery.data.Constants;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.UserSelection;
@@ -28,9 +29,15 @@ import java.util.List;
 public class OccurrenceProbabilityActivity extends BaseActivity {
     private CalculatorCollection mCalculators;
 
+    private Lottery.Type mType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mType = (Lottery.Type) getIntent().getSerializableExtra(Constants.KEY_TYPE);
+        if (mType == null) {
+            mType = Lottery.Type.DLT;
+        }
         setContentView(R.layout.activity_occurrence_probability);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -53,7 +60,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         showProgress(R.string.calculating);
         final String countText = ((TextView) findViewById(R.id.pick_number_count)).getText().toString();
         final String loopCountText = ((TextView) findViewById(R.id.calculate_count)).getText().toString();
-        DataProvider.getInstance().loadDLT(new DataLoadingCallback<List<HistoryItem>>() {
+        DataProvider.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
 
             @Override
             public void onLoaded(List<HistoryItem> result) {
@@ -74,18 +81,23 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
                                 dismissProgress();
                                 final StringBuilder builder = new StringBuilder();
                                 for (int i = 0; i < result.size(); i++) {
-                                    builder.append(result.get(i).toString()).append("\n");
+                                    builder.append(result.get(i)
+                                            .toString())
+                                            .append("\n");
                                 }
-                                new AlertDialog.Builder(OccurrenceProbabilityActivity.this)
-                                        .setMessage(builder.toString())
+                                new AlertDialog.Builder(
+                                        OccurrenceProbabilityActivity.this).setMessage(
+                                        builder.toString())
                                         .setNegativeButton(R.string.cancel, null)
                                         .setTitle(R.string.calculate_result)
-                                        .setPositiveButton(R.string.save_calculate_result, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                saveResult(result);
-                                            }
-                                        })
+                                        .setPositiveButton(R.string.save_calculate_result,
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog,
+                                                                        int which) {
+                                                        saveResult(result);
+                                                    }
+                                                })
                                         .show();
                             }
 
@@ -138,7 +150,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         for (int i = 0; i < result.size(); i++) {
             userSelections.add(new UserSelection(result.get(i)));
         }
-        UserSelectionManagerDelegate.getInstance().addUserSelections(userSelections, new DataLoadingCallback<UserSelectionOperationResult>() {
+        UserSelectionManagerDelegate.getInstance().addUserSelections(mType, userSelections, new DataLoadingCallback<UserSelectionOperationResult>() {
             @Override
             public void onLoaded(UserSelectionOperationResult result) {
                 new AlertDialog.Builder(OccurrenceProbabilityActivity.this)
@@ -173,11 +185,13 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
     public void handleViewSelectionClicked(View view) {
         final Intent intent = new Intent(this, SelectionRewardHistoryActivity.class);
+        intent.putExtra(Constants.KEY_TYPE, mType);
         startActivity(intent);
     }
 
     public void handleViewRedeemedClicked(View view) {
         final Intent intent = new Intent(this, SelectionsActivity.class);
+        intent.putExtra(Constants.KEY_TYPE, mType);
         startActivity(intent);
     }
 }

@@ -10,6 +10,7 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import com.qqdd.lottery.data.DLTRewardRule;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
+import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.RewardRule;
 
@@ -36,30 +37,6 @@ public class DLTSource extends DataSource {
             "<FONT class='FontRed'>([0-9 ]+)</FONT> \\+ <FONT class='FontBlue'>([0-9 ]+)</FONT>");
     private static final Pattern COLUMN_PATTERN = Pattern.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})");
     private static final Pattern TOTAL_PAGE_PATTERN = Pattern.compile("<span id=\"ContentPlaceHolderDefault_LabelTotalPages\">(\\d+)</span>");
-    private static final String TEST = "<td bgcolor=\"#fff3db\">\n" +
-            "                                3\n" +
-            "                            </td>\n" +
-            "                            <td bgcolor=\"#fff3db\">\n" +
-            "                                9927745\n" +
-            "                            </td>\n" +
-            "                            <td bgcolor=\"#fff3db\">\n" +
-            "                                1\n" +
-            "                            </td>\n" +
-            "                            <td bgcolor=\"#fff3db\">\n" +
-            "                                5956647\n" +
-            "                            </td>\n" +
-            "                            <td bgcolor=\"#eeffee\">\n" +
-            "                                68\n" +
-            "                            </td>\n" +
-            "                            <td bgcolor=\"#eeffee\">\n" +
-            "                                120953\n" +
-            "                            </td>\n" +
-            "                            <td bgcolor=\"#eeffee\">\n" +
-            "                                20\n" +
-            "                            </td>\n" +
-            "                            <td bgcolor=\"#eeffee\">\n" +
-            "                                72571\n" +
-            "                            </td>";
     private static final Pattern GO_HOME_MONEY_PATTERN = Pattern.compile("<td bgcolor=\"#fff3db\">\\s+(\\d+)\\s+</td>");
     private static final Pattern BUY_HOUSE_MONEY_PATTERN = Pattern.compile("<td bgcolor=\"#eeffee\">\\s+(\\d+)\\s+</td>");
     private LoadTask mRequestTask;
@@ -188,7 +165,7 @@ public class DLTSource extends DataSource {
             return null;
         }
         final Matcher matcher = NUMBER_PATTERN.matcher(line);
-        Lottery lt = Lottery.newDLT();
+        Lottery lt = Lottery.newLotteryWithConfiguration(LotteryConfiguration.DLTConfiguration());
         if (!matcher.find()) {
             return null;
         }

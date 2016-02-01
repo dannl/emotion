@@ -1,6 +1,7 @@
 package com.qqdd.lottery.data.management;
 
 import com.qqdd.lottery.data.HistoryItem;
+import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.UserSelection;
@@ -30,6 +31,9 @@ public class UserSelectionManager {
     private static final String NOT_REDEEMED_FILE = "not_redeemed";
     private static final String SUMMARY_FILE = "summary";
     private static final int LOADING_CAPACITY = 5;
+    public static final String getCacheFolderWithType(Lottery.Type type) {
+        return type.toString() + "_US";
+    }
 
     private File mRootFile;
     private UserSelectionOperationResult mCache;

@@ -40,4 +40,6 @@
     <string name="confirm">确认</string>
     <string name="title_activity_selections">本期选号</string>
     <string name="view_not_redeemed">查看本期选号…</string>
+    <string name="action_ssq_history">双色球历史数据…</string>
+    <string name="ssq">双色球</string>
 </resources>

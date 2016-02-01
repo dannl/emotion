@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import la.niub.util.utils.IOUtilities;
@@ -38,20 +39,30 @@ public class DataProvider {
     private DataProvider() {
     }
 
-    private List<HistoryItem> mDLTs;
-    private LoadTask mLoadTask;
+    private HashMap<Lottery.Type, LoadTask> mTaskCache = new HashMap<>();
+    private HashMap<Lottery.Type, List<HistoryItem>> mHistoryCache = new HashMap<>();
 
-    public void loadDLT(@NotNull final DataLoadingCallback<List<HistoryItem>> callback) {
-        if (mDLTs != null) {
-            callback.onLoaded(mDLTs);
+    public void load(@NotNull Lottery.Type type, @NotNull final DataLoadingCallback<List<HistoryItem>> callback) {
+        if (mHistoryCache.get(type) != null) {
+            callback.onLoaded(mHistoryCache.get(type));
             return;
         }
-        if (mLoadTask != null) {
+        if (mTaskCache.get(type) != null) {
             callback.onBusy();
             return;
         }
-        mLoadTask = new LoadTask(Lottery.Type.DLT, new DLTSource(), callback);
-        mLoadTask.execute();
+        DataSource dataSource;
+        if (type == Lottery.Type.DLT) {
+            dataSource = new DLTSource();
+        } else if (type == Lottery.Type.SSQ) {
+            dataSource = new SSQSource();
+        } else {
+            callback.onLoadFailed("不支持的类型!");
+            return;
+        }
+        final LoadTask task = new LoadTask(type, dataSource, callback);
+        mTaskCache.put(type, task);
+        task.execute();
     }
 
     public static File getCacheFile(Lottery.Type type) {
@@ -80,7 +91,7 @@ public class DataProvider {
                 mDataSource.getAll(new DataLoadingCallback<List<HistoryItem>>() {
                     @Override
                     public void onLoaded(List<HistoryItem> result) {
-                        mDLTs = result;
+                        mHistoryCache.put(mType, result);
                         mSaveToLocalTask.execute();
                     }
 
@@ -92,13 +103,13 @@ public class DataProvider {
                     @Override
                     public void onLoadFailed(String err) {
                         mCallback.onLoadFailed(err);
-                        mLoadTask = null;
+                        mTaskCache.put(mType, null);
                     }
 
                     @Override
                     public void onBusy() {
                         mCallback.onBusy();
-                        mLoadTask = null;
+                        mTaskCache.put(mType, null);
                     }
                 });
             }
@@ -107,7 +118,7 @@ public class DataProvider {
         private AsyncTask<Void, Void, Void> mSaveToLocalTask = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                final List<HistoryItem> records = mDLTs;
+                final List<HistoryItem> records = mHistoryCache.get(mType);
                 final JSONArray jsonArray = new JSONArray();
                 for (int i = 0; i < records.size(); i++) {
                     jsonArray.put(records.get(i)
@@ -123,8 +134,8 @@ public class DataProvider {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                mCallback.onLoaded(mDLTs);
-                mLoadTask = null;
+                mCallback.onLoaded(mHistoryCache.get(mType));
+                mTaskCache.put(mType, null);
             }
         };
 
@@ -155,7 +166,7 @@ public class DataProvider {
             protected void onPostExecute(final List<HistoryItem> lotteryRecords) {
                 if (lotteryRecords == null || lotteryRecords.isEmpty()) {
                     mCallback.onLoadFailed("load from local failed.");
-                    mLoadTask = null;
+                    mTaskCache.put(mType, null);
                 } else {
                     final HistoryItem firstCache = lotteryRecords.get(0);
                     final Date date = firstCache.getDate();
@@ -163,30 +174,30 @@ public class DataProvider {
                     if (deltaTime < 2 * ONE_DAY
                             //周3是3.
                             || (date.getDay() == 3 && deltaTime < 3 * ONE_DAY)) {
-                        mDLTs = lotteryRecords;
-                        mCallback.onLoaded(mDLTs);
-                        mLoadTask = null;
+//                        mDLTs = lotteryRecords;
+                        mHistoryCache.put(mType, lotteryRecords);
+                        mCallback.onLoaded(mHistoryCache.get(mType));
+                        mTaskCache.put(mType, null);
                         return;
                     }
                     mDataSource.getNewSince(lotteryRecords.get(0), new DataLoadingCallback<List<HistoryItem>>() {
                         @Override
                         public void onLoaded(List<HistoryItem> result) {
                             lotteryRecords.addAll(0, result);
-                            mDLTs = lotteryRecords;
+                            mHistoryCache.put(mType, lotteryRecords);
                             mSaveToLocalTask.execute();
                         }
 
                         @Override
                         public void onLoadFailed(String err) {
                             mCallback.onLoadFailed(err);
-                            mLoadTask = null;
+                            mTaskCache.put(mType, null);
                         }
 
                         @Override
                         public void onBusy() {
                             mCallback.onBusy();
-                            ;
-                            mLoadTask = null;
+                            mTaskCache.put(mType, null);
                         }
 
                         @Override

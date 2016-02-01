@@ -10,6 +10,8 @@ import android.view.View;
 import com.qqdd.lottery.BaseActivity;
 import com.qqdd.lottery.R;
 import com.qqdd.lottery.calculate.AlgorithmTester;
+import com.qqdd.lottery.data.Constants;
+import com.qqdd.lottery.data.Lottery;
 
 public class MainActivity extends BaseActivity {
 
@@ -39,10 +41,12 @@ public class MainActivity extends BaseActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.action_dlt_history) {
-            final Intent intent = new Intent(MainActivity.this, DLTHistoryActivity.class);
+        if (id == R.id.action_dlt_history) {
+            final Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_ssq_history) {
+            final Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+            intent.putExtra(Constants.KEY_TYPE, Lottery.Type.SSQ);
             startActivity(intent);
         }
 
@@ -51,6 +55,12 @@ public class MainActivity extends BaseActivity {
 
     public void handleDLTClicked(View view) {
         final Intent intent = new Intent(MainActivity.this, OccurrenceProbabilityActivity.class);
+        startActivity(intent);
+    }
+
+    public void handleSSQClicked(View view) {
+        final Intent intent = new Intent(MainActivity.this, OccurrenceProbabilityActivity.class);
+        intent.putExtra(Constants.KEY_TYPE, Lottery.Type.SSQ);
         startActivity(intent);
     }
 }

@@ -13,12 +13,27 @@
     tools:context=".activities.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
+    <LinearLayout
         android:layout_centerInParent="true"
-        android:onClick="handleDLTClicked"
-        style="@style/AppButtonStyle"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="@string/dlt"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:onClick="handleDLTClicked"
+            style="@style/AppButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/dlt"/>
+
+        <TextView
+            android:layout_marginTop="@dimen/main_margin"
+            android:onClick="handleSSQClicked"
+            style="@style/AppButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/ssq"/>
+    </LinearLayout>
+
 
 </RelativeLayout>
