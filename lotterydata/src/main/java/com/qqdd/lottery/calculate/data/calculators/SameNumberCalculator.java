@@ -39,17 +39,32 @@ public class SameNumberCalculator extends CalculatorImpl {
 
         final NumberList recordSpecials = record.getSpecials();
 
+        int value = 0;
+        float maxProbability = 0;
         for (int i = 0; i < recordNormals.size(); i++) {
             final Number number = normalTable.getWithNumber(recordNormals.get(i));
-            number.setWeight(
-                    number.getWeight() * probabilities.normalProbability[number.getValue()]);
+//            number.setWeight(
+//                    number.getWeight() * probabilities.normalProbability[number.getValue()]);
+            if (probabilities.normalProbability[number.getValue()] > maxProbability) {
+                maxProbability = probabilities.normalProbability[number.getValue()];
+                value = number.getValue();
+            }
         }
+        normalTable.getWithNumber(value).setWeight(normalTable.getWithNumber(value).getWeight() * maxProbability * 2);
 
+        value = 0;
+        maxProbability = 0;
         for (int i = 0; i < recordSpecials.size(); i++) {
             final Number number = specialTable.getWithNumber(recordSpecials.get(i));
-            number.setWeight(
-                    number.getWeight() * probabilities.specialProbability[number.getValue()]);
+//            number.setWeight(
+//                    number.getWeight() * probabilities.specialProbability[number.getValue()]);
+            if (probabilities.specialProbability[number.getValue()] > maxProbability) {
+                maxProbability = probabilities.specialProbability[number.getValue()];
+                value = number.getValue();
+            }
         }
+        specialTable.getWithNumber(value).setWeight(specialTable.getWithNumber(value).getWeight() * maxProbability * 2);
+
     }
 
     private Probability calculateDuplicateProbability(List<HistoryItem> lts,

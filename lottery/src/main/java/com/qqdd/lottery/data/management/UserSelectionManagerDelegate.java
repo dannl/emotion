@@ -16,6 +16,7 @@ public class UserSelectionManagerDelegate {
 
     private static final String CACHE_DIR = "selection";
 
+
     private static class SingletonHolder {
         private static UserSelectionManagerDelegate INSTANCE = new UserSelectionManagerDelegate();
     }
@@ -29,6 +30,18 @@ public class UserSelectionManagerDelegate {
 
     private UserSelectionManagerDelegate() {
         mDataManager = new UserSelectionManager(new File(FileUtils.getCacheDir(), CACHE_DIR));
+    }
+
+
+    public void loadNotRedeemed(final List<HistoryItem> history,
+                                DataLoadingCallback<UserSelectionOperationResult> callback) {
+        executeRunnable(new Runnable() {
+            @Override
+            public UserSelectionOperationResult execute() {
+                return mDataManager.getNotRedeemed(history);
+            }
+        }, callback);
+
     }
 
     public void load(final List<HistoryItem> history, final DataLoadingCallback<UserSelectionOperationResult> callback) {

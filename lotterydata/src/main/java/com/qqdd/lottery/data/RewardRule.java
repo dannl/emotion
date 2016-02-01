@@ -98,7 +98,19 @@ public abstract class RewardRule {
 
         @Override
         public int hashCode() {
-            return (mTitle + mDesc + mMoney).hashCode();
+            return mTitle.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (super.equals(obj)) {
+                return true;
+            } else {
+                if (obj instanceof Reward) {
+                    return mTitle.equals(((Reward) obj).mTitle);
+                }
+                return false;
+            }
         }
 
         public JSONObject toJson() {

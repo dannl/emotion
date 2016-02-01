@@ -43,6 +43,25 @@ public class UserSelectionManager {
         }
     }
 
+
+    public UserSelectionOperationResult getNotRedeemed(List<HistoryItem> history) {
+        final UserSelectionOperationResult result = getUserSelectionList(history);
+        List<LotteryRecord> remove = new ArrayList<>();
+        for (int i = 0; i < result.size(); i++) {
+            final LotteryRecord record = result.get(i);
+            if (record instanceof  HistoryItem) {
+                remove.add(record);
+            } else if (record instanceof  UserSelection) {
+                if (((UserSelection) record).getParentTime() > 0) {
+                    remove.add(record);
+                }
+            }
+        }
+        result.removeAll(remove);
+        return result;
+    }
+
+
     public UserSelectionOperationResult getUserSelectionList(List<HistoryItem> history) {
         loadSummaryIfNeeded();
         if (mCache == null) {

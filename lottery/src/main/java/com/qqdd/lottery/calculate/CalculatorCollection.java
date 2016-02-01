@@ -28,7 +28,7 @@ public class CalculatorCollection extends ArrayList<CalculatorItem> {
 
     private CalculateTask mCalculateTask;
 
-    private static final DecimalFormat PROGRESS_FORMAT = new DecimalFormat("#.0");
+    private static final DecimalFormat PROGRESS_FORMAT = new DecimalFormat("0.0");
 
     public void calculate(final List<HistoryItem> lts, final int resultSize, final int loopCount, final DataLoadingCallback<List<Lottery>> callback) {
         if (mCalculateTask != null) {

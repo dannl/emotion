@@ -7,21 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.qqdd.lottery.BaseActivity;
 import com.qqdd.lottery.R;
-import com.qqdd.lottery.activities.SelectionHistoryActivity;
+import com.qqdd.lottery.activities.SelectionHistory;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.UserSelection;
-import com.qqdd.lottery.data.management.DataLoadingCallback;
-import com.qqdd.lottery.data.management.UserSelectionManagerDelegate;
 import com.qqdd.lottery.data.management.UserSelectionOperationResult;
 import com.qqdd.lottery.ui.view.NumberLineView;
-
-import org.w3c.dom.Text;
-
-import java.util.List;
 
 /**
  * Created by danliu on 2016/1/28.
@@ -35,9 +28,9 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private UserSelectionOperationResult mData;
     private boolean mIsLoading = false;
-    private SelectionHistoryActivity mActivity;
+    private SelectionHistory mActivity;
 
-    public SelectionHistoryAdapter(SelectionHistoryActivity activity) {
+    public SelectionHistoryAdapter(SelectionHistory activity) {
         mActivity = activity;
     }
 
@@ -120,9 +113,9 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private static class AddManualSelectionViewHolder extends RecyclerView.ViewHolder {
 
-        private SelectionHistoryActivity mActivity;
+        private SelectionHistory mActivity;
 
-        public AddManualSelectionViewHolder(SelectionHistoryActivity activity, View itemView) {
+        public AddManualSelectionViewHolder(SelectionHistory activity, View itemView) {
             super(itemView);
             mActivity = activity;
 
@@ -141,9 +134,9 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
         private NumberLineView mNumberLineView;
         private TextView mDeleteView;
         private TextView mRewardMsgView;
-        private SelectionHistoryActivity mActivity;
+        private SelectionHistory mActivity;
 
-        public SelectionItemViewHolder(SelectionHistoryActivity activity, View itemView) {
+        public SelectionItemViewHolder(SelectionHistory activity, View itemView) {
             super(itemView);
             this.mActivity = activity;
             mNumberLineView = (NumberLineView) itemView.findViewById(R.id.number_line);
@@ -200,9 +193,9 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         private View progress;
         private TextView textView;
-        private SelectionHistoryActivity mActivity;
+        private SelectionHistory mActivity;
 
-        public LoadMoreViewHolder(SelectionHistoryActivity activity, View itemView) {
+        public LoadMoreViewHolder(SelectionHistory activity, View itemView) {
             super(itemView);
             mActivity = activity;
             progress = itemView.findViewById(R.id.progress);

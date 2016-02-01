@@ -38,4 +38,6 @@
     <string name="title_activity_manual_selection">手选</string>
     <string name="adding">添加中…</string>
     <string name="confirm">确认</string>
+    <string name="title_activity_selections">本期选号</string>
+    <string name="view_not_redeemed">查看本期选号…</string>
 </resources>

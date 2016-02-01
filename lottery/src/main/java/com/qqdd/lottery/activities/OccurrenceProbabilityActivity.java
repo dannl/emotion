@@ -7,34 +7,25 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import com.qqdd.lottery.BaseActivity;
 import com.qqdd.lottery.R;
-import com.qqdd.lottery.activities.adapters.NumAreaAdapter;
 import com.qqdd.lottery.calculate.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.CalculatorItem;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
-import com.qqdd.lottery.data.LotteryConfiguration;
-import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.UserSelection;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 import com.qqdd.lottery.data.management.DataProvider;
-import com.qqdd.lottery.data.management.UserSelectionOperationResult;
 import com.qqdd.lottery.data.management.UserSelectionManagerDelegate;
-import com.qqdd.lottery.ui.view.NumberView;
+import com.qqdd.lottery.data.management.UserSelectionOperationResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import la.niub.util.display.DisplayManager;
-
 public class OccurrenceProbabilityActivity extends BaseActivity {
-    private NumberTable mNormalNumbers;
-    private NumberTable mSpecialNumbers;
     private CalculatorCollection mCalculators;
 
     @Override
@@ -46,7 +37,6 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
         setupCalculatorsView();
 
-        setupData();
     }
 
 
@@ -55,16 +45,8 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         mCalculators.add(new CalculatorItem(
                 CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                         .createCalculator()));
-        mCalculators.add(new CalculatorItem(CalculatorFactory.SameNumberCalculatorFactory.instance().createCalculator()));
+//        mCalculators.add(new CalculatorItem(CalculatorFactory.SameNumberCalculatorFactory.instance().createCalculator()));
         mCalculators.add(new CalculatorItem(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance().createCalculator()));
-    }
-
-
-    private void setupData() {
-        LotteryConfiguration lotteryConfiguration = LotteryConfiguration.DLTConfiguration();
-        mNormalNumbers = new NumberTable(lotteryConfiguration.getNormalRange());
-        mSpecialNumbers = new NumberTable(lotteryConfiguration.getSpecialRange());
-
     }
 
     public void handleCalculateClicked(View view) {
@@ -190,8 +172,12 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
 
     public void handleViewSelectionClicked(View view) {
-        final Intent intent = new Intent(this, SelectionHistoryActivity.class);
+        final Intent intent = new Intent(this, SelectionRewardHistoryActivity.class);
         startActivity(intent);
     }
 
+    public void handleViewRedeemedClicked(View view) {
+        final Intent intent = new Intent(this, SelectionsActivity.class);
+        startActivity(intent);
+    }
 }

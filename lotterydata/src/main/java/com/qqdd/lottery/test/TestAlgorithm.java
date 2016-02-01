@@ -12,7 +12,6 @@ import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.UserSelection;
-import com.qqdd.lottery.data.management.UserSelectionOperationResult;
 import com.qqdd.lottery.data.management.UserSelectionManager;
 import com.qqdd.lottery.utils.NumUtils;
 
@@ -27,8 +26,8 @@ import java.util.Set;
 
 public class TestAlgorithm {
 
-    public static final int CALCULATE_TIMES = 1000000;
-    public static final int TEST_SINCE = 1000;
+    public static final int CALCULATE_TIMES = 100000;
+    public static final int TEST_SINCE = 4;
 
     public static void main(String[] args) {
 //        testLocalCache();
@@ -66,11 +65,6 @@ public class TestAlgorithm {
         }
         UserSelectionManager manager = new UserSelectionManager(new File(getProjectRoot(), "selection"));
         manager.addUserSelection(userSelections);
-        UserSelectionOperationResult list = manager.getUserSelectionList(history);
-        System.out.println("has more: " + list.hasMore());
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i).getClass() + list.get(i).toString());
-        }
     }
 
     private static List<Lottery> calculate(final int count) {
@@ -229,6 +223,7 @@ public class TestAlgorithm {
         calculatorList.add(new CalculatorItem(
                 CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
                         .createCalculator()));
+//        calculatorList.add(new CalculatorItem(CalculatorFactory.SameNumberCalculatorFactory.instance().createCalculator()));
         return calculatorList;
     }
 
