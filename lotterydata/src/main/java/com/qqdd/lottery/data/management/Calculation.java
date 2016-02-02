@@ -10,6 +10,7 @@ import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.NumberTable;
+import com.qqdd.lottery.utils.Random;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class Calculation {
 
     public List<Lottery> calculate(List<HistoryItem> history, ProgressCallback progressCallback,
                                    int calculateTimes, Lottery.Type type, final int count) {
+        Random.getInstance().init();
         List<Calculator> calculatorList = lastNTime();
         final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
         final NumberTable normalTable = new NumberTable(configuration.getNormalRange());

@@ -15,6 +15,7 @@ import com.qqdd.lottery.data.management.History;
 import com.qqdd.lottery.data.management.ProgressCallback;
 import com.qqdd.lottery.data.management.UserSelections;
 import com.qqdd.lottery.utils.NumUtils;
+import com.qqdd.lottery.utils.Random;
 import com.qqdd.lottery.utils.SimpleIOUtils;
 
 import org.json.JSONArray;
@@ -29,15 +30,13 @@ import java.util.Set;
 public class TestAlgorithm {
 
     public static void main(String[] args) {
-//        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                Lottery.Type.DLT, Calculation.lastNTime_sameTail(), 100000, 4);
-        List<HistoryItem> items = null;
+        Random.getInstance().init();
         try {
-            items = new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+                    Lottery.Type.DLT, Calculation.lastNTime_sameTail(), 100000, 4);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
-        System.out.println("dlt size: " + items);
     }
 
     private File mRoot;
