@@ -14,8 +14,8 @@
     <string name="cancel">取消</string>
     <string name="picking_number">正在选号…</string>
     <string name="number_count_hint">请输入需要生成的号码个数…默认5个</string>
-    <string name="calculate_count_hint">请输入需要计算的次数…默认1000次</string>
-    <string name="calculate_count_intro">说明：为了增加出号的概率，需要多次计算再从中选出。最小1000，输入数字小于1000或者不输入都会按1000计算. 建议不要太高…手机的性能无法支持快速的计算，超过10万的计算次数会耗时非常的久</string>
+    <string name="calculate_count_hint">请输入需要计算的次数…默认10000次</string>
+    <string name="calculate_count_intro">说明：为了增加出号的概率，需要多次计算再从中选出。最小10000，输入数字小于10000或者不输入都会按10000计算. 建议不要太高…手机的性能无法支持快速的计算，超过10万的计算次数会耗时非常的久</string>
     <string name="number_count_intro">一次计算最多生成10个串。输入超过10或者小于1神马的…我都是按10或者1处理哟！</string>
     <string name="dlt">大乐透</string>
     <string name="calculate_result">计算结果</string>

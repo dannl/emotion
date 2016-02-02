@@ -27,6 +27,8 @@ import java.util.List;
 public class OccurrenceProbabilityActivity extends BaseActivity {
 
     private Lottery.Type mType;
+    private static final int DEFAULT_COUNT = 5;
+    private static final int DEFAULT_LOOP_COUNT = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +52,12 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
             @Override
             public void onLoaded(List<HistoryItem> result) {
-                int count = 5;
+                int count = DEFAULT_COUNT;
                 try {
                     count = Math.max(1, Math.min(Integer.parseInt(countText), 10));
                 } catch (Exception ignore) {
                 }
-                int loop = 1000;
+                int loop = DEFAULT_LOOP_COUNT;
                 try {
                     loop = Math.max(Integer.parseInt(loopCountText), loop);
                 } catch (Exception ignore) {

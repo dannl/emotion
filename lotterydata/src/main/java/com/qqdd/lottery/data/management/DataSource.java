@@ -11,7 +11,15 @@ import java.util.List;
  */
 public abstract class DataSource {
 
-    public abstract List<HistoryItem> getAll();
+    public abstract List<HistoryItem> getAll() throws DataLoadingException;
 
-    public abstract List<HistoryItem> getNewSince(@NotNull HistoryItem since);
+    public abstract List<HistoryItem> getNewSince(@NotNull HistoryItem since)
+            throws DataLoadingException;
+
+    public static class DataLoadingException extends Exception {
+
+        public DataLoadingException(final String cause) {
+            super(cause);
+        }
+    }
 }

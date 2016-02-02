@@ -42,7 +42,12 @@ public class HistoryDelegate {
         task.execute();
     }
 
-    private class LoadTask extends AsyncTask<Void, Void, List<HistoryItem>> {
+    private class LoadResult {
+        List<HistoryItem> items;
+        String error;
+    }
+
+    private class LoadTask extends AsyncTask<Void, Void, LoadResult> {
 
 
         private final Lottery.Type mType;
@@ -55,16 +60,22 @@ public class HistoryDelegate {
         }
 
         @Override
-        protected List<HistoryItem> doInBackground(Void... params) {
-            return mHistoryManager.load(mType);
+        protected LoadResult doInBackground(Void... params) {
+            LoadResult result = new LoadResult();
+            try {
+                result.items = mHistoryManager.load(mType);
+            } catch (DataSource.DataLoadingException e) {
+                result.error = e.getMessage();
+            }
+            return result;
         }
 
         @Override
-        protected void onPostExecute(List<HistoryItem> historyItems) {
-            if (historyItems == null) {
-                mCallback.onLoadFailed("failed to load history");
+        protected void onPostExecute(LoadResult result) {
+            if (result.items == null) {
+                mCallback.onLoadFailed(result.error);
             } else {
-                mCallback.onLoaded(historyItems);
+                mCallback.onLoaded(result.items);
             }
             mTaskCache.put(mType, null);
         }

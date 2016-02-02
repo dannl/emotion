@@ -73,7 +73,7 @@ public class CalculationDelegate {
                     UIUtil.runOnUIThread(new Runnable() {
                         @Override
                         public void run() {
-                            mCallback.onProgressUpdate(PROGRESS_FORMAT.format(Double.parseDouble(progress) * 100));
+                            mCallback.onProgressUpdate(PROGRESS_FORMAT.format(Double.parseDouble(progress) * 100) + "%");
                         }
                     });
                 }

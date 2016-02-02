@@ -31,7 +31,8 @@ public class History {
 
     private HashMap<Lottery.Type, List<HistoryItem>> mHistoryCache = new HashMap<>();
 
-    public List<HistoryItem> load(@NotNull Lottery.Type type) {
+    public List<HistoryItem> load(@NotNull Lottery.Type type)
+            throws DataSource.DataLoadingException {
         if (mHistoryCache.get(type) != null) {
             return mHistoryCache.get(type);
         }
@@ -61,7 +62,7 @@ public class History {
             mDataSource = dataSource;
         }
 
-        public List<HistoryItem> load() {
+        public List<HistoryItem> load() throws DataSource.DataLoadingException {
             final File cacheFile = getCacheFile(mType);
             if (cacheFile.exists()) {
                 return loadFromLocal();
@@ -87,7 +88,7 @@ public class History {
             }
         }
 
-        protected List<HistoryItem> loadFromLocal() {
+        protected List<HistoryItem> loadFromLocal() throws DataSource.DataLoadingException {
             final File cacheFile = getCacheFile(mType);
             try {
                 final String content = SimpleIOUtils.loadContent(new FileInputStream(cacheFile),

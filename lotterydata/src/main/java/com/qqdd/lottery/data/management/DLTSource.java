@@ -41,13 +41,13 @@ public class DLTSource extends DataSource {
             "<td bgcolor=\"#eeffee\">\\s+(\\d+)\\s+</td>");
 
     @Override
-    public List<HistoryItem> getAll() {
+    public List<HistoryItem> getAll() throws DataLoadingException {
         final LoadTask task = new LoadTask(null);
         return task.doInBackground();
     }
 
     @Override
-    public List<HistoryItem> getNewSince(@NotNull HistoryItem since) {
+    public List<HistoryItem> getNewSince(@NotNull HistoryItem since) throws DataLoadingException{
         final LoadTask task = new LoadTask(since);
         return task.doInBackground();
     }
@@ -64,7 +64,7 @@ public class DLTSource extends DataSource {
             mSince = since;
         }
 
-        List<HistoryItem> doInBackground(Void... params) {
+        List<HistoryItem> doInBackground() throws DataLoadingException {
             final List<HistoryItem> result = new ArrayList<>();
             while (!mEnded) {
                 final String url = String.format(DLT_REPO_URL_FORMAT, mIndex);
@@ -73,6 +73,7 @@ public class DLTSource extends DataSource {
                     mRetry++;
                     if (mRetry > 5) {
                         mEnded = true;
+                        throw new DataLoadingException("加载失败,请检查网络！");
                     }
                     continue;
                 }
@@ -91,6 +92,8 @@ public class DLTSource extends DataSource {
                     final HistoryItem record = parseLine(line);
                     if (record != null) {
                         temp.add(record);
+                    } else {
+                        throw  new DataLoadingException("解析失败，看起来需要换个数据源了...");
                     }
                     String headRec = headIndexer % 2 == 0 ?
                             RECORD_RECOGNIZER_HEAD_0 :
