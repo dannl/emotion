@@ -17,9 +17,9 @@ import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.UserSelection;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
-import com.qqdd.lottery.data.management.DataProvider;
+import com.qqdd.lottery.data.management.HistoryDelegate;
 import com.qqdd.lottery.data.management.UserSelectionOperationResult;
-import com.qqdd.lottery.data.management.UserSelectionManagerDelegate;
+import com.qqdd.lottery.data.management.UserSelectionsDelegate;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,10 +59,10 @@ public class SelectionRewardHistoryActivity extends BaseActivity implements Sele
     private void loadData() {
         mAdapter.setIsLoading(true);
         showProgress(R.string.loading);
-        DataProvider.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
+        HistoryDelegate.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
             @Override
             public void onLoaded(List<HistoryItem> result) {
-                UserSelectionManagerDelegate.getInstance()
+                UserSelectionsDelegate.getInstance()
                         .load(mType,result, new DataLoadingCallback<UserSelectionOperationResult>() {
                             @Override
                             public void onLoaded(UserSelectionOperationResult result) {
@@ -118,7 +118,7 @@ public class SelectionRewardHistoryActivity extends BaseActivity implements Sele
 
     public void deleteUserSelection(UserSelection userSelection) {
         showProgress(R.string.deleting);
-        UserSelectionManagerDelegate.getInstance().delete(mType,userSelection, new DataLoadingCallback<UserSelectionOperationResult>() {
+        UserSelectionsDelegate.getInstance().delete(mType,userSelection, new DataLoadingCallback<UserSelectionOperationResult>() {
             @Override
             public void onLoaded(UserSelectionOperationResult result) {
                 operationSucceeded(result);
@@ -144,10 +144,10 @@ public class SelectionRewardHistoryActivity extends BaseActivity implements Sele
     }
 
     public void loadMore(final LotteryRecord last) {
-        DataProvider.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
+        HistoryDelegate.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
             @Override
             public void onLoaded(List<HistoryItem> result) {
-                UserSelectionManagerDelegate.getInstance()
+                UserSelectionsDelegate.getInstance()
                         .loadMore(mType,result, last.getDate()
                                 .getTime(),
                                 new DataLoadingCallback<UserSelectionOperationResult>() {
@@ -208,7 +208,7 @@ public class SelectionRewardHistoryActivity extends BaseActivity implements Sele
                     final Lottery lottery = Lottery.fromJson(new JSONObject(json));
                     UserSelection userSelection = new UserSelection(lottery);
                     showProgress(R.string.adding);
-                    UserSelectionManagerDelegate.getInstance().addUserSelection(mType, userSelection, new DataLoadingCallback<UserSelectionOperationResult>() {
+                    UserSelectionsDelegate.getInstance().addUserSelection(mType, userSelection, new DataLoadingCallback<UserSelectionOperationResult>() {
                         @Override
                         public void onLoaded(UserSelectionOperationResult result) {
                             operationSucceeded(result);

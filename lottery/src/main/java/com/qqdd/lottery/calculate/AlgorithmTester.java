@@ -101,7 +101,7 @@ public class AlgorithmTester {
                 final LotteryRecord record = mHistory.get(i - 1);
                 for (int j = 0; j < CALCULATE_TIMES; j++) {
                     totalTime++;
-                    final Lottery tempResult = NumberProducer.getInstance().calculate(normalTable, specialTable, mConfiguration);
+                    final Lottery tempResult = NumberProducer.getInstance().calculateAndSave(normalTable, specialTable, mConfiguration);
                     final RewardRule.Reward reward = tempResult.calculateReward(record);
                     final int money = reward.getMoney();
                     if (money > 0) {

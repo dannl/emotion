@@ -6,7 +6,7 @@ import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.UserSelection;
 import com.qqdd.lottery.data.management.UserSelectionOperationResult.ResultType;
-import com.qqdd.lottery.test.DataLoader;
+import com.qqdd.lottery.utils.SimpleIOUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * Created by danliu on 1/29/16.
  */
-public class UserSelectionManager {
+public class UserSelections {
 
     private static final String NOT_REDEEMED_FILE = "not_redeemed";
     private static final String SUMMARY_FILE = "summary";
@@ -39,7 +39,7 @@ public class UserSelectionManager {
     private UserSelectionOperationResult mCache;
     private UserSelectionSummary mSummary;
 
-    public UserSelectionManager(final File root) {
+    public UserSelections(final File root) {
         mRootFile = root;
         assert root != null;
         if (!root.exists()) {
@@ -162,7 +162,8 @@ public class UserSelectionManager {
         final File summaryFile = new File(mRootFile, SUMMARY_FILE);
         if (summaryFile.exists()) {
             try {
-                final String s = DataLoader.loadContent(new FileInputStream(summaryFile), "UTF-8");
+                final String s = SimpleIOUtils.loadContent(new FileInputStream(summaryFile),
+                        "UTF-8");
                 mSummary = UserSelectionSummary.fromJson(new JSONObject(s));
             } catch (IOException | JSONException ignored) {
             }
@@ -301,7 +302,7 @@ public class UserSelectionManager {
 
     private void saveSummary(UserSelectionSummary summary) {
         try {
-            DataLoader.saveToFile(new File(mRootFile, SUMMARY_FILE), summary.toJson()
+            SimpleIOUtils.saveToFile(new File(mRootFile, SUMMARY_FILE), summary.toJson()
                     .toString(), "UTF-8");
         } catch (IOException ignored) {
         }
@@ -352,7 +353,7 @@ public class UserSelectionManager {
         }
         final List<UserSelection> result = new ArrayList<>();
         try {
-            final String content = DataLoader.loadContent(new FileInputStream(file), "UTF-8");
+            final String content = SimpleIOUtils.loadContent(new FileInputStream(file), "UTF-8");
             final JSONArray jsonArray = new JSONArray(content);
             for (int i = 0; i < jsonArray.length(); i++) {
                 final UserSelection userSelection = UserSelection.fromJson(
@@ -379,7 +380,7 @@ public class UserSelectionManager {
                     .toJson());
         }
         try {
-            DataLoader.saveToFile(file, jsonArray.toString(), "UTF-8");
+            SimpleIOUtils.saveToFile(file, jsonArray.toString(), "UTF-8");
         } catch (IOException ignored) {
         }
     }

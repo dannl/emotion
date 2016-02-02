@@ -14,7 +14,7 @@ import com.qqdd.lottery.data.Constants;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
-import com.qqdd.lottery.data.management.DataProvider;
+import com.qqdd.lottery.data.management.HistoryDelegate;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class HistoryActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         final ListView listView = (ListView) findViewById(R.id.list);
-        DataProvider.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
+        HistoryDelegate.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
             @Override
             public void onLoaded(final List<HistoryItem> result) {
                 listView.setAdapter(new BaseAdapter() {

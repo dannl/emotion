@@ -1,10 +1,7 @@
 package com.qqdd.lottery.test;
 
-import com.qqdd.lottery.calculate.data.CalculatorFactory;
-import com.qqdd.lottery.calculate.data.CalculatorItem;
-import com.qqdd.lottery.calculate.data.NumberProducer;
+import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
-import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -12,12 +9,16 @@ import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.UserSelection;
-import com.qqdd.lottery.data.management.UserSelectionManager;
+import com.qqdd.lottery.data.management.Calculation;
+import com.qqdd.lottery.data.management.History;
+import com.qqdd.lottery.data.management.ProgressCallback;
+import com.qqdd.lottery.data.management.UserSelections;
 import com.qqdd.lottery.utils.NumUtils;
+import com.qqdd.lottery.utils.SimpleIOUtils;
+
+import org.json.JSONArray;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,18 +27,30 @@ import java.util.Set;
 
 public class TestAlgorithm {
 
-    public static final int CALCULATE_TIMES = 100000;
-    public static final int TEST_SINCE = 4;
-
     public static void main(String[] args) {
-//        testLocalCache();
-//        testARound(Lottery.Type.SSQ);
-        testRandom(Lottery.Type.SSQ);
+        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
     }
 
-    private static List<Lottery> calculateResult(Lottery.Type type) {
+    private File mRoot;
+
+    public TestAlgorithm(final File root) {
+        mRoot = root;
+    }
+
+    private File getProjectRoot() {
+        return mRoot;
+    }
+
+    private List<Lottery> calculateResult(Lottery.Type type, int calculateTimes) {
         final int resultCount = 5;
-        List<Lottery> result = calculate(type, resultCount);
+        List<Lottery> result = new Calculation(getProjectRoot()).calculate(
+                new History(getProjectRoot()).load(type), new ProgressCallback() {
+                    @Override
+                    public void onProgressUpdate(String progress) {
+                        System.out.println("\r" + progress);
+                    }
+                }, calculateTimes, type, resultCount);
         System.out.println("\nresult is: ");
         for (int i = 0; i < result.size(); i++) {
             System.out.println(result.get(i)
@@ -46,50 +59,28 @@ public class TestAlgorithm {
         return result;
     }
 
-    private static void testLocalCache(Lottery.Type type) {
-        List<Lottery> result = calculateResult(type);
+    public void calculateAndSave(Lottery.Type type, int calculateTimes) {
+        List<Lottery> result = calculateResult(type, calculateTimes);
         final List<UserSelection> userSelections = new ArrayList<>(result.size());
         for (int i = 0; i < result.size(); i++) {
             final UserSelection useSelection = new UserSelection(result.get(i));
             useSelection.sort();
             userSelections.add(useSelection);
         }
-        UserSelectionManager manager = new UserSelectionManager(new File(getProjectRoot(), UserSelectionManager.getCacheFolderWithType(type)));
+        UserSelections manager = new UserSelections(
+                new File(getProjectRoot(), UserSelections.getCacheFolderWithType(type)));
         manager.addUserSelection(userSelections);
     }
 
-    private static List<Lottery> calculate(Lottery.Type type, final int count) {
-        List<HistoryItem> history = DataLoader.loadData(getHistoryFile(type));
-        List<CalculatorItem> calculatorList = createCalculatorList();
-        final LotteryConfiguration configuration = LotteryConfiguration.DLTConfiguration();
-        final NumberTable normalTable = new NumberTable(configuration.getNormalRange());
-        final NumberTable specialTable = new NumberTable(configuration.getSpecialRange());
-        List<Lottery> tempBuffer = new ArrayList<>();
-        for (int i = 0; i < CALCULATE_TIMES; i++) {
-            if (i % (CALCULATE_TIMES / 100) == 0) {
-                System.out.print("\r progress: " + (((float) i) / CALCULATE_TIMES));
-            }
-            normalTable.reset();
-            specialTable.reset();
-            for (int j = 0; j < calculatorList.size(); j++) {
-                calculatorList.get(j)
-                        .calculate(history, normalTable, specialTable);
-            }
-            tempBuffer.add(NumberProducer.getInstance()
-                    .calculate(history, normalTable, specialTable, configuration));
-        }
-        return NumberProducer.getInstance()
-                .select(tempBuffer, count, loadTimeToGoHome(type, CALCULATE_TIMES));
-    }
-
-    private static void actualBuyingTest(Lottery.Type type) {
+    public void actualBuyingTest(Lottery.Type type, CalculatorCollection collection,
+                                 int calculateTimes, int since) {
         double total = 0;
         double max = Double.MIN_VALUE;
         double min = Double.MAX_VALUE;
         final int testRound = 1000;
         int earnCount = 0;
         for (int i = 0; i < testRound; i++) {
-            final double v = actualBuyingARound(type);
+            final double v = actualBuyingARound(type, collection, calculateTimes, since);
             total += v;
             if (v > 0) {
                 earnCount++;
@@ -105,25 +96,31 @@ public class TestAlgorithm {
                 "total: " + total + " avr: " + total / testRound + " max: " + max + " min: " + min + " earn count: " + earnCount + " earn rate: " + (((float) earnCount) / testRound));
     }
 
-    private static double actualBuyingARound(Lottery.Type type) {
-        final TestResult result = testAlgorithm(type);
+    public double actualBuyingARound(Lottery.Type type, CalculatorCollection collection,
+                                     int calculateTimes, int since) {
+        final TestResult result = testAlgorithm(type, collection, calculateTimes, since);
         System.out.println(result.toString());
         return result.calculateTotal() - 2 * result.totalTestCount;
     }
 
-    private static double testARound(Lottery.Type type) {
-        final TestResult result = testAlgorithm(type);
+    public double testAlgorithmAndPrintRateDetail(Lottery.Type type,
+                                                  CalculatorCollection collection,
+                                                  int calculateTimes, int since) {
+        final TestResult result = testAlgorithm(type, collection, calculateTimes, since);
         System.out.println(result.toString());
         float maxRate = 0;
         float minRate = 1;
-        for (Map.Entry<LotteryRecord, Float> entry : result.recordRate.entrySet()) {
-            if (entry.getValue() > maxRate) {
-                maxRate = entry.getValue();
+        final JSONArray json = new JSONArray();
+        for (TestRoundRates entry : result.recordRate) {
+            if (entry.getRate() > maxRate) {
+                maxRate = entry.getRate();
             }
-            if (entry.getValue() < minRate) {
-                minRate = entry.getValue();
+            if (entry.getRate() < minRate) {
+                minRate = entry.getRate();
             }
+            json.put(entry.toJson());
         }
+        TestRoundRates.save(getProjectRoot(), result.title, result.recordRate);
         System.out.println("max: " + maxRate + " min: " + minRate);
 
         StringBuilder builder = new StringBuilder();
@@ -140,85 +137,19 @@ public class TestAlgorithm {
         return result.getExpectationOnBuying(5);
     }
 
-    private static TestResult testRandom(Lottery.Type type) {
-        List<HistoryItem> history = DataLoader.loadData(getHistoryFile(type));
-        List<CalculatorItem> calculatorList = new ArrayList<>();
-        calculatorList.add(new CalculatorItem(new AverageProbabilityCalculator()));
-        final Task task = new Task(type, history,
-                calculatorList);
-        final TestResult result = task.execute();
-        return result;
+    public TestResult testRandom(Lottery.Type type, int calculateTimes, int since) {
+        final Task task = new Task(getProjectRoot(), type, Calculation.random(), calculateTimes,
+                since);
+        return task.execute();
     }
 
-    private static TestResult testAlgorithm(Lottery.Type type) {
-        List<HistoryItem> history = DataLoader.loadData(getHistoryFile(type));
-        List<CalculatorItem> calculatorList = createCalculatorList();
-        final Task task = new Task(type, history,
-                calculatorList);
-        final TestResult result = task.execute();
-        return result;
+    public TestResult testAlgorithm(Lottery.Type type, CalculatorCollection collection,
+                                    int calculateTimes, int since) {
+        final Task task = new Task(getProjectRoot(), type, collection, calculateTimes, since);
+        return task.execute();
     }
 
-    private static File getHistoryFile(Lottery.Type type) {
-        final File rootFolder = getProjectRoot();
-        final File history = new File(rootFolder,type.toString());
-        return history;
-    }
-
-    private static File getProjectRoot() {
-        final String file = TestAlgorithm.class.getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .getFile();
-        final String projectRoot = file.substring(0, file.indexOf("lotterydata"));
-        return new File(projectRoot);
-    }
-
-    private static File getGoHomeRecordFile(Lottery.Type type, int testTime) {
-        return new File(getProjectRoot(), "GO_HOME_RECORD_" + type.toString() + testTime);
-    }
-
-    private static TimeToGoHome loadTimeToGoHome(Lottery.Type type, int testTime) {
-        try {
-            final String content = DataLoader.loadContent(
-                    new FileInputStream(getGoHomeRecordFile(type, testTime)), "UTF-8");
-            TimeToGoHome result = TimeToGoHome.fromJson(content);
-            if (result != null) {
-                return result;
-            }
-        } catch (IOException e) {
-        }
-        return new TimeToGoHome(testTime);
-    }
-
-
-    //        final SelectionIncreaseCalculator selectionIncrease = CalculatorFactory.SelectionIncreaseCalculatorFactory.instance()
-    //                .createCalculator();
-    //        selectionIncrease.addNormal(4);
-    //        selectionIncrease.addNormal(15);
-    //        selectionIncrease.addNormal(10);
-    //        selectionIncrease.addNormal(22);
-    //        selectionIncrease.addNormal(8);
-    //        selectionIncrease.addNormal(29);
-    //        selectionIncrease.addNormal(6);
-    //        selectionIncrease.addNormal(26);
-    //        selectionIncrease.addSpecial(1);
-    //        selectionIncrease.addSpecial(4);
-    //calculatorList.add(new CalculatorItem(selectionIncrease));
-
-    private static List<CalculatorItem> createCalculatorList() {
-        List<CalculatorItem> calculatorList = new ArrayList<>();
-        calculatorList.add(new CalculatorItem(
-                CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                        .createCalculator()));
-        calculatorList.add(new CalculatorItem(
-                CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-                        .createCalculator()));
-//        calculatorList.add(new CalculatorItem(CalculatorFactory.SameNumberCalculatorFactory.instance().createCalculator()));
-        return calculatorList;
-    }
-
-    private static final class TestResult {
+    public static final class TestResult {
         String title = "我的算法";
         long totalTestCount;
         long totalRewardCount;
@@ -228,10 +159,12 @@ public class TestAlgorithm {
         long startTime;
         long endTime;
         private HashMap<LotteryRecord, Integer> goHomeDistribute = new HashMap<>();
-        HashMap<LotteryRecord, Float> recordRate = new HashMap<>();
+        List<TestRoundRates> recordRate = new ArrayList<>();
 
-        public TestResult(final Lottery.Type type, final int testTime) {
-            mTimeToGoHome = loadTimeToGoHome(type, testTime);
+        public TestResult(File root, final Lottery.Type type, final int testTime,
+                          final String calculatorDesc) {
+            title = calculatorDesc + "_" + type.toString() + "_测试" + testTime + "次";
+            mTimeToGoHome = TimeToGoHome.load(root, type, testTime);
         }
 
         @Override
@@ -311,37 +244,38 @@ public class TestAlgorithm {
         }
     }
 
-    private static class Task {
+    private class Task {
 
-        private final List<HistoryItem> mHistory;
-        private final List<CalculatorItem> mCalculators;
+        private final CalculatorCollection mCalculators;
         private LotteryConfiguration mConfiguration;
         private TestResult mResult;
         private Lottery.Type mType;
+        private int mCalculateTimes;
+        private int mSince;
 
-        public Task(Lottery.Type type, List<HistoryItem> history,
-                    List<CalculatorItem> calculators) {
-            mHistory = history;
+        public Task(File root, Lottery.Type type, CalculatorCollection calculators,
+                    final int calculateTimes, final int since) {
             mCalculators = calculators;
+            mCalculateTimes = calculateTimes;
             mConfiguration = LotteryConfiguration.getWithType(type);
             mType = type;
-            mResult = new TestResult(type, CALCULATE_TIMES);
+            mSince = since;
+            mResult = new TestResult(root, type, calculateTimes, calculators.getDesc());
         }
 
         protected TestResult execute() {
+            List<HistoryItem> history = new History(getProjectRoot()).load(mType);
             final TestResult result = mResult;
             result.startTime = System.currentTimeMillis();
             NumberTable normalTable = new NumberTable(mConfiguration.getNormalRange());
             NumberTable specialTable = new NumberTable(mConfiguration.getSpecialRange());
-            final AverageProbabilityCalculator randomCalculator = new AverageProbabilityCalculator();
-            randomCalculator.calculate(mHistory, normalTable, specialTable);
-            final int size = mHistory.size();
+            final int size = history.size();
             //全随机算法。
-            for (int i = size / TEST_SINCE; i > 0; i--) {
-                final List<HistoryItem> subHistory = mHistory.subList(i - 1, size);
-                final HistoryItem record = mHistory.get(i);
+            for (int i = size / mSince; i > 0; i--) {
+                final List<HistoryItem> subHistory = history.subList(i - 1, size);
+                final HistoryItem record = history.get(i);
                 int roundRewardCount = 0;
-                for (int j = 0; j < CALCULATE_TIMES; j++) {
+                for (int j = 0; j < mCalculateTimes; j++) {
                     result.totalTestCount++;
                     normalTable.reset();
                     specialTable.reset();
@@ -376,19 +310,15 @@ public class TestAlgorithm {
                     }
                     publishProgressLocal();
                 }
-                mResult.recordRate.put(record, ((float) roundRewardCount) / CALCULATE_TIMES);
+                mResult.recordRate.add(
+                        new TestRoundRates(record, ((float) roundRewardCount) / mCalculateTimes));
             }
             result.endTime = System.currentTimeMillis();
             return result;
         }
 
         private void updateGoHomeRecord() {
-            final File file = getGoHomeRecordFile(mType, CALCULATE_TIMES);
-            try {
-                DataLoader.saveToFile(file, mResult.mTimeToGoHome.toJson()
-                        .toString(), "UTF8");
-            } catch (IOException e) {
-            }
+            TimeToGoHome.save(getProjectRoot(), mType, mResult.mTimeToGoHome);
         }
 
         private long mLastPublishProgressTime = 0;

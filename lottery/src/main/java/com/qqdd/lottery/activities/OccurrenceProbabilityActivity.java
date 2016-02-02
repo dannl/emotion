@@ -11,23 +11,20 @@ import android.widget.TextView;
 
 import com.qqdd.lottery.BaseActivity;
 import com.qqdd.lottery.R;
-import com.qqdd.lottery.calculate.CalculatorCollection;
-import com.qqdd.lottery.calculate.data.CalculatorFactory;
-import com.qqdd.lottery.calculate.data.CalculatorItem;
 import com.qqdd.lottery.data.Constants;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.UserSelection;
+import com.qqdd.lottery.data.management.CalculationDelegate;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
-import com.qqdd.lottery.data.management.DataProvider;
-import com.qqdd.lottery.data.management.UserSelectionManagerDelegate;
+import com.qqdd.lottery.data.management.HistoryDelegate;
+import com.qqdd.lottery.data.management.UserSelectionsDelegate;
 import com.qqdd.lottery.data.management.UserSelectionOperationResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OccurrenceProbabilityActivity extends BaseActivity {
-    private CalculatorCollection mCalculators;
 
     private Lottery.Type mType;
 
@@ -42,25 +39,14 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setupCalculatorsView();
-
     }
 
-
-    private void setupCalculatorsView() {
-        mCalculators = new CalculatorCollection();
-        mCalculators.add(new CalculatorItem(
-                CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                        .createCalculator()));
-//        mCalculators.add(new CalculatorItem(CalculatorFactory.SameNumberCalculatorFactory.instance().createCalculator()));
-        mCalculators.add(new CalculatorItem(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance().createCalculator()));
-    }
 
     public void handleCalculateClicked(View view) {
         showProgress(R.string.calculating);
         final String countText = ((TextView) findViewById(R.id.pick_number_count)).getText().toString();
         final String loopCountText = ((TextView) findViewById(R.id.calculate_count)).getText().toString();
-        DataProvider.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
+        HistoryDelegate.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
 
             @Override
             public void onLoaded(List<HistoryItem> result) {
@@ -74,7 +60,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
                     loop = Math.max(Integer.parseInt(loopCountText), loop);
                 } catch (Exception ignore) {
                 }
-                mCalculators.calculate(result, count, loop,
+                CalculationDelegate.getInstance().calculate(result, mType, count, loop,
                         new DataLoadingCallback<List<Lottery>>() {
                             @Override
                             public void onLoaded(final List<Lottery> result) {
@@ -150,7 +136,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         for (int i = 0; i < result.size(); i++) {
             userSelections.add(new UserSelection(result.get(i)));
         }
-        UserSelectionManagerDelegate.getInstance().addUserSelections(mType, userSelections, new DataLoadingCallback<UserSelectionOperationResult>() {
+        UserSelectionsDelegate.getInstance().addUserSelections(mType, userSelections, new DataLoadingCallback<UserSelectionOperationResult>() {
             @Override
             public void onLoaded(UserSelectionOperationResult result) {
                 new AlertDialog.Builder(OccurrenceProbabilityActivity.this)

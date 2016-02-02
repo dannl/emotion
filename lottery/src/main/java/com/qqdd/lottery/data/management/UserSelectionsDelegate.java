@@ -14,26 +14,26 @@ import java.util.List;
 
 import la.niub.util.utils.AppContext;
 
-public class UserSelectionManagerDelegate {
+public class UserSelectionsDelegate {
 
 
     private static class SingletonHolder {
-        private static UserSelectionManagerDelegate INSTANCE = new UserSelectionManagerDelegate();
+        private static UserSelectionsDelegate INSTANCE = new UserSelectionsDelegate();
     }
 
-    public static UserSelectionManagerDelegate getInstance() {
+    public static UserSelectionsDelegate getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
-    private HashMap<Lottery.Type, UserSelectionManager> mManagers;
+    private HashMap<Lottery.Type, UserSelections> mManagers;
     private HashMap<Lottery.Type, Task> mTaskCache;
 
-    private UserSelectionManagerDelegate() {
+    private UserSelectionsDelegate() {
         mManagers = new HashMap<>();
-        mManagers.put(Lottery.Type.DLT, new UserSelectionManager(new File(FileUtils.getCacheDir(),
-                UserSelectionManager.getCacheFolderWithType(Lottery.Type.DLT))));
-        mManagers.put(Lottery.Type.SSQ, new UserSelectionManager(new File(FileUtils.getCacheDir(),
-                UserSelectionManager.getCacheFolderWithType(Lottery.Type.SSQ))));
+        mManagers.put(Lottery.Type.DLT, new UserSelections(new File(FileUtils.getCacheDir(),
+                UserSelections.getCacheFolderWithType(Lottery.Type.DLT))));
+        mManagers.put(Lottery.Type.SSQ, new UserSelections(new File(FileUtils.getCacheDir(),
+                UserSelections.getCacheFolderWithType(Lottery.Type.SSQ))));
         mTaskCache = new HashMap<>();
     }
 

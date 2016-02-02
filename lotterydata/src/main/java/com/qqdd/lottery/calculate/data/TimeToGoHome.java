@@ -1,9 +1,15 @@
 package com.qqdd.lottery.calculate.data;
 
+import com.qqdd.lottery.data.Lottery;
+import com.qqdd.lottery.utils.SimpleIOUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -59,4 +65,27 @@ public class TimeToGoHome extends ArrayList<Integer> {
     public int getTestCount() {
         return mTestCount;
     }
+
+    public static TimeToGoHome load(File root, Lottery.Type type, int count) {
+        try {
+            final String content = SimpleIOUtils.loadContent(
+                    new FileInputStream(new File(root, "GO_HOME_RECORD_" + type.toString() + count)), "UTF-8");
+            TimeToGoHome result = TimeToGoHome.fromJson(content);
+            if (result != null) {
+                return result;
+            }
+        } catch (IOException e) {
+        }
+        return new TimeToGoHome(count);
+    }
+
+    public static void save(File root, Lottery.Type type, TimeToGoHome goHome) {
+        final File file = new File(root, "GO_HOME_RECORD_" + type.toString() + goHome.getTestCount());
+        try {
+            SimpleIOUtils.saveToFile(file, goHome.toJson()
+                    .toString(), "UTF8");
+        } catch (IOException e) {
+        }
+    }
+
 }

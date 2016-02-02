@@ -15,7 +15,7 @@ import java.util.Set;
 public class Lottery implements ILottery {
 
     public enum Type {
-        SSQ, mType, NONE, DLT
+        SSQ, NONE, DLT
     }
 
     private final NumberList mNormal = new NumberList();

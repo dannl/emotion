@@ -1,12 +1,5 @@
 package com.qqdd.lottery.data.management;
 
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
-import android.util.Log;
-
-import com.loopj.android.http.SyncHttpClient;
-import com.loopj.android.http.TextHttpResponseHandler;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -14,6 +7,9 @@ import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberList;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.SSQRewardRule;
+import com.qqdd.lottery.utils.SimpleHttpGetter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -27,7 +23,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.util.TextUtils;
 
 /**
  * Created by danliu on 1/19/16.
@@ -56,112 +52,82 @@ public class SSQSource extends DataSource {
             "<div class=\\\\\"lqhm_bg\\\\\">(\\d+)<\\\\/div>");
 
 
-    private LoadTask mRequestTask;
-
     @Override
-    public void getAll(@NonNull DataLoadingCallback callback) {
-        if (mRequestTask != null) {
-            callback.onBusy();
-            return;
-        }
-        mRequestTask = new LoadTask(null, callback);
-        mRequestTask.execute();
+    public List<HistoryItem> getAll() {
+        final LoadTask task = new LoadTask(null);
+        return task.doInBackground();
     }
 
     @Override
-    public void getNewSince(@NonNull LotteryRecord since, @NonNull DataLoadingCallback callback) {
-        if (mRequestTask != null) {
-            callback.onBusy();
-            return;
-        }
-        mRequestTask = new LoadTask(since, callback);
-        mRequestTask.execute();
+    public List<HistoryItem> getNewSince(@NotNull HistoryItem since) {
+        final LoadTask task = new LoadTask(since);
+        return task.doInBackground();
     }
 
-    private class LoadTask extends AsyncTask<Void, Void, List<HistoryItem>> {
+
+    private class LoadTask {
 
         int mIndex = 1;
         boolean mEnded = false;
         private int mRetry = 0;
-        private DataLoadingCallback mCallback;
         private LotteryRecord mSince;
 
-        public LoadTask(LotteryRecord since, DataLoadingCallback callback) {
-            mCallback = callback;
+        public LoadTask(LotteryRecord since) {
             mSince = since;
         }
 
 
-        @Override
-        protected void onPostExecute(List<HistoryItem> lotteryRecords) {
-            if (mRetry == 5) {
-                mCallback.onLoadFailed("failed to load from server");
-            } else {
-                mCallback.onLoaded(lotteryRecords);
-            }
-            mRequestTask = null;
-        }
-
-        @Override
         protected List<HistoryItem> doInBackground(Void... params) {
-            SyncHttpClient client = new SyncHttpClient();
             final List<HistoryItem> result = new ArrayList<>();
             final long current = System.currentTimeMillis();
             while (!mEnded) {
                 final String url = String.format(SSQ_REQUEST_URL_FORMAT, current, mIndex);
-                client.get(url, new TextHttpResponseHandler() {
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString,
-                                          Throwable throwable) {
-                        Log.e("SSQSource", "failed: " + responseString);
-                        if (mRetry < 5) {
-                            mEnded = true;
-                        }
-                        mRetry++;
+                String responseString = SimpleHttpGetter.request(url);
+                if (TextUtils.isEmpty(responseString)) {
+                    mRetry++;
+                    if (mRetry > 5) {
+                        mEnded = true;
                     }
-
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                        List<HistoryItem> temp = new ArrayList<>();
-                        responseString = responseString.replaceAll("\\\\r\\\\n", "");
-                        int head = responseString.indexOf(RECORD_START);
-                        int tail;
-                        if (head >= 0) {
-                            tail = responseString.indexOf(RECORD_END, head);
-                        } else {
-                            mEnded = true;
-                            return;
-                        }
-                        while (head >= 0 && tail >= 0) {
-                            final String line = responseString.substring(head, tail);
-                            final HistoryItem record = parseLine(line);
-                            if (record != null) {
-                                temp.add(record);
-                            }
-                            head = responseString.indexOf(RECORD_START, tail);
-                            if (head >= 0) {
-                                tail = responseString.indexOf(RECORD_END, head);
-                            }
-                        }
-                        if (mSince != null) {
-                            int indexToRemove = -1;
-                            for (int i = 0; i < temp.size(); i++) {
-                                if (temp.get(i)
-                                        .equals(mSince)) {
-                                    indexToRemove = i;
-                                    break;
-                                }
-                            }
-                            if (indexToRemove >= 0) {
-                                final List<HistoryItem> sub = temp.subList(0, indexToRemove);
-                                temp = sub;
-                                mEnded = true;
-                            }
-                        }
-                        result.addAll(temp);
-                        mIndex ++;
+                    continue;
+                }
+                List<HistoryItem> temp = new ArrayList<>();
+                responseString = responseString.replaceAll("\\\\r\\\\n", "");
+                int head = responseString.indexOf(RECORD_START);
+                int tail;
+                if (head >= 0) {
+                    tail = responseString.indexOf(RECORD_END, head);
+                } else {
+                    mEnded = true;
+                    continue;
+                }
+                while (head >= 0 && tail >= 0) {
+                    final String line = responseString.substring(head, tail);
+                    final HistoryItem record = parseLine(line);
+                    if (record != null) {
+                        temp.add(record);
                     }
-                });
+                    head = responseString.indexOf(RECORD_START, tail);
+                    if (head >= 0) {
+                        tail = responseString.indexOf(RECORD_END, head);
+                    }
+                }
+                if (mSince != null) {
+                    int indexToRemove = -1;
+                    for (int i = 0; i < temp.size(); i++) {
+                        if (temp.get(i)
+                                .equals(mSince)) {
+                            indexToRemove = i;
+                            break;
+                        }
+                    }
+                    if (indexToRemove >= 0) {
+                        final List<HistoryItem> sub = temp.subList(0, indexToRemove);
+                        temp = sub;
+                        mEnded = true;
+                    }
+                }
+                result.addAll(temp);
+                mIndex ++;
             }
             Collections.sort(result, new Comparator<HistoryItem>() {
                 @Override

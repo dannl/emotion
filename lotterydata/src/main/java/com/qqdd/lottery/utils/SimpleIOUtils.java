@@ -1,52 +1,25 @@
-package com.qqdd.lottery.test;
-
-import com.qqdd.lottery.data.HistoryItem;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+package com.qqdd.lottery.utils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 
 import cz.msebera.android.httpclient.util.CharArrayBuffer;
 
-/**
- * Created by danliu on 1/25/16.
- */
-public class DataLoader {
+public class SimpleIOUtils {
 
-    public static List<HistoryItem> loadData(File input) {
-        final JSONArray jsonArray;
-        final List<HistoryItem> records = new ArrayList<>();
-        try {
-            final String content = loadContent(new FileInputStream(input), "UTF-8");
-            jsonArray = new JSONArray(content);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                final JSONObject json = jsonArray.getJSONObject(i);
-                //FIXME type here should be history item??
-                final HistoryItem record = HistoryItem.fromJson(json);
-                if (record != null) {
-                    records.add(record);
-                }
-            }
-        } catch (JSONException e) {
-        } catch (FileNotFoundException e) {
-        } catch (IOException e) {
-        }
-        return records;
+    public static File getProjectRoot() {
+        final String file = SimpleIOUtils.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getFile();
+        final String projectRoot = file.substring(0, file.indexOf("lotterydata"));
+        return new File(projectRoot);
     }
-
-    private static int IO_BUFFER_SIZE = 4096;
 
     public static void saveToFile(File file, String content, String encoding) throws IOException {
         if (!file.getParentFile()
@@ -71,7 +44,8 @@ public class DataLoader {
         Reader reader = new InputStreamReader(stream, encoding);
         CharArrayBuffer buffer = new CharArrayBuffer(stream.available());
         try {
-            char[] tmp = new char[IO_BUFFER_SIZE];
+            final int bufferSize = 4096;
+            char[] tmp = new char[bufferSize];
             int l;
             while ((l = reader.read(tmp)) != -1) {
                 buffer.append(tmp, 0, l);

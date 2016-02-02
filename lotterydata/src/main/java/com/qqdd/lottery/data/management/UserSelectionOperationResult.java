@@ -14,7 +14,7 @@ public class UserSelectionOperationResult extends ArrayList<LotteryRecord> {
     }
 
     private boolean mHasMore = false;
-    private UserSelectionManager.UserSelectionSummary mSummary;
+    private UserSelections.UserSelectionSummary mSummary;
     private ResultType mResultType;
 
     public UserSelectionOperationResult() {
@@ -43,11 +43,11 @@ public class UserSelectionOperationResult extends ArrayList<LotteryRecord> {
         mHasMore = hasMore;
     }
 
-    public UserSelectionManager.UserSelectionSummary getSummary() {
+    public UserSelections.UserSelectionSummary getSummary() {
         return mSummary;
     }
 
-    void setSummary(UserSelectionManager.UserSelectionSummary summary) {
+    void setSummary(UserSelections.UserSelectionSummary summary) {
         mSummary = summary;
     }
 
