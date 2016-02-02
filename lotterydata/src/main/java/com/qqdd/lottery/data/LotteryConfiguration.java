@@ -9,7 +9,7 @@ public class LotteryConfiguration {
         private static final LotteryConfiguration INSTANCE = new LotteryConfiguration(Lottery.Type.DLT, 5, 2, 35, 12, 2);
     }
 
-    public static final LotteryConfiguration DLTConfiguration() {
+    private static LotteryConfiguration DLTConfiguration() {
         return DLTInstanceHolder.INSTANCE;
     }
 
@@ -17,7 +17,7 @@ public class LotteryConfiguration {
         private static final LotteryConfiguration INSTANCE = new LotteryConfiguration(Lottery.Type.SSQ, 6, 1, 33, 16, 2);
     }
 
-    public static final LotteryConfiguration SSQConfiguration() {
+    private static LotteryConfiguration SSQConfiguration() {
         return SSQInstanceHolder.INSTANCE;
     }
 

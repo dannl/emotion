@@ -225,7 +225,8 @@ public class SSQSource extends DataSource {
                 rewardBuyHouse.setBuyHouse(true);
                 rewardRule.putReward(6 << 2, rewardBuyHouse);
             }
-            final Lottery lottery = Lottery.newLotteryWithConfiguration(LotteryConfiguration.SSQConfiguration());
+            final Lottery lottery = Lottery.newLotteryWithConfiguration(LotteryConfiguration.getWithType(
+                    Lottery.Type.SSQ));
             lottery.addNormals(new HashSet<>(normalList));
             lottery.addSpecials(new HashSet<>(specialList));
             final HistoryItem result = new HistoryItem(lottery, rewardRule);

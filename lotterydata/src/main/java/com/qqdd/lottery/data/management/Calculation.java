@@ -29,7 +29,7 @@ public class Calculation {
     public List<Lottery> calculate(List<HistoryItem> history, ProgressCallback progressCallback,
                                    int calculateTimes, Lottery.Type type, final int count) {
         List<Calculator> calculatorList = lastNTime();
-        final LotteryConfiguration configuration = LotteryConfiguration.DLTConfiguration();
+        final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
         final NumberTable normalTable = new NumberTable(configuration.getNormalRange());
         final NumberTable specialTable = new NumberTable(configuration.getSpecialRange());
         List<Lottery> tempBuffer = new ArrayList<>();

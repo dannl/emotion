@@ -92,11 +92,13 @@ public class Lottery implements ILottery {
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         for (int v : mNormal) {
-            builder.append(v).append(" ");
+            builder.append(v)
+                    .append(" ");
         }
         builder.append("---- ");
         for (int v : mSpecial) {
-            builder.append(v).append(" ");
+            builder.append(v)
+                    .append(" ");
         }
         return builder.toString();
     }
@@ -104,13 +106,11 @@ public class Lottery implements ILottery {
     public JSONObject toJson() {
         final JSONObject result = new JSONObject();
         final JSONArray normals = new JSONArray();
-        for (int v :
-                mNormal) {
+        for (int v : mNormal) {
             normals.put(v);
         }
         final JSONArray specials = new JSONArray();
-        for (int v :
-                mSpecial) {
+        for (int v : mSpecial) {
             specials.put(v);
         }
         try {
@@ -123,14 +123,13 @@ public class Lottery implements ILottery {
     }
 
     public static Lottery newLotteryWithConfiguration(LotteryConfiguration configuration) {
-        if (configuration == LotteryConfiguration.DLTConfiguration()) {
+        if (configuration == LotteryConfiguration.getWithType(Type.DLT)) {
             return new Lottery(Type.DLT, configuration);
-        } else if (configuration == LotteryConfiguration.SSQConfiguration()) {
+        } else if (configuration == LotteryConfiguration.getWithType(Type.SSQ)) {
             return new Lottery(Type.SSQ, configuration);
         }
         return new Lottery(Type.NONE, configuration);
     }
-
 
 
     public static Lottery fromJson(JSONObject lottery) {
@@ -142,28 +141,14 @@ public class Lottery implements ILottery {
             final JSONArray normals = lottery.getJSONArray("normals");
             final JSONArray specials = lottery.getJSONArray("specials");
             Lottery result;
-            if (type == Type.DLT) {
-                result = newLotteryWithConfiguration(LotteryConfiguration.DLTConfiguration());
-                for (int i = 0; i < normals.length(); i++) {
-                    result.addNormal(normals.getInt(i));
-                }
-                for (int i = 0; i < specials.length(); i++) {
-                    result.addSpecial(specials.getInt(i));
-                }
-                return result;
-            } else if (type == Type.SSQ) {
-                result = newLotteryWithConfiguration(LotteryConfiguration.SSQConfiguration());
-                for (int i = 0; i < normals.length(); i++) {
-                    result.addNormal(normals.getInt(i));
-                }
-                for (int i = 0; i < specials.length(); i++) {
-                    result.addSpecial(specials.getInt(i));
-                }
-                return result;
+            result = newLotteryWithConfiguration(LotteryConfiguration.getWithType(type));
+            for (int i = 0; i < normals.length(); i++) {
+                result.addNormal(normals.getInt(i));
             }
-            else {
-                return null;
+            for (int i = 0; i < specials.length(); i++) {
+                result.addSpecial(specials.getInt(i));
             }
+            return result;
         } catch (JSONException e) {
         }
         return null;

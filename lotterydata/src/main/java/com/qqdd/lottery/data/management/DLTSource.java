@@ -139,7 +139,8 @@ public class DLTSource extends DataSource {
             return null;
         }
         final Matcher matcher = NUMBER_PATTERN.matcher(line);
-        Lottery lt = Lottery.newLotteryWithConfiguration(LotteryConfiguration.DLTConfiguration());
+        Lottery lt = Lottery.newLotteryWithConfiguration(LotteryConfiguration.getWithType(
+                Lottery.Type.DLT));
         if (!matcher.find()) {
             return null;
         }
