@@ -28,8 +28,10 @@ import java.util.Set;
 public class TestAlgorithm {
 
     public static void main(String[] args) {
-        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
+//        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+//                Lottery.Type.DLT, Calculation.lastNTime_sameTail(), 100000, 4);
+        List<HistoryItem> items = new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT);
+        System.out.println("dlt size: " + items);
     }
 
     private File mRoot;

@@ -6,7 +6,6 @@ import com.qqdd.lottery.utils.NumUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -78,7 +77,7 @@ public abstract class LotteryRecord implements ILottery {
         final JSONObject json = new JSONObject();
         try {
             json.put("lottery", getLottery().toJson());
-            json.put("date", DATE_FORMAT.format(mDate));
+            json.put("date", mDate.getTime());
         } catch (JSONException e) {
         }
         return json;
@@ -127,16 +126,13 @@ public abstract class LotteryRecord implements ILottery {
                  == null) {
             return;
         }
-        try {
-            final JSONObject lottery = json.getJSONObject("lottery");
-            final Lottery lt = Lottery.fromJson(lottery);
-            if (lt == null) {
-                throw new JSONException("failed to parse lottery.");
-            }
-            record.mLottery = lt;
-            record.setDate(DATE_FORMAT.parse(json.getString("date")));
-        } catch (ParseException ignored) {
+        final JSONObject lottery = json.getJSONObject("lottery");
+        final Lottery lt = Lottery.fromJson(lottery);
+        if (lt == null) {
+            throw new JSONException("failed to parse lottery.");
         }
+        record.mLottery = lt;
+        record.setDate(new Date(json.getLong("date")));
     }
 
 }

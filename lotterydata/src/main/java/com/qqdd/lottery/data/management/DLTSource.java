@@ -163,7 +163,7 @@ public class DLTSource extends DataSource {
         int month = Integer.parseInt(dateMatcher.group(2));
         int day = Integer.parseInt(dateMatcher.group(3));
         CALENDAR.set(year, month - 1, day, 20, 30, 0);
-        Date date = CALENDAR.getTime();
+        Date date = new Date(CALENDAR.getTimeInMillis() / 1000 * 1000);
 
         final Matcher goHomeMatcher = GO_HOME_MONEY_PATTERN.matcher(line);
 

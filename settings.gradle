@@ -1,1 +1,1 @@
-include ':client', ':gif', ':producer', ':utils', ':lottery',':lotterydata'
+include ':client', ':gif', ':producer', ':utils', ':lottery', ':lotterydata', ':chart'

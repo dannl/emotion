@@ -107,9 +107,13 @@ public class History {
                     final HistoryItem firstCache = records.get(0);
                     final Date date = firstCache.getDate();
                     final long deltaTime = System.currentTimeMillis() - date.getTime();
+                    int dayOfWeek = 3;
+                    if (mType == Lottery.Type.SSQ) {
+                        dayOfWeek = 4;
+                    }
                     if (deltaTime < 2 * ONE_DAY
                             //周3是3.
-                            || (date.getDay() == 3 && deltaTime < 3 * ONE_DAY)) {
+                            || (date.getDay() == dayOfWeek && deltaTime < 3 * ONE_DAY)) {
                         //                        mDLTs = lotteryRecords;
                         mHistoryCache.put(mType, records);
                         return mHistoryCache.get(mType);

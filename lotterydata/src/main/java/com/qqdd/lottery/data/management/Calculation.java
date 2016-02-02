@@ -70,6 +70,28 @@ public class Calculation {
                         .createCalculator());
         return calculatorList;
     }
+    public static CalculatorCollection lastNTime_sameTail() {
+        CalculatorCollection calculatorList = new CalculatorCollection("波动型_sameTtail");
+        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
+                .createCalculator());
+        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
+                .createCalculator());
+        calculatorList.add(CalculatorFactory.SameNumberCalculatorFactory.instance()
+                        .createCalculator());
+        return calculatorList;
+    }
+
+    public static CalculatorCollection lastNTime_sameNumber_sameTail() {
+        CalculatorCollection calculatorList = new CalculatorCollection("波动型_sameNumber_sameTail");
+        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
+                .createCalculator());
+        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
+                .createCalculator());
+        calculatorList.add(CalculatorFactory.SameNumberCalculatorFactory.instance()
+                        .createCalculator());
+        calculatorList.add(CalculatorFactory.SameTailCalculatorFactory.instance().createCalculator());
+        return calculatorList;
+    }
 
     public static CalculatorCollection random() {
         CalculatorCollection calculatorList = new CalculatorCollection("纯随机");
