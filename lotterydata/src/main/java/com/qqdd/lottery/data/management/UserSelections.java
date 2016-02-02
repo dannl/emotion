@@ -231,7 +231,7 @@ public class UserSelections {
         Collections.sort(fileNameValues, new Comparator<Long>() {
             @Override
             public int compare(Long o1, Long o2) {
-                return (int) (o2 - o1);
+                return (int) (o2 / 1000 - o1 / 1000);
             }
         });
 
