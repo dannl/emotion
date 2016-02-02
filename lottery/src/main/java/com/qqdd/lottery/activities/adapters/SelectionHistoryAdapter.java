@@ -147,7 +147,7 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
         @Override
         protected void bind(final LotteryRecord record) {
             final UserSelection userSelection = (UserSelection) record;
-            mNumberLineView.setLottery(userSelection.getLottery());
+            mNumberLineView.setLottery(userSelection);
             mDeleteView.setVisibility(userSelection.isRedeemed() ? View.GONE : View.VISIBLE);
             mDeleteView.setOnClickListener(new View.OnClickListener() {
                 @Override

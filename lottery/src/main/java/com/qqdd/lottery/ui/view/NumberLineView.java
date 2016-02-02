@@ -7,8 +7,11 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.qqdd.lottery.data.*;
-import com.qqdd.lottery.data.Number;
+import com.qqdd.lottery.data.ILottery;
+import com.qqdd.lottery.data.LotteryConfiguration;
+import com.qqdd.lottery.data.NumberList;
+import com.qqdd.lottery.data.RewardRule;
+import com.qqdd.lottery.data.UserSelection;
 
 /**
  * Created by danliu on 2016/1/28.
@@ -60,19 +63,38 @@ public class NumberLineView extends LinearLayout {
         final NumberList normals = lottery.getNormals();
         final NumberList specials = lottery.getSpecials();
 
+        NumberList normalHighLight = new NumberList();
+        NumberList specialHighLight = new NumberList();
+
+        if (lottery instanceof UserSelection) {
+            UserSelection us = (UserSelection) lottery;
+            final RewardRule.RewardDetail detail = us.getRewardDetail();
+            if (detail != null) {
+                normalHighLight = detail.getNormals();
+                specialHighLight = detail.getSpecials();
+            }
+        }
+
 
         final int normalSize = normals.size();
         for (int i = 0; i < normalSize; i++) {
-            ((NumberView)getChildAt(i)).setNumber(normals.get(i));
+            final NumberView childView = (NumberView) getChildAt(i);
+            final Integer number = normals.get(i);
+            childView.setNumber(number);
+            childView.setChecked(normalHighLight.contains(number));
         }
         for (int i = 0; i < specials.size(); i++) {
-            ((NumberView) getChildAt(i + normalSize)).setNumber(specials.get(i));
+            final NumberView childView = (NumberView) getChildAt(i + normalSize);
+            final Integer number = specials.get(i);
+            childView.setNumber(number);
+            childView.setChecked(specialHighLight.contains(number));
         }
     }
 
     @NonNull
     private static LayoutParams newLayoutParam() {
-        final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
         params.weight = 1;
         return params;
     }

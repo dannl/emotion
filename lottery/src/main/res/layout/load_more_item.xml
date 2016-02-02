@@ -27,7 +27,9 @@
     <TextView
         android:id="@+id/load_more_text"
         style="@style/AppPrimaryTextStyle"
-        android:layout_width="wrap_content"
+        android:background="@drawable/white_clickable"
+        android:textColor="@color/colorPrimary"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center"
         android:text="@string/load_more" />
