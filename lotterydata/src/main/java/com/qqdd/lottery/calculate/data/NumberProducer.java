@@ -11,7 +11,6 @@ import com.qqdd.lottery.utils.NumUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -27,7 +26,6 @@ public class NumberProducer {
         return SingletonHolder.INSTANCE;
     }
 
-    private static final Random RANDOM = new Random();
     private static final int RANGE_DIVIDER = 100;
 
 
@@ -68,10 +66,11 @@ public class NumberProducer {
         float[] rate = calculateTimeToHomeRate(timeToGoHome);
         final List<Lottery> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            final int startIndex = NumUtils.calculateIndexWithWeight(rate, RANDOM);
+            final int startIndex = NumUtils.calculateIndexWithWeight(rate,
+                    com.qqdd.lottery.utils.Random.getInstance());
             final int range = tempBuffer.size() / rate.length;
             final int startFrom = startIndex * range;
-            final int index = RANDOM.nextInt(range) + startFrom;
+            final int index = com.qqdd.lottery.utils.Random.getInstance().nextInt(range) + startFrom;
             result.add(tempBuffer.get(index));
         }
         return result;
@@ -87,7 +86,7 @@ public class NumberProducer {
         final Set<Integer> result = new HashSet<>(size);
         result.addAll(alreadySelected);
         while (result.size() < size) {
-            float calculated = RANDOM.nextFloat() * total;
+            float calculated = com.qqdd.lottery.utils.Random.getInstance().nextFloat() * total;
             float indexer = 0f;
             for (int i = 0; i < table.size(); i++) {
                 Number number = table.get(i);

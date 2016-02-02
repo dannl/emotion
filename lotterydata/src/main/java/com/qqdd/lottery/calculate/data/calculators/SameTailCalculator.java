@@ -9,10 +9,10 @@ import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.NumberList;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.utils.NumUtils;
+import com.qqdd.lottery.utils.Random;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by danliu on 2016/1/26.
@@ -24,7 +24,6 @@ public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
     }
 
     private static HashMap<HistoryItem, Probabilities> CACHE = new HashMap<>();
-    private static final Random RANDOM = new Random();
     private static final float POWER = 2;
 
     @Override
@@ -50,10 +49,11 @@ public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
             cache = calculateProbability(lts);
             CACHE.put(record, cache);
         }
-        int normalOccTime = NumUtils.calculateIndexWithWeight(cache.normalOccTimeRate, RANDOM);
-        int specialOccTime = NumUtils.calculateIndexWithWeight(cache.specialOccTimeRate, RANDOM);
+        int normalOccTime = NumUtils.calculateIndexWithWeight(cache.normalOccTimeRate,
+                com.qqdd.lottery.utils.Random.getInstance());
+        int specialOccTime = NumUtils.calculateIndexWithWeight(cache.specialOccTimeRate, Random.getInstance());
         for (int i = 0; i < normalOccTime; i++) {
-            int tailToAddRate = NumUtils.calculateIndexWithWeight(cache.normalNumberOccProb, RANDOM);
+            int tailToAddRate = NumUtils.calculateIndexWithWeight(cache.normalNumberOccProb, Random.getInstance());
             int range = configuration.getNormalRange();
             for (int j = tailToAddRate; j <= range; j+= 10) {
                 if (j == 0) {
@@ -63,7 +63,7 @@ public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
             }
         }
         for (int i = 0; i < specialOccTime; i++) {
-            int tailToAddRate = NumUtils.calculateIndexWithWeight(cache.specialNumberOccProb, RANDOM);
+            int tailToAddRate = NumUtils.calculateIndexWithWeight(cache.specialNumberOccProb, Random.getInstance());
             int range = configuration.getSpecialRange();
             for (int j = tailToAddRate; j <= range; j+= 10) {
                 if (j == 0) {
