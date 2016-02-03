@@ -52,6 +52,8 @@ public class SelectionsActivity extends BaseActivity implements SelectionHistory
         mList.setAdapter(mAdapter);
 
         loadData();
+
+        setTitle(mType.getName() + getTitle());
     }
 
     private void loadData() {

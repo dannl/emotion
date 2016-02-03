@@ -21,6 +21,7 @@ import com.qqdd.lottery.utils.SimpleIOUtils;
 import org.json.JSONArray;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,13 +30,16 @@ import java.util.Set;
 
 public class TestAlgorithm {
 
+    private static final DecimalFormat TEST_RESULT_FORMAT = new DecimalFormat("##0.0000000");
+
     public static void main(String[] args) {
         Random.getInstance()
                 .init();
         try {
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                    Lottery.Type.DLT, Calculation.lastNTime(), 100000, 4);
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT, Calculation.lastNTime(), 3, 1000000);
+            //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+            //                    Lottery.Type.DLT, Calculation.lastNTime(), 100000, 4);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
+                    Calculation.lastNTime(), 3, 1000000);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
@@ -51,7 +55,8 @@ public class TestAlgorithm {
         return mRoot;
     }
 
-    private List<Lottery> calculateResult(Lottery.Type type, CalculatorCollection calculators, int resultCount, int calculateTimes)
+    private List<Lottery> calculateResult(Lottery.Type type, CalculatorCollection calculators,
+                                          int resultCount, int calculateTimes)
             throws DataSource.DataLoadingException {
         List<Lottery> result = new Calculation(getProjectRoot()).calculate(
                 new History(getProjectRoot()).load(type), calculators, new ProgressCallback() {
@@ -68,7 +73,8 @@ public class TestAlgorithm {
         return result;
     }
 
-    public void calculateAndSave(Lottery.Type type, CalculatorCollection calculators,int resultCount ,int calculateTimes)
+    public void calculateAndSave(Lottery.Type type, CalculatorCollection calculators,
+                                 int resultCount, int calculateTimes)
             throws DataSource.DataLoadingException {
         List<Lottery> result = calculateResult(type, calculators, resultCount, calculateTimes);
         final List<UserSelection> userSelections = new ArrayList<>(result.size());
@@ -110,7 +116,8 @@ public class TestAlgorithm {
     public double actualBuyingARound(Lottery.Type type, CalculatorCollection collection,
                                      int calculateTimes, int since)
             throws DataSource.DataLoadingException {
-        final TestResult result = testAlgorithm(type, collection, calculateTimes, since);
+        final TestResult result = testAlgorithm(type, collection, calculateTimes, since, null,
+                false);
         System.out.println(result.toString());
         return result.calculateTotal() - 2 * result.totalTestCount;
     }
@@ -119,7 +126,8 @@ public class TestAlgorithm {
                                                   CalculatorCollection collection,
                                                   int calculateTimes, int since)
             throws DataSource.DataLoadingException {
-        final TestResult result = testAlgorithm(type, collection, calculateTimes, since);
+        final TestResult result = testAlgorithm(type, collection, calculateTimes, since, null,
+                false);
         System.out.println(result.toString());
         float maxRate = 0;
         float minRate = 1;
@@ -153,14 +161,15 @@ public class TestAlgorithm {
     public TestResult testRandom(Lottery.Type type, int calculateTimes, int since)
             throws DataSource.DataLoadingException {
         final Task task = new Task(getProjectRoot(), type, Calculation.random(), calculateTimes,
-                since);
+                since, null, false);
         return task.execute();
     }
 
     public TestResult testAlgorithm(Lottery.Type type, CalculatorCollection collection,
-                                    int calculateTimes, int since)
-            throws DataSource.DataLoadingException {
-        final Task task = new Task(getProjectRoot(), type, collection, calculateTimes, since);
+                                    int calculateTimes, int since, ProgressCallback callback,
+                                    boolean needAllResult) throws DataSource.DataLoadingException {
+        final Task task = new Task(getProjectRoot(), type, collection, calculateTimes, since,
+                callback, needAllResult);
         return task.execute();
     }
 
@@ -175,6 +184,7 @@ public class TestAlgorithm {
         long endTime;
         private HashMap<LotteryRecord, Integer> goHomeDistribute = new HashMap<>();
         List<TestRoundRates> recordRate = new ArrayList<>();
+        public ArrayList<Lottery> allLtResult;
 
         public TestResult(File root, final Lottery.Type type, final int testTime,
                           final String calculatorDesc) {
@@ -194,10 +204,11 @@ public class TestAlgorithm {
                     .append(totalMoney)
                     .append("\n");
             builder.append("总中奖率：")
-                    .append(((double) totalRewardCount) / totalTestCount)
+                    .append(TEST_RESULT_FORMAT.format(((double) totalRewardCount) / totalTestCount))
                     .append("\n");
             builder.append("测试速度：")
-                    .append(((double) totalTestCount) / (System.currentTimeMillis() - startTime) * 1000)
+                    .append(TEST_RESULT_FORMAT.format(
+                            ((double) totalTestCount) / (System.currentTimeMillis() - startTime) * 1000))
                     .append("\n");
             final Set<Map.Entry<RewardRule.Reward, Integer>> entrySet = detail.entrySet();
             for (Map.Entry<RewardRule.Reward, Integer> entry : entrySet) {
@@ -205,12 +216,12 @@ public class TestAlgorithm {
                 final RewardRule.Reward key = entry.getKey();
                 totalMoney += value * key.getMoney();
                 builder.append(key.getTitle())
-                        .append(" 奖金：")
+                        .append(" 奖金:")
                         .append(key.getMoney())
                         .append(" 个数:")
                         .append(value)
-                        .append(" 中奖率：")
-                        .append(((double) value) / totalTestCount)
+                        .append(" 中奖率:")
+                        .append(TEST_RESULT_FORMAT.format(((double) value) / totalTestCount))
                         .append("\n");
             }
 
@@ -259,6 +270,14 @@ public class TestAlgorithm {
         }
     }
 
+    private class DefaultProgressCallback implements ProgressCallback {
+
+        @Override
+        public void onProgressUpdate(String progress) {
+            System.out.print(progress);
+        }
+    }
+
     private class Task {
 
         private final CalculatorCollection mCalculators;
@@ -267,15 +286,24 @@ public class TestAlgorithm {
         private Lottery.Type mType;
         private int mCalculateTimes;
         private int mSince;
+        private ProgressCallback mProgressCallback;
+
 
         public Task(File root, Lottery.Type type, CalculatorCollection calculators,
-                    final int calculateTimes, final int since) {
+                    final int calculateTimes, final int since, ProgressCallback callback,
+                    boolean needAllResult) {
             mCalculators = calculators;
             mCalculateTimes = calculateTimes;
             mConfiguration = LotteryConfiguration.getWithType(type);
             mType = type;
             mSince = since;
             mResult = new TestResult(root, type, calculateTimes, calculators.getTitle());
+            if (needAllResult) {
+                mResult.allLtResult = new ArrayList<>();
+            }
+            mProgressCallback = callback == null ?
+                    new DefaultProgressCallback() :
+                    callback;
         }
 
         protected TestResult execute() throws DataSource.DataLoadingException {
@@ -300,6 +328,9 @@ public class TestAlgorithm {
                     }
                     final Lottery tempResult = com.qqdd.lottery.data.management.NumberProducer.getInstance()
                             .pick(subHistory, normalTable, specialTable, mConfiguration);
+                    if (mResult.allLtResult != null) {
+                        mResult.allLtResult.add(tempResult);
+                    }
                     final RewardRule.Reward reward = record.calculateReward(tempResult);
                     final int money = reward.getMoney();
                     if (money > 0) {
@@ -343,7 +374,8 @@ public class TestAlgorithm {
                 return;
             }
             mLastPublishProgressTime = System.currentTimeMillis();
-            System.out.print("=========================\n" + mResult.toString() + "\n");
+            mProgressCallback.onProgressUpdate(
+                    "\n" + mResult.toString() + "\n");
         }
 
     }

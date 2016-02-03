@@ -15,7 +15,17 @@ import java.util.Set;
 public class Lottery implements ILottery {
 
     public enum Type {
-        SSQ, NONE, DLT
+        SSQ("双色球"), NONE("无"), DLT("大乐透");
+
+        private String mName;
+
+        Type(final String name) {
+            mName = name;
+        }
+
+        public String getName() {
+            return mName;
+        }
     }
 
     private final NumberList mNormal = new NumberList();

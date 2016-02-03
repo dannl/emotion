@@ -2,7 +2,7 @@ package com.qqdd.lottery.data.management;
 
 import android.os.AsyncTask;
 
-import com.example.niub.utils.FileUtils;
+import com.qqdd.lottery.ui.view.FileUtils;
 import com.qqdd.lottery.R;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;

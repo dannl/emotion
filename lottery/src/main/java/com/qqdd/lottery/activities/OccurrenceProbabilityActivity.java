@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qqdd.lottery.BaseActivity;
+import com.qqdd.lottery.LTPrefs;
 import com.qqdd.lottery.R;
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.data.Constants;
@@ -42,6 +43,10 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
         setContentView(R.layout.activity_occurrence_probability);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        setTitle(mType.getName() + getTitle());
+
+        findViewById(R.id.test_entrance).setVisibility(LTPrefs.getInstance().showTestEntrance() ? View.VISIBLE : View.GONE);
 
     }
 
@@ -204,6 +209,12 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
     public void handleViewRedeemedClicked(View view) {
         final Intent intent = new Intent(this, SelectionsActivity.class);
+        intent.putExtra(Constants.KEY_TYPE, mType);
+        startActivity(intent);
+    }
+
+    public void handleTestLastClicked(View view) {
+        final Intent intent = new Intent(this, TestActivity.class);
         intent.putExtra(Constants.KEY_TYPE, mType);
         startActivity(intent);
     }

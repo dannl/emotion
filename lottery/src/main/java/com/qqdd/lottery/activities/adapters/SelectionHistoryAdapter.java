@@ -129,7 +129,7 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     }
 
-    private static class SelectionItemViewHolder extends MyViewHolder {
+    public static class SelectionItemViewHolder extends MyViewHolder {
 
         private NumberLineView mNumberLineView;
         private TextView mDeleteView;
@@ -169,7 +169,6 @@ public class SelectionHistoryAdapter extends RecyclerView.Adapter<RecyclerView.V
                 mNumberLineView.setAlpha(0.5f);
             }
         }
-
     }
 
 

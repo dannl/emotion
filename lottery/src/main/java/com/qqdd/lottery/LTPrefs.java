@@ -7,6 +7,14 @@ import la.niub.util.utils.PrefsFile;
  */
 public class LTPrefs extends PrefsFile {
 
+    public void setShowTestEntrance(boolean showTestEntrance) {
+        setBooleanValue("showTestEntrance", showTestEntrance);
+    }
+
+    public boolean showTestEntrance() {
+        return getBooleanValue("showTestEntrance", false);
+    }
+
 
     private static class SingletonHolder {
         private static LTPrefs INSTANCE = new LTPrefs();

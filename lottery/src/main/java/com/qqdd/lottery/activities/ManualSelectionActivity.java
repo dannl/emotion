@@ -4,10 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -15,7 +11,9 @@ import android.widget.GridView;
 
 import com.qqdd.lottery.R;
 import com.qqdd.lottery.activities.adapters.NumAreaAdapter;
-import com.qqdd.lottery.data.*;
+import com.qqdd.lottery.data.Constants;
+import com.qqdd.lottery.data.Lottery;
+import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.Number;
 import com.qqdd.lottery.ui.view.NumberView;
 
@@ -56,6 +54,7 @@ public class ManualSelectionActivity extends AppCompatActivity {
         setupNumberView(mNormalNumberView);
         setupNumberView(mSpecialNumberView);
 
+        setTitle(type.getName() + getTitle());
     }
 
     private void initViews(LotteryConfiguration configuration) {

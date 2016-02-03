@@ -6,16 +6,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.qqdd.lottery.BaseActivity;
+import com.qqdd.lottery.LTPrefs;
 import com.qqdd.lottery.R;
-import com.qqdd.lottery.calculate.AlgorithmTester;
 import com.qqdd.lottery.data.Constants;
 import com.qqdd.lottery.data.Lottery;
 
 public class MainActivity extends BaseActivity {
-
-    private AlgorithmTester mTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,5 +61,38 @@ public class MainActivity extends BaseActivity {
         final Intent intent = new Intent(MainActivity.this, OccurrenceProbabilityActivity.class);
         intent.putExtra(Constants.KEY_TYPE, Lottery.Type.SSQ);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mClickCount = 0;
+    }
+
+    private int mClickCount = 0;
+    private Toast mToast;
+
+    public void handleTestTogglerClicked(View view) {
+        mClickCount ++;
+        if (mClickCount == 18) {
+            showTestSwitchHint(2);
+        } else if (mClickCount == 19) {
+            showTestSwitchHint(1);
+        } else if (mClickCount >= 20) {
+            showTestSwitchHint(0);
+            LTPrefs.getInstance().setShowTestEntrance(true);
+        }
+    }
+
+    private void showTestSwitchHint(int count) {
+        if (mToast == null) {
+            mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+        }
+        if (count == 0) {
+            mToast.setText("已打开测试工具，点大乐透或者双色球就可以看到了！！");
+        } else {
+            mToast.setText("再点击" + count + "次打开测试工具！");
+        }
+        mToast.show();
     }
 }

@@ -78,6 +78,15 @@
                 style="@style/AppButtonStyle"
                 android:text="@string/view_not_redeemed"
                 android:onClick="handleViewRedeemedClicked"/>
+
+            <TextView
+                android:id="@+id/test_entrance"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="@dimen/main_margin"
+                style="@style/AppButtonStyle"
+                android:text="@string/test_last_probability"
+                android:onClick="handleTestLastClicked"/>
         </LinearLayout>
     </ScrollView>
 

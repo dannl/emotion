@@ -54,6 +54,8 @@ public class SelectionRewardHistoryActivity extends BaseActivity implements Sele
         mList.setAdapter(mAdapter);
 
         loadData();
+
+        setTitle(mType.getName() + getTitle());
     }
 
     private void loadData() {
