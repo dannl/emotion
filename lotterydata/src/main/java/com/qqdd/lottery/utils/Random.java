@@ -27,8 +27,6 @@ public class Random extends SecureRandom {
                 final String[] split = seed.split("\\s+");
                 byte[] seedBytes = new byte[split.length];
                 for (int i = 0; i < split.length; i++) {
-                    System.out.println(String.valueOf(i));
-                    System.out.println(split[i]);
                     final int parsedInt = Integer.parseInt(split[i], 16);
                     final int byteValue = parsedInt & 0x7f;
 

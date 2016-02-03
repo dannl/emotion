@@ -119,7 +119,7 @@ public class SelectionsActivity extends BaseActivity implements SelectionHistory
         UserSelectionsDelegate.getInstance().delete(mType, userSelection, new DataLoadingCallback<UserSelectionOperationResult>() {
             @Override
             public void onLoaded(UserSelectionOperationResult result) {
-                operationSucceeded(result);
+                loadData();
             }
 
             @Override
