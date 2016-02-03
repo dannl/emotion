@@ -1,9 +1,7 @@
 package com.qqdd.lottery.data.management;
 
-import com.qqdd.lottery.calculate.data.Calculator;
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
-import com.qqdd.lottery.calculate.data.NumberProducer;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
 import com.qqdd.lottery.data.HistoryItem;
@@ -27,10 +25,9 @@ public class Calculation {
         mRoot = root;
     }
 
-    public List<Lottery> calculate(List<HistoryItem> history, ProgressCallback progressCallback,
+    public List<Lottery> calculate(List<HistoryItem> history, CalculatorCollection calculatorList, ProgressCallback progressCallback,
                                    int calculateTimes, Lottery.Type type, final int count) {
         Random.getInstance().init();
-        List<Calculator> calculatorList = lastNTime();
         final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
         final NumberTable normalTable = new NumberTable(configuration.getNormalRange());
         final NumberTable specialTable = new NumberTable(configuration.getSpecialRange());
@@ -46,7 +43,7 @@ public class Calculation {
                         .calculate(history, normalTable, specialTable);
             }
             tempBuffer.add(NumberProducer.getInstance()
-                    .calculate(history, normalTable, specialTable, configuration));
+                    .pick(history, normalTable, specialTable, configuration));
         }
         return NumberProducer.getInstance()
                 .select(tempBuffer, count, TimeToGoHome.load(mRoot, type, calculateTimes));
@@ -54,7 +51,7 @@ public class Calculation {
 
 
     public static CalculatorCollection lastNTime() {
-        CalculatorCollection calculatorList = new CalculatorCollection("稳健型");
+        CalculatorCollection calculatorList = new CalculatorCollection("稳健型", "根据测试结果，概率分布最稳定，平均中奖率最高，约20%（大乐透），13.5%(双色球)");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
         calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
@@ -63,7 +60,7 @@ public class Calculation {
     }
 
     public static CalculatorCollection lastNTime_sameNumber() {
-        CalculatorCollection calculatorList = new CalculatorCollection("波动型");
+        CalculatorCollection calculatorList = new CalculatorCollection("波动型","根据测试结果，概率分布波动较大，平均中奖率19%(大乐透),13%(双色球)，使用往期开奖号码进行测试，最高中奖率可以到40%,同时最低也到了9%");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
         calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
@@ -73,7 +70,7 @@ public class Calculation {
         return calculatorList;
     }
     public static CalculatorCollection lastNTime_sameTail() {
-        CalculatorCollection calculatorList = new CalculatorCollection("波动型_sameTtail");
+        CalculatorCollection calculatorList = new CalculatorCollection("测试用_波动型_同尾","测试用...");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
         calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
@@ -84,7 +81,7 @@ public class Calculation {
     }
 
     public static CalculatorCollection lastNTime_sameNumber_sameTail() {
-        CalculatorCollection calculatorList = new CalculatorCollection("波动型_sameNumber_sameTail");
+        CalculatorCollection calculatorList = new CalculatorCollection("测试用_波动型_同号_同尾","测试用...");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
         calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
@@ -96,8 +93,18 @@ public class Calculation {
     }
 
     public static CalculatorCollection random() {
-        CalculatorCollection calculatorList = new CalculatorCollection("纯随机");
+        CalculatorCollection calculatorList = new CalculatorCollection("纯随机","平均中奖率6.6%");
         calculatorList.add(new AverageProbabilityCalculator());
         return calculatorList;
+    }
+
+    public static List<CalculatorCollection> allCalculorGroups() {
+        final List<CalculatorCollection> result = new ArrayList<>();
+        result.add(lastNTime());
+        result.add(lastNTime_sameNumber());
+        result.add(random());
+//        result.add(lastNTime_sameTail());
+//        result.add(lastNTime_sameNumber_sameTail());
+        return result;
     }
 }

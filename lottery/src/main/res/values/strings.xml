@@ -42,4 +42,5 @@
     <string name="view_not_redeemed">查看本期选号…</string>
     <string name="action_ssq_history">双色球历史数据…</string>
     <string name="ssq">双色球</string>
+    <string name="select_calculator_set">选择算号器类型</string>
 </resources>

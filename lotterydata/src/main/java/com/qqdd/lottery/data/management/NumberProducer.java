@@ -1,5 +1,7 @@
-package com.qqdd.lottery.calculate.data;
+package com.qqdd.lottery.data.management;
 
+import com.qqdd.lottery.calculate.data.TimeToGoHome;
+import com.qqdd.lottery.calculate.data.calculators.OddEvenCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -27,24 +29,34 @@ public class NumberProducer {
     }
 
     private static final int RANGE_DIVIDER = 100;
-
+    private boolean mUseOddEvenPicker = false;
+    private OddEvenCalculator mOddEvenCalculator;
 
     private NumberProducer() {
+        mOddEvenCalculator = new OddEvenCalculator();
     }
 
-    public Lottery calculate(List<HistoryItem> history, final NumberTable normals, final NumberTable specials,
-                             final LotteryConfiguration lotteryConfiguration)  {
+    public void setUseOddEvenPicker(boolean useOddEvenPicker) {
+        mUseOddEvenPicker = useOddEvenPicker;
+    }
+
+    public Lottery pick(List<HistoryItem> history, final NumberTable normals,
+                        final NumberTable specials, final LotteryConfiguration lotteryConfiguration) {
         Lottery result = Lottery.newLotteryWithConfiguration(lotteryConfiguration);
-        Set<Integer> normalValues = calculateValues(normals, result.getNormals(),
-                lotteryConfiguration.getNormalSize());
-        Set<Integer> specialValues = calculateValues(specials, result.getSpecials(),
-                lotteryConfiguration.getSpecialSize());
-        assert result != null;
-        result.replaceAllNormals(normalValues);
-        result.replaceAllSpecials(specialValues);
+        if (mUseOddEvenPicker) {
+            mOddEvenCalculator.pick(history, normals, specials,result);
+        }
+        if (!result.isValid()) {
+            Set<Integer> normalValues = calculateValues(normals, result.getNormals(),
+                    lotteryConfiguration.getNormalSize());
+            Set<Integer> specialValues = calculateValues(specials, result.getSpecials(),
+                    lotteryConfiguration.getSpecialSize());
+            result.replaceAllNormals(normalValues);
+            result.replaceAllSpecials(specialValues);
+        }
         return result;
     }
-    
+
     private float[] calculateTimeToHomeRate(TimeToGoHome timeToGoHome) {
         if (timeToGoHome == null) {
             return NumUtils.newEmptyFloatArray(RANGE_DIVIDER);
@@ -54,7 +66,7 @@ public class NumberProducer {
         final int[] occ = NumUtils.newEmptyIntArray(RANGE_DIVIDER);
         for (int i = 0; i < timeToGoHome.size(); i++) {
             final int index = timeToGoHome.get(i) / range;
-            occ[index] ++;
+            occ[index]++;
         }
         return NumUtils.calculateProbability(occ);
     }
@@ -70,7 +82,8 @@ public class NumberProducer {
                     com.qqdd.lottery.utils.Random.getInstance());
             final int range = tempBuffer.size() / rate.length;
             final int startFrom = startIndex * range;
-            final int index = com.qqdd.lottery.utils.Random.getInstance().nextInt(range) + startFrom;
+            final int index = com.qqdd.lottery.utils.Random.getInstance()
+                    .nextInt(range) + startFrom;
             result.add(tempBuffer.get(index));
         }
         return result;
@@ -86,7 +99,8 @@ public class NumberProducer {
         final Set<Integer> result = new HashSet<>(size);
         result.addAll(alreadySelected);
         while (result.size() < size) {
-            float calculated = com.qqdd.lottery.utils.Random.getInstance().nextFloat() * total;
+            float calculated = com.qqdd.lottery.utils.Random.getInstance()
+                    .nextFloat() * total;
             float indexer = 0f;
             for (int i = 0; i < table.size(); i++) {
                 Number number = table.get(i);
@@ -105,13 +119,12 @@ public class NumberProducer {
         int valuedNumberCount = 0;
         for (int i = 0; i < table.size(); i++) {
             final Number number = table.get(i);
-            if (number.getWeight() > 0f){
-                valuedNumberCount ++;
+            if (number.getWeight() > 0f) {
+                valuedNumberCount++;
             }
         }
         return valuedNumberCount > size;
     }
-
 
 
 }

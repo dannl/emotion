@@ -3,6 +3,7 @@ package com.qqdd.lottery.data.management;
 import android.os.AsyncTask;
 
 import com.example.niub.utils.FileUtils;
+import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 
@@ -36,14 +37,14 @@ public class CalculationDelegate {
         mTaskCache = new HashMap<>();
     }
 
-    public void calculate(final List<HistoryItem> lts, final Lottery.Type type,
+    public void calculate(final List<HistoryItem> lts, CalculatorCollection calculators, final Lottery.Type type,
                           final int resultSize, final int loopCount,
                           final DataLoadingCallback<List<Lottery>> callback) {
         if (mTaskCache.get(type) != null) {
             callback.onBusy();
             return;
         }
-        final CalculateTask task = new CalculateTask(lts, type, resultSize, loopCount, callback);
+        final CalculateTask task = new CalculateTask(lts, calculators, type, resultSize, loopCount, callback);
         mTaskCache.put(type, task);
         task.execute();
     }
@@ -55,19 +56,21 @@ public class CalculationDelegate {
         private final int mResultSize;
         private final int mLoopCount;
         private final DataLoadingCallback<List<Lottery>> mCallback;
+        private CalculatorCollection mCalculators;
 
-        public CalculateTask(List<HistoryItem> lts, Lottery.Type type, int resultSize,
+        public CalculateTask(List<HistoryItem> lts, CalculatorCollection calculators, Lottery.Type type, int resultSize,
                              int loopCount, DataLoadingCallback<List<Lottery>> callback) {
             mHistory = lts;
             mType = type;
             mResultSize = resultSize;
             mLoopCount = loopCount;
             mCallback = callback;
+            mCalculators = calculators;
         }
 
         @Override
         protected List<Lottery> doInBackground(Void... params) {
-            return mCalculation.calculate(mHistory, new ProgressCallback() {
+            return mCalculation.calculate(mHistory, mCalculators, new ProgressCallback() {
                 @Override
                 public void onProgressUpdate(final String progress) {
                     UIUtil.runOnUIThread(new Runnable() {
@@ -83,7 +86,7 @@ public class CalculationDelegate {
         @Override
         protected void onPostExecute(List<Lottery> lotteries) {
             if (lotteries == null || lotteries.isEmpty()) {
-                mCallback.onLoadFailed("failed to calculate.");
+                mCallback.onLoadFailed("failed to pick.");
             } else {
                 mCallback.onLoaded(lotteries);
             }

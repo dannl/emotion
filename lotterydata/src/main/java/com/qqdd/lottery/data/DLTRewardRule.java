@@ -128,8 +128,10 @@ public class DLTRewardRule extends RewardRule {
         mRewards.put(4 << 2 | 2, great);
         mRewards.put(5 << 2, great);
         final Reward omg = new Reward("二等", "1+2或者0+2或者", 200000);
+        omg.setBuyHouse(true);
         mRewards.put(5 << 2 | 1, omg);
         final Reward iAmRichNow = new Reward("一等", "1+2或者0+2或者", 10000000);
+        iAmRichNow.setGoHome(true);
         mRewards.put(5 << 2 | 2, iAmRichNow);
     }
 

@@ -30,10 +30,12 @@ import java.util.Set;
 public class TestAlgorithm {
 
     public static void main(String[] args) {
-        Random.getInstance().init();
+        Random.getInstance()
+                .init();
         try {
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                    Lottery.Type.DLT, Calculation.lastNTime_sameTail(), 100000, 4);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+//                    Lottery.Type.DLT, Calculation.lastNTime(), 100000, 4);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT, Calculation.lastNTime_sameNumber(), 2, 1000000);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
@@ -49,11 +51,10 @@ public class TestAlgorithm {
         return mRoot;
     }
 
-    private List<Lottery> calculateResult(Lottery.Type type, int calculateTimes)
+    private List<Lottery> calculateResult(Lottery.Type type, CalculatorCollection calculators, int resultCount, int calculateTimes)
             throws DataSource.DataLoadingException {
-        final int resultCount = 5;
         List<Lottery> result = new Calculation(getProjectRoot()).calculate(
-                new History(getProjectRoot()).load(type), new ProgressCallback() {
+                new History(getProjectRoot()).load(type), calculators, new ProgressCallback() {
                     @Override
                     public void onProgressUpdate(String progress) {
                         System.out.println("\r" + progress);
@@ -67,9 +68,9 @@ public class TestAlgorithm {
         return result;
     }
 
-    public void calculateAndSave(Lottery.Type type, int calculateTimes)
+    public void calculateAndSave(Lottery.Type type, CalculatorCollection calculators,int resultCount ,int calculateTimes)
             throws DataSource.DataLoadingException {
-        List<Lottery> result = calculateResult(type, calculateTimes);
+        List<Lottery> result = calculateResult(type, calculators, resultCount, calculateTimes);
         final List<UserSelection> userSelections = new ArrayList<>(result.size());
         for (int i = 0; i < result.size(); i++) {
             final UserSelection useSelection = new UserSelection(result.get(i));
@@ -274,7 +275,7 @@ public class TestAlgorithm {
             mConfiguration = LotteryConfiguration.getWithType(type);
             mType = type;
             mSince = since;
-            mResult = new TestResult(root, type, calculateTimes, calculators.getDesc());
+            mResult = new TestResult(root, type, calculateTimes, calculators.getTitle());
         }
 
         protected TestResult execute() throws DataSource.DataLoadingException {
@@ -297,8 +298,8 @@ public class TestAlgorithm {
                         mCalculators.get(k)
                                 .calculate(subHistory, normalTable, specialTable);
                     }
-                    final Lottery tempResult = com.qqdd.lottery.calculate.data.NumberProducer.getInstance()
-                            .calculate(subHistory, normalTable, specialTable, mConfiguration);
+                    final Lottery tempResult = com.qqdd.lottery.data.management.NumberProducer.getInstance()
+                            .pick(subHistory, normalTable, specialTable, mConfiguration);
                     final RewardRule.Reward reward = record.calculateReward(tempResult);
                     final int money = reward.getMoney();
                     if (money > 0) {

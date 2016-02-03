@@ -3,7 +3,7 @@ package com.qqdd.lottery.calculate;
 import android.os.AsyncTask;
 
 import com.qqdd.lottery.calculate.data.CalculatorItem;
-import com.qqdd.lottery.calculate.data.NumberProducer;
+import com.qqdd.lottery.data.management.NumberProducer;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
@@ -117,17 +117,20 @@ public class AlgorithmTester {
                 }
             }*/
             totalTime = 0;
+            normalTable = new NumberTable(mConfiguration.getNormalRange());
+            specialTable = new NumberTable(mConfiguration.getSpecialRange());
             for (int i = size / 2; i > 0; i--) {
                 final List<HistoryItem> subHistory = mHistory.subList(i - 1, size);
                 final HistoryItem record = mHistory.get(i);
                 for (int j = 0; j < TEST_TIME; j++) {
-                    normalTable = new NumberTable(mConfiguration.getNormalRange());
-                    specialTable = new NumberTable(mConfiguration.getSpecialRange());
+                    normalTable.reset();
+                    specialTable.reset();
                     for (int k = 0; k < mCalculators.size(); k++) {
                         mCalculators.get(k).calculate(subHistory, normalTable, specialTable);
                     }
                     totalTime++;
-                    final Lottery tempResult = NumberProducer.getInstance().calculate(subHistory, normalTable, specialTable, mConfiguration);
+                    final Lottery tempResult = NumberProducer.getInstance().pick(subHistory,
+                            normalTable, specialTable, mConfiguration);
                     final RewardRule.Reward reward = record.calculateReward(tempResult);
                     final int money = reward.getMoney();
                     if (money > 0) {

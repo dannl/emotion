@@ -11,10 +11,12 @@ import android.widget.TextView;
 
 import com.qqdd.lottery.BaseActivity;
 import com.qqdd.lottery.R;
+import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.data.Constants;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.UserSelection;
+import com.qqdd.lottery.data.management.Calculation;
 import com.qqdd.lottery.data.management.CalculationDelegate;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 import com.qqdd.lottery.data.management.HistoryDelegate;
@@ -45,6 +47,29 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
 
     public void handleCalculateClicked(View view) {
+        final List<CalculatorCollection> calculatorCollections = Calculation.allCalculorGroups();
+        final CharSequence[] items = new CharSequence[calculatorCollections.size()];
+        for (int i = 0; i < items.length; i++) {
+            items[i] = calculatorCollections.get(i).getTitle() + "\n" + calculatorCollections.get(i).getDesc();
+        }
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.select_calculator_set);
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                calculationImpl(calculatorCollections.get(which));
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    private void calculationImpl(final CalculatorCollection collection) {
         showProgress(R.string.calculating);
         final String countText = ((TextView) findViewById(R.id.pick_number_count)).getText().toString();
         final String loopCountText = ((TextView) findViewById(R.id.calculate_count)).getText().toString();
@@ -62,7 +87,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
                     loop = Math.max(Integer.parseInt(loopCountText), loop);
                 } catch (Exception ignore) {
                 }
-                CalculationDelegate.getInstance().calculate(result, mType, count, loop,
+                CalculationDelegate.getInstance().calculate(result, collection, mType, count, loop,
                         new DataLoadingCallback<List<Lottery>>() {
                             @Override
                             public void onLoaded(final List<Lottery> result) {

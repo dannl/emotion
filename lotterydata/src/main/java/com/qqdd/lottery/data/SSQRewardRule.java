@@ -125,8 +125,10 @@ public class SSQRewardRule extends RewardRule {
         final Reward great = new Reward("三等", "5+1", 3000);
         mRewards.put(5 << 2 | 1, great);
         final Reward omg = new Reward("二等", "6+0", 200000);
+        omg.setBuyHouse(true);
         mRewards.put(6 << 2, omg);
         final Reward iAmRichNow = new Reward("一等", "6+1", 10000000);
+        iAmRichNow.setGoHome(true);
         mRewards.put(6 << 2 | 1, iAmRichNow);
     }
 

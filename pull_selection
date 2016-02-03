@@ -1,0 +1,5 @@
+#!/bin/bash
+rm -rf DLT_US
+rm -rf SSQ_US
+adb pull /sdcard/Ltt/DLT_US
+adb pull /sdcard/Ltt/SSQ_US

@@ -257,7 +257,7 @@ public class UserSelections {
     private List<UserSelection> loadNotRedeemed(List<HistoryItem> history, File notRedeemedFile) {
         final List<UserSelection> notRedeemedSelection = parseUserSelection(notRedeemedFile);
         boolean needUpdateNotRedeemedCache = false;
-        //try to calculate and reset cache.
+        //try to pick and reset cache.
         HashMap<HistoryItem, List<UserSelection>> neededToUpdate = new HashMap<>();
         for (int i = 0; i < notRedeemedSelection.size(); i++) {
             final UserSelection userSelection = notRedeemedSelection.get(i);

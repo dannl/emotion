@@ -7,14 +7,20 @@ import java.util.ArrayList;
  */
 public class CalculatorCollection extends ArrayList<Calculator> {
 
-    private String mDesc;
+    private final String mDesc;
+    private String mTitle;
 
-    public CalculatorCollection(String desc) {
+    public CalculatorCollection(String title, String desc) {
         super();
+        mTitle = title;
         mDesc = desc;
     }
 
     public String getDesc() {
         return mDesc;
+    }
+
+    public String getTitle() {
+        return mTitle;
     }
 }

@@ -1,7 +1,7 @@
 package com.qqdd.lottery.calculate.data.calculators;
 
 import com.qqdd.lottery.calculate.data.CalculatorImpl;
-import com.qqdd.lottery.calculate.data.NumberPicker;
+import com.qqdd.lottery.data.management.NumberPicker;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -27,7 +27,7 @@ public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
     private static final float POWER = 2;
 
     @Override
-    public void pick(List<HistoryItem> history, Lottery picked) {
+    public void pick(List<HistoryItem> history, NumberTable normals, NumberTable specials, Lottery picked) {
 //        if (picked.getNormals().size() == 0 || picked.getSpecials().size() == 0) {
 //            return;
 //        }
