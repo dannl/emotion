@@ -37,7 +37,7 @@ public class TestAlgorithm {
                 .init();
         try {
                         new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                                Lottery.Type.SSQ, Calculation.lastNTime_SUM_SSQ_ONLY(), 100000, 4);
+                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
 //                    Calculation.lastNTime(), 3, 1000000);
         } catch (DataSource.DataLoadingException e) {
