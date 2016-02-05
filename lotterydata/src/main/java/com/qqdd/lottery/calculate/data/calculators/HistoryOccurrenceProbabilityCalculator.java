@@ -40,10 +40,10 @@ public class HistoryOccurrenceProbabilityCalculator extends CalculatorImpl {
         float totalSpecialOcc = NumUtils.calculateTotalInIntArray(specialOcc);
 
         for (int i = 1; i < normalSize; i++) {
-            normalTable.getWithNumber(i).setWeight(normalOcc[i] / totalNormalOcc);
+            normalTable.getWithNumber(i).setWeight(normalOcc[i] / totalNormalOcc * 100);
         }
         for (int i = 1; i < specialSize; i++) {
-            specialTable.getWithNumber(i).setWeight(specialOcc[i] / totalSpecialOcc);
+            specialTable.getWithNumber(i).setWeight(specialOcc[i] / totalSpecialOcc * 100);
         }
 
 

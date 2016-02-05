@@ -6,6 +6,7 @@ import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
+import com.qqdd.lottery.data.NumberList;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.UserSelection;
@@ -15,7 +16,6 @@ import com.qqdd.lottery.data.management.History;
 import com.qqdd.lottery.data.management.ProgressCallback;
 import com.qqdd.lottery.data.management.UserSelections;
 import com.qqdd.lottery.utils.NumUtils;
-import com.qqdd.lottery.utils.Random;
 import com.qqdd.lottery.utils.SimpleIOUtils;
 
 import org.json.JSONArray;
@@ -33,13 +33,14 @@ public class TestAlgorithm {
     private static final DecimalFormat TEST_RESULT_FORMAT = new DecimalFormat("##0.0000000");
 
     public static void main(String[] args) {
-        Random.getInstance()
-                .init();
+//        Random.getInstance()
+//                .init();
         try {
-                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
+//                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+//                                Lottery.Type.SSQ, Calculation.lastNTime_NO_PM1(), 100000, 4);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
-//                    Calculation.lastNTime(), 3, 1000000);
+//                    Calculation.lastNTime(), 10, 1000000);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).printAllHistory(new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT));
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
@@ -71,6 +72,40 @@ public class TestAlgorithm {
                     .toString());
         }
         return result;
+    }
+    private static final DecimalFormat FORMAT = new DecimalFormat("00");
+
+    public void printAllHistory(final List<HistoryItem> items) {
+        final LotteryConfiguration configuration = items.get(0).getConfiguration();
+        final String[] line = new String[configuration.getNormalRange() + configuration.getSpecialRange() + 1];
+        for (int i = items.size() - 1; i >= 0; i--) {
+            for (int j = 0; j < line.length; j++) {
+                line[j] = "==";
+                if (j == configuration.getNormalRange()) {
+                    line[j] = "||";
+                }
+            }
+            final HistoryItem item = items.get(i);
+            final NumberList normals = item.getNormals();
+            final NumberList specials = item.getSpecials();
+            for (int j = 0; j < normals.size(); j++) {
+                final int value = normals.get(j);
+                line[value - 1] = FORMAT.format(value);
+            }
+            for (int j = 0; j < specials.size(); j++) {
+                final int value = specials.get(j);
+                line[configuration.getNormalRange() + value] = FORMAT.format(value);
+            }
+            printStringArray(line);
+        }
+    }
+
+    private void printStringArray(final String[] array) {
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < array.length; i++) {
+            builder.append(array[i]);
+        }
+        System.out.println(builder.toString());
     }
 
     public void calculateAndSave(Lottery.Type type, CalculatorCollection calculators,

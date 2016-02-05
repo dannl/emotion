@@ -4,7 +4,6 @@ import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
-import com.qqdd.lottery.calculate.data.calculators.SSQSumPickCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -49,18 +48,6 @@ public class Calculation {
         return NumberProducer.getInstance()
                 .select(tempBuffer, count, TimeToGoHome.load(mRoot, type, calculateTimes));
     }
-
-
-    public static CalculatorCollection lastNTime_SUM_SSQ_ONLY() {
-        CalculatorCollection calculatorList = new CalculatorCollection("稳健型_SUM", "");
-        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                .createCalculator());
-        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-                .createCalculator());
-        calculatorList.add(new SSQSumPickCalculator());
-        return calculatorList;
-    }
-
 
     public static CalculatorCollection lastNTime() {
         CalculatorCollection calculatorList = new CalculatorCollection("稳健型", "根据测试结果，概率分布最稳定，平均中奖率最高，约20%（大乐透），13.5%(双色球)");

@@ -84,6 +84,7 @@ public class NumberProducer {
             final int startFrom = startIndex * range;
             final int index = com.qqdd.lottery.utils.Random.getInstance()
                     .nextInt(range) + startFrom;
+            System.out.println("selected index: " + index);
             result.add(tempBuffer.get(index));
         }
         return result;
