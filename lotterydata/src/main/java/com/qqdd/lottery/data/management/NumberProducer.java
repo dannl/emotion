@@ -41,10 +41,11 @@ public class NumberProducer {
     }
 
     public Lottery pick(List<HistoryItem> history, final NumberTable normals,
-                        final NumberTable specials, final LotteryConfiguration lotteryConfiguration) {
+                        final NumberTable specials,
+                        final LotteryConfiguration lotteryConfiguration) {
         Lottery result = Lottery.newLotteryWithConfiguration(lotteryConfiguration);
         if (mUseOddEvenPicker) {
-            mOddEvenCalculator.pick(history, normals, specials,result);
+            mOddEvenCalculator.pick(history, normals, specials, result);
         }
         if (!result.isValid()) {
             Set<Integer> normalValues = calculateValues(normals, result.getNormals(),
@@ -77,15 +78,15 @@ public class NumberProducer {
         }
         float[] rate = calculateTimeToHomeRate(timeToGoHome);
         final List<Lottery> result = new ArrayList<>();
+        final int startIndex = NumUtils.calculateIndexWithWeight(rate,
+                com.qqdd.lottery.utils.Random.getInstance());
+        final int range = tempBuffer.size() / rate.length;
+        final int startFrom = startIndex * range;
+        final int index = com.qqdd.lottery.utils.Random.getInstance()
+                .nextInt(range) + startFrom;
+        System.out.println("selected index: " + index);
         for (int i = 0; i < count; i++) {
-            final int startIndex = NumUtils.calculateIndexWithWeight(rate,
-                    com.qqdd.lottery.utils.Random.getInstance());
-            final int range = tempBuffer.size() / rate.length;
-            final int startFrom = startIndex * range;
-            final int index = com.qqdd.lottery.utils.Random.getInstance()
-                    .nextInt(range) + startFrom;
-            System.out.println("selected index: " + index);
-            result.add(tempBuffer.get(index));
+            result.add(tempBuffer.get((index + i) % tempBuffer.size()));
         }
         return result;
     }

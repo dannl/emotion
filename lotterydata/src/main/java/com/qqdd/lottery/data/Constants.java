@@ -9,4 +9,5 @@ public class Constants {
 
     public static final String KEY_LOTTERY = "lottery";
     public static final String KEY_TYPE = "type";
+    public static final long ONE_DAY = 24 * 60 * 60 * 1000;
 }

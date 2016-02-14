@@ -49,6 +49,15 @@
             android:label="@string/title_activity_test"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
+        <receiver android:name=".notification.AlarmBroadcastReceiver">
+            <intent-filter >
+                <action android:name="com.qqdd.lottery.ACTION_UPDATE_DLT" />
+            </intent-filter>
+            <intent-filter >
+                <action android:name="com.qqdd.lottery.ACTION_UPDATE_SSQ" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

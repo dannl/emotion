@@ -13,6 +13,7 @@ import com.qqdd.lottery.LTPrefs;
 import com.qqdd.lottery.R;
 import com.qqdd.lottery.data.Constants;
 import com.qqdd.lottery.data.Lottery;
+import com.qqdd.lottery.notification.AlarmHelper;
 
 public class MainActivity extends BaseActivity {
 
@@ -22,8 +23,10 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        AlarmHelper.registerNextAlarm(this, Lottery.Type.DLT);
+        AlarmHelper.registerNextAlarm(this, Lottery.Type.SSQ);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
