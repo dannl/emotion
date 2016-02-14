@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">我的机选我做主</string>
+    <string name="app_name">机选我做主</string>
     <string name="action_settings">Settings</string>
     <string name="action_dlt_history">大乐透历史数据…</string>
     <string name="title_activity_dlt">历史记录</string>

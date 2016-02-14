@@ -16,6 +16,7 @@ import com.qqdd.lottery.data.management.History;
 import com.qqdd.lottery.data.management.ProgressCallback;
 import com.qqdd.lottery.data.management.UserSelections;
 import com.qqdd.lottery.utils.NumUtils;
+import com.qqdd.lottery.utils.Random;
 import com.qqdd.lottery.utils.SimpleIOUtils;
 
 import org.json.JSONArray;
@@ -33,14 +34,14 @@ public class TestAlgorithm {
     private static final DecimalFormat TEST_RESULT_FORMAT = new DecimalFormat("##0.0000000");
 
     public static void main(String[] args) {
-//        Random.getInstance()
-//                .init();
+        Random.getInstance()
+                .init();
         try {
 //                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
 //                                Lottery.Type.SSQ, Calculation.lastNTime_NO_PM1(), 100000, 4);
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
-//                    Calculation.lastNTime(), 10, 1000000);
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).printAllHistory(new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT));
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
+                    Calculation.lastNTime(), 10, 1000000);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).printAllHistory(new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT));
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
