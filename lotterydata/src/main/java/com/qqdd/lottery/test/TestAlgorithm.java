@@ -40,7 +40,7 @@ public class TestAlgorithm {
                         new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
                                 Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
-//                    Calculation.lastNTime(), 5, 1000000);
+//                    Calculation.lastNTime(), 5, 100000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).printAllHistory(new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT));
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
