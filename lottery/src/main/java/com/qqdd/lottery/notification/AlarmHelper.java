@@ -25,6 +25,7 @@ public class AlarmHelper {
         final Intent intent = new Intent(action);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(pendingIntent);
         final long time = getTime(type);
         alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
 

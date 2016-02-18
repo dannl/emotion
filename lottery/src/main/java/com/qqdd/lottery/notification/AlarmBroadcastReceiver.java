@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.qqdd.lottery.R;
 import com.qqdd.lottery.activities.SelectionRewardHistoryActivity;
@@ -63,6 +64,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
     private void sendNotification(final Context context, final Lottery.Type type,
                                   final List<RewardRule.RewardDetail> rewards) {
+        Log.e("AlarmBroadcastReceiver", "send notification for " + type.getName());
         NotificationManager manager = (NotificationManager) context.getSystemService(
                 Context.NOTIFICATION_SERVICE);
         final Notification.Builder builder = new Notification.Builder(context);
@@ -78,7 +80,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         builder.setTicker(type.getName() + "应该已经有结果了！");
         builder.setContentText("点击查看" + type.getName() + "开奖结果!");
         builder.setContentTitle(type.getName());
-        builder.setSmallIcon(R.drawable.ic_add_black);
+        builder.setSmallIcon(R.drawable.ic_launcher);
         final Intent intent = new Intent(context, SelectionRewardHistoryActivity.class);
         intent.putExtra(Constants.KEY_TYPE, type);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
