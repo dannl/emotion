@@ -41,9 +41,10 @@ public class TestAlgorithm {
 //                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
 //                    Calculation.lastNTime(), 5, 1000000);
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateSelectMethod(Lottery.Type.SSQ,
-                    Calculation.lastNTime(), 5, 100000);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateSelectMethod(Lottery.Type.SSQ,
+//                    Calculation.lastNTime(), 5, 100000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).printAllHistory(new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT));
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testBuyCount(Lottery.Type.DLT, Calculation.lastNTime(), 2, 4);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
@@ -57,6 +58,36 @@ public class TestAlgorithm {
 
     private File getProjectRoot() {
         return mRoot;
+    }
+
+    private void testBuyCount(final Lottery.Type type, final CalculatorCollection calculators, final int buyCount, final int since)
+            throws DataSource.DataLoadingException {
+        final List<HistoryItem> history = new History(SimpleIOUtils.getProjectRoot()).load(type);
+        final int from = Math.max(1, history.size() / since);
+        int total = 0;
+        int win = 0;
+        long allMoney = 0;
+        for (int i = from; i > 0; i--) {
+            total ++;
+            final HistoryItem record = history.get(i - 1);
+            final List<Lottery> result = new Calculation(SimpleIOUtils.getProjectRoot()).calculate(
+                    history.subList(i, history.size()), calculators, new ProgressCallback() {
+                        @Override
+                        public void onProgressUpdate(String progress) {
+                        }
+                    }, 1000000, type, buyCount);
+            long totalMoney = 0;
+            for (int j = 0; j < result.size(); j++) {
+                final RewardRule.Reward reward = record.calculateReward(result.get(j));
+                totalMoney += reward.getMoney();
+            }
+            final long earn = totalMoney - buyCount * 2;
+            if (earn > 0) {
+                win ++;
+            }
+            allMoney += earn;
+            System.out.println("total round: " + total + " win: " + win + " all money: " + allMoney + " earn this round: " + earn);
+        }
     }
 
     private void calculateSelectMethod(Lottery.Type type, CalculatorCollection calculators,
@@ -154,12 +185,11 @@ public class TestAlgorithm {
     }
 
     public void actualBuyingTest(Lottery.Type type, CalculatorCollection collection,
-                                 int calculateTimes, int since)
+                                 int calculateTimes, int since, int testRound)
             throws DataSource.DataLoadingException {
         double total = 0;
         double max = Double.MIN_VALUE;
         double min = Double.MAX_VALUE;
-        final int testRound = 1000;
         int earnCount = 0;
         for (int i = 0; i < testRound; i++) {
             final double v = actualBuyingARound(type, collection, calculateTimes, since);
@@ -173,9 +203,9 @@ public class TestAlgorithm {
             if (v < min) {
                 min = v;
             }
+            System.out.println(
+                    "total: " + total + " avr: " + total / testRound + " max: " + max + " min: " + min + " earn count: " + earnCount + " earn rate: " + (((float) earnCount) / testRound));
         }
-        System.out.println(
-                "total: " + total + " avr: " + total / testRound + " max: " + max + " min: " + min + " earn count: " + earnCount + " earn rate: " + (((float) earnCount) / testRound));
     }
 
     public double actualBuyingARound(Lottery.Type type, CalculatorCollection collection,

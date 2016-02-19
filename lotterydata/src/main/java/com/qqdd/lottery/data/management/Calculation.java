@@ -33,7 +33,8 @@ public class Calculation {
         final NumberTable specialTable = new NumberTable(configuration.getSpecialRange());
         List<Lottery> tempBuffer = new ArrayList<>();
         for (int i = 0; i < calculateTimes; i++) {
-            if (i % (calculateTimes / 100) == 0) {
+            final int i1 = calculateTimes / 100;
+            if (i1!= 0 && i % i1 == 0) {
                 progressCallback.onProgressUpdate(String.valueOf(((float) i) / calculateTimes));
             }
             normalTable.reset();
@@ -44,6 +45,9 @@ public class Calculation {
             }
             tempBuffer.add(NumberProducer.getInstance()
                     .pick(history, normalTable, specialTable, configuration));
+        }
+        if (calculateTimes <= count) {
+            return tempBuffer;
         }
         return NumberProducer.getInstance()
                 .select(tempBuffer, count, TimeToGoHome.load(mRoot, type, calculateTimes));
