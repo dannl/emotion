@@ -78,7 +78,7 @@ public class NumberProducer {
         }
         float[] rate = calculateTimeToHomeRate(timeToGoHome);
         final List<Lottery> result = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
+//        for (int i = 0; i < count; i++) {
             final int startIndex = NumUtils.calculateIndexWithWeight(rate,
                     com.qqdd.lottery.utils.Random.getInstance());
             final int range = tempBuffer.size() / rate.length;
@@ -86,8 +86,10 @@ public class NumberProducer {
             final int index = com.qqdd.lottery.utils.Random.getInstance()
                     .nextInt(range) + startFrom;
             System.out.println("selected index: " + index);
-            result.add(tempBuffer.get(index));
+        for (int i = 0; i < count; i++) {
+            result.add(tempBuffer.get((index + i) % tempBuffer.size()));
         }
+//        }
         return result;
     }
 

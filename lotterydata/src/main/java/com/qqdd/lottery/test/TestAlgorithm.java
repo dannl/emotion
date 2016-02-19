@@ -39,8 +39,10 @@ public class TestAlgorithm {
         try {
 //                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
 //                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
-                    Calculation.lastNTime(), 5, 1000000);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
+//                    Calculation.lastNTime(), 5, 1000000);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateSelectMethod(Lottery.Type.SSQ,
+                    Calculation.lastNTime(), 5, 100000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).printAllHistory(new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT));
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
@@ -55,6 +57,33 @@ public class TestAlgorithm {
 
     private File getProjectRoot() {
         return mRoot;
+    }
+
+    private void calculateSelectMethod(Lottery.Type type, CalculatorCollection calculators,
+                                       int resultCount, int calculateTimes)
+            throws DataSource.DataLoadingException {
+        final List<HistoryItem> loaded = new History(getProjectRoot()).load(type);
+        final HistoryItem record = loaded.get(0);
+        int rewardCount = 0;
+        int totalCount = 0;
+        for (int i = 0; i < 100; i++) {
+            List<Lottery> result = new Calculation(getProjectRoot()).calculate(
+                    loaded
+                            .subList(1, loaded.size()), calculators, new ProgressCallback() {
+                        @Override
+                        public void onProgressUpdate(String progress) {
+                            System.out.println("\r" + progress);
+                        }
+                    }, calculateTimes, type, resultCount);
+            for (int j = 0; j < result.size(); j++) {
+                totalCount ++;
+                RewardRule.Reward reward = record.calculateReward(result.get(j));
+                if (reward != null && reward.getMoney() > 0) {
+                    rewardCount ++;
+                }
+            }
+            System.out.println("reward count: " + rewardCount + " total: " + totalCount + " rate: " + (((float) rewardCount) / totalCount));
+        }
     }
 
     private List<Lottery> calculateResult(Lottery.Type type, CalculatorCollection calculators,
