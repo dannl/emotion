@@ -34,17 +34,17 @@ public class TestAlgorithm {
     private static final DecimalFormat TEST_RESULT_FORMAT = new DecimalFormat("##0.0000000");
 
     public static void main(String[] args) {
-        Random.getInstance()
-                .init();
+//        Random.getInstance()
+//                .init();
         try {
-//                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
-//                    Calculation.lastNTime(), 5, 1000000);
+                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
+//                    Calculation.lastNTime(), 2, 1000000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateSelectMethod(Lottery.Type.SSQ,
 //                    Calculation.lastNTime(), 5, 100000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).printAllHistory(new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT));
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testBuyCount(Lottery.Type.DLT, Calculation.lastNTime(), 2, 4);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testBuyCount(Lottery.Type.DLT, Calculation.lastNTime(), 2, 4);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
@@ -413,6 +413,7 @@ public class TestAlgorithm {
                 final List<HistoryItem> subHistory = history.subList(i - 1, size);
                 final HistoryItem record = history.get(i);
                 int roundRewardCount = 0;
+                Random.getInstance().init();
                 for (int j = 0; j < mCalculateTimes; j++) {
                     result.totalTestCount++;
                     normalTable.reset();
