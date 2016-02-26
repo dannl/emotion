@@ -37,12 +37,12 @@ public class TestAlgorithm {
 //        Random.getInstance()
 //                .init();
         try {
-                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
-//                    Calculation.lastNTime(), 2, 1000000);
+//                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+//                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
+                    Calculation.lastNTime(), 5, 2000000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateSelectMethod(Lottery.Type.SSQ,
-//                    Calculation.lastNTime(), 5, 100000);
+//                    Calculation.lastNTime(), 5, 100000)
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).printAllHistory(new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT));
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testBuyCount(Lottery.Type.DLT, Calculation.lastNTime(), 2, 4);
         } catch (DataSource.DataLoadingException e) {

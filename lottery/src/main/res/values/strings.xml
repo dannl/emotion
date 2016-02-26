@@ -49,4 +49,5 @@
     <string name="test_last_probability">测试上期中奖概率…</string>
     <string name="test_failed">测试失败...</string>
     <string name="test_detail_title">详细结果：</string>
+    <string name="pager_indicator_format">第%1$s页/共%2$s页</string>
 </resources>
