@@ -2,6 +2,7 @@ package com.qqdd.lottery.test;
 
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
+import com.qqdd.lottery.calculate.data.calculators.KillDuplicatedNumberCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -37,14 +38,12 @@ public class TestAlgorithm {
 //        Random.getInstance()
 //                .init();
         try {
+            System.out.println(new KillDuplicatedNumberCalculator(4).calculateProb(new History(SimpleIOUtils.getProjectRoot()).load(
+                    Lottery.Type.DLT)));
 //                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
-                    Calculation.lastNTime(), 5, 2000000);
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateSelectMethod(Lottery.Type.SSQ,
-//                    Calculation.lastNTime(), 5, 100000)
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).printAllHistory(new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT));
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testBuyCount(Lottery.Type.DLT, Calculation.lastNTime(), 2, 4);
+//                                Lottery.Type.DLT, Calculation.lastNTime_Kill_duplicate(), 100000, 4);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
+//                    Calculation.lastNTime(), 5, 2000000);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }

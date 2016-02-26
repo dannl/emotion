@@ -4,6 +4,7 @@ import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
+import com.qqdd.lottery.calculate.data.calculators.KillDuplicatedNumberCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -59,6 +60,16 @@ public class Calculation {
                 .createCalculator());
         calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
                 .createCalculator());
+        return calculatorList;
+    }
+
+    public static CalculatorCollection lastNTime_Kill_duplicate() {
+        CalculatorCollection calculatorList = new CalculatorCollection("稳健型_杀重复", "");
+        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
+                .createCalculator());
+        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
+                .createCalculator());
+        calculatorList.add(new KillDuplicatedNumberCalculator(3));
         return calculatorList;
     }
 
