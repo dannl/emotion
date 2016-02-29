@@ -2,7 +2,6 @@ package com.qqdd.lottery.test;
 
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
-import com.qqdd.lottery.calculate.data.calculators.KillDuplicatedNumberCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -38,11 +37,11 @@ public class TestAlgorithm {
 //        Random.getInstance()
 //                .init();
         try {
-            System.out.println(new KillDuplicatedNumberCalculator(4).calculateProb(new History(SimpleIOUtils.getProjectRoot()).load(
-                    Lottery.Type.DLT)));
-//                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                                Lottery.Type.DLT, Calculation.lastNTime_Kill_duplicate(), 100000, 4);
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
+//            System.out.println(new KillDuplicatedNumberCalculator(2).calculateProb(new History(SimpleIOUtils.getProjectRoot()).load(
+//                    Lottery.Type.SSQ)));
+                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+                                Lottery.Type.DLT, Calculation.lastNTime_sameNumber(), 100000, 4);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
 //                    Calculation.lastNTime(), 5, 2000000);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());

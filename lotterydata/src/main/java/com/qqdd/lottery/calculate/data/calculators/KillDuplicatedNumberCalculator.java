@@ -80,11 +80,11 @@ public class KillDuplicatedNumberCalculator extends CalculatorImpl {
             }
         }
 
-        for (int i = 0; i < normalToUpdate.size(); i++) {
-            final com.qqdd.lottery.data.Number number = normalTable.getWithNumber(
-                    normalToUpdate.get(i));
-            number.setWeight(number.getWeight() * probability.normalProb);
-        }
+//        for (int i = 0; i < normalToUpdate.size(); i++) {
+//            final com.qqdd.lottery.data.Number number = normalTable.getWithNumber(
+//                    normalToUpdate.get(i));
+//            number.setWeight(number.getWeight() * probability.normalProb);
+//        }
 
         for (int i = 0; i < specialToUpdate.size(); i++) {
             final com.qqdd.lottery.data.Number number = specialTable.getWithNumber(
@@ -128,10 +128,11 @@ public class KillDuplicatedNumberCalculator extends CalculatorImpl {
                 }
                 if (hasNumber) {
                     normalOcc++;
-//                    System.out.println("=======normal has " + mRange + " duplicated!");
-//                    for (int k = 0; k < mRange; k++) {
-//                        System.out.println(history.get(i + k).toString());
-//                    }
+                    System.out.println("=======normal has " + mRange + " duplicated!");
+                    for (int k = 0; k < mRange; k++) {
+                        System.out.println(history.get(i + k)
+                                .toString());
+                    }
                 }
             }
             for (int j = 0; j < special.size(); j++) {
@@ -147,18 +148,24 @@ public class KillDuplicatedNumberCalculator extends CalculatorImpl {
                 }
                 if (hasNumber) {
                     specialOcc++;
-//                    System.out.println("=======special has " + mRange + " duplicated!");
-//                    for (int k = 0; k < mRange; k++) {
-//                        System.out.println(history.get(i + k).toString());
-//                    }
+                    System.out.println("=======special has " + mRange + " duplicated!");
+                    for (int k = 0; k < mRange; k++) {
+                        System.out.println(history.get(i + k)
+                                .toString());
+                    }
                 }
             }
         }
+        System.out.println("normal occ: " + normalOcc + " total normals: " + totalNormals);
+        System.out.println("special occ: " + specialOcc + " total special: " + totalSpecials);
         float normalProbability = ((float) normalOcc) / totalNormals;
         float specialProbability = ((float) specialOcc) / totalSpecials;
+        System.out.println("real normal: " + normalProbability + " special: " + specialProbability);
         Probability result = new Probability();
         result.normalProb = normalProbability / normalizedProbNormal;
         result.specialProb = specialProbability / normalizedProbSpecial;
+        System.out.println(
+                " related normal : " + result.normalProb + "   special: " + result.specialProb);
         return result;
     }
 
@@ -168,7 +175,7 @@ public class KillDuplicatedNumberCalculator extends CalculatorImpl {
 
         @Override
         public String toString() {
-            return " normal : " + normalProb +  "   special: " + specialProb;
+            return " related normal : " + normalProb + "   special: " + specialProb;
         }
     }
 }

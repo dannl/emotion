@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.niub.utils.FileUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -30,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import la.niub.util.utils.StorageHelper;
 import la.niub.util.utils.UIUtil;
 
 public class ChartActivity extends AppCompatActivity implements OnChartValueSelectedListener {
@@ -213,9 +213,13 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         return super.onOptionsItemSelected(item);
     }
 
+    public File getFile() {
+        return new File(StorageHelper.getExternalStorageDirectory(), "Ltt");
+    }
+
     private void loadRate() {
 
-        final String[] files = TestRoundRates.loadFiles(FileUtils.getCacheDir());
+        final String[] files = TestRoundRates.loadFiles(getFile());
         if (files == null || files.length == 0) {
             UIUtil.showToastSafe(this, "数据呢?!");
             return;
@@ -223,7 +227,7 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         ArrayList<String> xV = new ArrayList<>();
         for (int i = 0; i < files.length; i++) {
-            final File f = new File(FileUtils.getCacheDir(), files[i]);
+            final File f = new File(getFile(), files[i]);
             final List<TestRoundRates> rates = TestRoundRates.load(f);
             ArrayList<Entry> yV = new ArrayList<>();
             xV.clear();
@@ -269,7 +273,7 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
     }
 
     private void loadGoHome(final int count){
-        TimeToGoHome goHome = TimeToGoHome.load(FileUtils.getCacheDir(), Lottery.Type.DLT, count);
+        TimeToGoHome goHome = TimeToGoHome.load(getFile(), Lottery.Type.DLT, count);
         if (goHome.size() == 0) {
             UIUtil.showToastSafe(this, "没数据啊！");
             return;
