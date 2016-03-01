@@ -49,12 +49,12 @@ public class AlarmHelper {
                 destCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
             } else if (dayOfWeek == Calendar.SATURDAY && hourOfDay >= 21) {
                 destCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-                setHourAndMinute(destCalendar);
+                setHourAndMinute(destCalendar,type);
                 destCalendar.setTimeInMillis(destCalendar.getTimeInMillis() + Constants.ONE_DAY * 2);
             } else {
                 //DO NOTHING.
             }
-            setHourAndMinute(destCalendar);
+            setHourAndMinute(destCalendar,type);
         } else if (type == Lottery.Type.SSQ) {
             if (dayOfWeek < Calendar.SUNDAY) {
                 destCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
@@ -68,21 +68,29 @@ public class AlarmHelper {
                 destCalendar.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
             } else if (dayOfWeek == Calendar.THURSDAY && hourOfDay >= 21 || dayOfWeek > Calendar.THURSDAY) {
                 destCalendar.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
-                setHourAndMinute(destCalendar);
+                setHourAndMinute(destCalendar,type);
                 destCalendar.setTimeInMillis(destCalendar.getTimeInMillis() + Constants.ONE_DAY * 3);
             } else {
                 //DO NOTHING.
             }
-            setHourAndMinute(destCalendar);
+            setHourAndMinute(destCalendar,type);
         }
         return destCalendar.getTimeInMillis();
     }
 
-    private static void setHourAndMinute(Calendar destCalendar) {
-        destCalendar.set(Calendar.HOUR_OF_DAY, 21);
-        destCalendar.set(Calendar.MINUTE, 0);
-        destCalendar.set(Calendar.SECOND, 0);
-        destCalendar.set(Calendar.MILLISECOND, 0);
+    private static void setHourAndMinute(Calendar destCalendar, Lottery.Type type) {
+        if (type == Lottery.Type.DLT) {
+            destCalendar.set(Calendar.HOUR_OF_DAY, 21);
+            destCalendar.set(Calendar.MINUTE, 0);
+            destCalendar.set(Calendar.SECOND, 0);
+            destCalendar.set(Calendar.MILLISECOND, 0);
+        } else {
+            destCalendar.set(Calendar.HOUR_OF_DAY, 22);
+            destCalendar.set(Calendar.MINUTE, 15);
+            destCalendar.set(Calendar.SECOND, 15);
+            destCalendar.set(Calendar.MILLISECOND, 15);
+        }
+
     }
 
     @Nullable
