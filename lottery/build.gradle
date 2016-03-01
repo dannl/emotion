@@ -11,6 +11,10 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    // This is handled for you by the 2.0+ Gradle Plugin
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
     buildTypes {
         release {
             minifyEnabled false
