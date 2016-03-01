@@ -39,10 +39,10 @@ public class TestAlgorithm {
         try {
 //            System.out.println(new KillDuplicatedNumberCalculator(2).calculateProb(new History(SimpleIOUtils.getProjectRoot()).load(
 //                    Lottery.Type.SSQ)));
-                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                                Lottery.Type.DLT, Calculation.lastNTime_sameNumber(), 100000, 4);
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
-//                    Calculation.lastNTime(), 5, 2000000);
+//                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+//                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
+                    Calculation.lastNTime(), 5, 2000000);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
