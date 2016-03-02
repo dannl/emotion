@@ -5,6 +5,7 @@ import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
 import com.qqdd.lottery.calculate.data.calculators.KillDuplicatedNumberCalculator;
+import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -60,6 +61,7 @@ public class Calculation {
                 .createCalculator());
         calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
                 .createCalculator());
+        calculatorList.add(new NoSelectionCalculator());
         return calculatorList;
     }
 

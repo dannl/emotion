@@ -2,6 +2,7 @@ package com.qqdd.lottery.test;
 
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
+import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -41,7 +42,8 @@ public class TestAlgorithm {
 //                    Lottery.Type.SSQ)));
 //                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
 //                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
+            NoSelectionCalculator.setExclusion(Lottery.Type.DLT, new int[][]{new int[]{}, new int[]{11}});
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
                     Calculation.lastNTime(), 5, 2000000);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
