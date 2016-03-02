@@ -2,7 +2,6 @@ package com.qqdd.lottery.test;
 
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
-import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -38,13 +37,16 @@ public class TestAlgorithm {
 //        Random.getInstance()
 //                .init();
         try {
-//            System.out.println(new KillDuplicatedNumberCalculator(2).calculateProb(new History(SimpleIOUtils.getProjectRoot()).load(
+//            System.out.println(new KillDuplicatedNumberCalculator(3).calculateProb(new History(SimpleIOUtils.getProjectRoot()).load(
 //                    Lottery.Type.SSQ)));
-//                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                                Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
-            NoSelectionCalculator.setExclusion(Lottery.Type.DLT, new int[][]{new int[]{}, new int[]{11}});
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
-                    Calculation.lastNTime(), 5, 2000000);
+//                        NoSelectionCalculator.setExclusion(Lottery.Type.DLT, new int[][]{
+//                                new int[]{},
+//                                new int[]{1,2,3,4,5,7,8,9,10,12}
+//                        });
+                                    new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+                                            Lottery.Type.SSQ, Calculation.lastNTime(), 100000, 4);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
+//                    Calculation.lastNTime(), 5, 2000000);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
@@ -410,8 +412,8 @@ public class TestAlgorithm {
             final int size = history.size();
             //全随机算法。
             for (int i = size / mSince; i > 0; i--) {
-                final List<HistoryItem> subHistory = history.subList(i - 1, size);
-                final HistoryItem record = history.get(i);
+                final List<HistoryItem> subHistory = history.subList(i, size);
+                final HistoryItem record = history.get(i - 1);
                 int roundRewardCount = 0;
                 Random.getInstance().init();
                 for (int j = 0; j < mCalculateTimes; j++) {
