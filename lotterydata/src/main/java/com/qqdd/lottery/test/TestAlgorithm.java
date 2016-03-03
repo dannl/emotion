@@ -2,6 +2,7 @@ package com.qqdd.lottery.test;
 
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
+import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -39,12 +40,14 @@ public class TestAlgorithm {
         try {
 //            System.out.println(new KillDuplicatedNumberCalculator(3).calculateProb(new History(SimpleIOUtils.getProjectRoot()).load(
 //                    Lottery.Type.SSQ)));
-//                        NoSelectionCalculator.setExclusion(Lottery.Type.DLT, new int[][]{
-//                                new int[]{},
-//                                new int[]{1,2,3,4,5,7,8,9,10,12}
-//                        });
+                        NoSelectionCalculator.setExclusion(Lottery.Type.DLT, new int[][]{
+                                new int[]{},
+                                new int[]{
+                                        12
+                                }
+                        });
                                     new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                                            Lottery.Type.SSQ, Calculation.lastNTime(), 100000, 4);
+                                            Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
 //                    Calculation.lastNTime(), 5, 2000000);
         } catch (DataSource.DataLoadingException e) {
@@ -443,7 +446,7 @@ public class TestAlgorithm {
                         result.totalMoney += money;
                         if (reward.isGoHome()) {
                             mResult.mTimeToGoHome.add(j);
-                            updateGoHomeRecord();
+//                            updateGoHomeRecord();
                             Integer v = mResult.goHomeDistribute.get(record);
                             if (v == null) {
                                 v = 0;
