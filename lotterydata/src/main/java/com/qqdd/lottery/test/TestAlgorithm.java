@@ -2,7 +2,6 @@ package com.qqdd.lottery.test;
 
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
-import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -40,15 +39,17 @@ public class TestAlgorithm {
         try {
 //            System.out.println(new KillDuplicatedNumberCalculator(3).calculateProb(new History(SimpleIOUtils.getProjectRoot()).load(
 //                    Lottery.Type.SSQ)));
-                        NoSelectionCalculator.setExclusion(Lottery.Type.DLT, new int[][]{
-                                new int[]{},
-                                new int[]{
-                                        12
-                                }
-                        });
+//                        NoSelectionCalculator.setExclusion(Lottery.Type.SSQ, new int[][]{
+//                                new int[]{},
+//                                new int[]{
+//                                        7
+//                                }
+//                        });
                                     new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                                            Lottery.Type.DLT, Calculation.lastNTime(), 1000000, 1000);
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
+                                            Lottery.Type.SSQ, Calculation.random(), 100000, 4);
+//            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
+//                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
 //                    Calculation.lastNTime(), 5, 2000000);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());

@@ -1,10 +1,13 @@
 package com.qqdd.lottery.chart;
 
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,6 +28,7 @@ import com.qqdd.lottery.test.TestRoundRates;
 import com.qqdd.lottery.utils.NumUtils;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -37,7 +41,7 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
     private static final int RANGE_DIVIDER = 100;
     private LineChart mChart;
 
-    private static final int[] COLORS = new int[] {
+    private static final int[] COLORS = new int[]{
             0xffff0000,
             0xff00ff00,
             0xff0000ff,
@@ -65,8 +69,8 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         mChart.setDescription("");
         mChart.setNoDataTextDescription("You need to provide data for the chart.");
 
-//        // enable value highlighting
-//        mChart.setHighlightEnabled(true);
+        //        // enable value highlighting
+        //        mChart.setHighlightEnabled(true);
 
         // enable touch gestures
         mChart.setTouchEnabled(true);
@@ -206,52 +210,93 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
             loadGoHome1000000();
             return true;
         } else if (id == R.id.action_rate) {
-            loadRate();
+            showFilePicker();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void showFilePicker() {
+        final File root = getFile();
+        final String[] names = root.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return !TextUtils.isEmpty(filename) && filename.endsWith("_rates");
+            }
+        });
+        final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(
+                this);
+        builder.setItems(names, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final String name = names[which];
+                loadRate(name);
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
     public File getFile() {
         return new File(StorageHelper.getExternalStorageDirectory(), "Ltt");
     }
 
-    private void loadRate() {
+    private void loadRate(final String name) {
 
-        final String[] files = TestRoundRates.loadFiles(getFile());
-        if (files == null || files.length == 0) {
-            UIUtil.showToastSafe(this, "数据呢?!");
-            return;
-        }
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         ArrayList<String> xV = new ArrayList<>();
-        for (int i = 0; i < files.length; i++) {
-            final File f = new File(getFile(), files[i]);
-            final List<TestRoundRates> rates = TestRoundRates.load(f);
-            ArrayList<Entry> yV = new ArrayList<>();
-            xV.clear();
-            for (int j = 0; j < rates.size(); j++) {
-                final TestRoundRates testRoundRates = rates.get(j);
-                xV.add(testRoundRates.getRecord()
-                        .getDateDisplay());
-                yV.add(new Entry(testRoundRates.getRate(), j));
+        final File f = new File(getFile(), name);
+        final List<TestRoundRates> rates = TestRoundRates.load(f);
+        ArrayList<Entry> yV = new ArrayList<>();
+        float max = 0;
+        int larger = 0;
+        float total = 0;
+        for (int j = 0; j < rates.size(); j++) {
+            final TestRoundRates testRoundRates = rates.get(j);
+            xV.add(testRoundRates.getRecord()
+                    .getDateDisplay());
+            yV.add(new Entry(testRoundRates.getRate(), j));
+            if (max < testRoundRates.getRate()) {
+                max  = testRoundRates.getRate();
             }
-            LineDataSet dataSet = new LineDataSet(yV, files[i]);
-            dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
-            final int color = COLORS[i % COLORS.length];
-            dataSet.setColor(color);
-            dataSet.setCircleColor(color);
-            dataSet.setLineWidth(1f);
-            dataSet.setCircleSize(2f);
-            dataSet.setFillAlpha(65);
-            dataSet.setFillColor(color);
-            dataSet.setDrawCircleHole(false);
-            dataSet.setHighLightColor(Color.rgb(244, 117, 117));
-
-            dataSets.add(dataSet);
-
+            if (testRoundRates.getRate() > 0.0666f) {
+                larger ++;total += testRoundRates.getRate();
+            }
         }
+        Log.e("TEST", " larger: " + larger + " avr: " + (total / larger));
+        LineDataSet dataSet = new LineDataSet(yV, name);
+        dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+        int color = COLORS[0];
+        dataSet.setColor(color);
+        dataSet.setCircleColor(color);
+        dataSet.setLineWidth(1f);
+        dataSet.setCircleSize(2f);
+        dataSet.setFillAlpha(65);
+        dataSet.setFillColor(color);
+        dataSet.setDrawCircleHole(false);
+        dataSet.setHighLightColor(Color.rgb(244, 117, 117));
+
+        dataSets.add(dataSet);
+
+        ArrayList<Entry> yVRandom = new ArrayList<>();
+        for (int i = 0; i < rates.size(); i++) {
+            yVRandom.add(new Entry(0.0666f, i));
+        }
+
+        dataSet = new LineDataSet(yVRandom, "随机");
+        dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+        color = COLORS[1];
+        dataSet.setColor(color);
+        dataSet.setCircleColor(color);
+        dataSet.setLineWidth(1f);
+        dataSet.setCircleSize(1f);
+        dataSet.setFillAlpha(65);
+        dataSet.setFillColor(color);
+        dataSet.setDrawCircleHole(false);
+        dataSet.setHighLightColor(Color.rgb(244, 117, 117));
+
+        dataSets.add(dataSet);
 
         LineData data = new LineData(xV, dataSets);
         data.setValueTextColor(Color.WHITE);
@@ -272,7 +317,7 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         loadGoHome(100000);
     }
 
-    private void loadGoHome(final int count){
+    private void loadGoHome(final int count) {
         TimeToGoHome goHome = TimeToGoHome.load(getFile(), Lottery.Type.DLT, count);
         if (goHome.size() == 0) {
             UIUtil.showToastSafe(this, "没数据啊！");
@@ -317,7 +362,7 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         final int[] occ = NumUtils.newEmptyIntArray(RANGE_DIVIDER);
         for (int i = 0; i < timeToGoHome.size(); i++) {
             final int index = timeToGoHome.get(i) / range;
-            occ[index] ++;
+            occ[index]++;
         }
         return NumUtils.calculateProbability(occ);
     }

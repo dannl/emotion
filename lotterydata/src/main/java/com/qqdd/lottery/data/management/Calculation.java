@@ -5,6 +5,7 @@ import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
 import com.qqdd.lottery.calculate.data.calculators.KillDuplicatedNumberCalculator;
+import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
 import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
@@ -59,8 +60,9 @@ public class Calculation {
         CalculatorCollection calculatorList = new CalculatorCollection("稳健型", "根据测试结果，概率分布最稳定，平均中奖率最高，约20%（大乐透），13.5%(双色球)");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
-        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-                .createCalculator());
+//        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
+//                .createCalculator());
+        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new());
         calculatorList.add(new NoSelectionCalculator());
         return calculatorList;
     }

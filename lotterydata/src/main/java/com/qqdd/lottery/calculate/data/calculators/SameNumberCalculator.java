@@ -43,27 +43,31 @@ public class SameNumberCalculator extends CalculatorImpl {
         float maxProbability = 0;
         for (int i = 0; i < recordNormals.size(); i++) {
             final Number number = normalTable.getWithNumber(recordNormals.get(i));
-//            number.setWeight(
-//                    number.getWeight() * probabilities.normalProbability[number.getValue()]);
+            //            number.setWeight(
+            //                    number.getWeight() * probabilities.normalProbability[number.getValue()]);
             if (probabilities.normalProbability[number.getValue()] > maxProbability) {
                 maxProbability = probabilities.normalProbability[number.getValue()];
                 value = number.getValue();
             }
         }
-        normalTable.getWithNumber(value).setWeight(normalTable.getWithNumber(value).getWeight() * maxProbability * 2);
+        normalTable.getWithNumber(value)
+                .setWeight(normalTable.getWithNumber(value)
+                        .getWeight() * maxProbability * 2);
 
         value = 0;
         maxProbability = 0;
         for (int i = 0; i < recordSpecials.size(); i++) {
             final Number number = specialTable.getWithNumber(recordSpecials.get(i));
-//            number.setWeight(
-//                    number.getWeight() * probabilities.specialProbability[number.getValue()]);
+            //            number.setWeight(
+            //                    number.getWeight() * probabilities.specialProbability[number.getValue()]);
             if (probabilities.specialProbability[number.getValue()] > maxProbability) {
                 maxProbability = probabilities.specialProbability[number.getValue()];
                 value = number.getValue();
             }
         }
-        specialTable.getWithNumber(value).setWeight(specialTable.getWithNumber(value).getWeight() * maxProbability * 2);
+        specialTable.getWithNumber(value)
+                .setWeight(specialTable.getWithNumber(value)
+                        .getWeight() * maxProbability * 2);
 
     }
 
@@ -112,7 +116,9 @@ public class SameNumberCalculator extends CalculatorImpl {
             totalRate += result.normalProbability[normals.get(i)];
         }
         for (int i = 0; i < normals.size(); i++) {
-            result.normalProbability[normals.get(i)] = 1 + normalHasSameRate * result.normalProbability[normals.get(i)] / totalRate;
+            result.normalProbability[normals.get(
+                    i)] = 1 + normalHasSameRate * result.normalProbability[normals.get(
+                    i)] / totalRate;
         }
         totalRate = 0;
         final NumberList specials = record.getSpecials();
@@ -120,7 +126,9 @@ public class SameNumberCalculator extends CalculatorImpl {
             totalRate += result.specialProbability[specials.get(i)];
         }
         for (int i = 0; i < specials.size(); i++) {
-            result.specialProbability[specials.get(i)] = 1 + specialHasSameRate * result.specialProbability[specials.get(i)] / totalRate;
+            result.specialProbability[specials.get(
+                    i)] = 1 + specialHasSameRate * result.specialProbability[specials.get(
+                    i)] / totalRate;
         }
         return result;
     }
