@@ -46,10 +46,10 @@ public class TestAlgorithm {
 //                                }
 //                        });
                                     new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                                            Lottery.Type.SSQ, Calculation.random(), 100000, 4);
+                                            Lottery.Type.DLT, Calculation.lastNTime(), 2000000, 1000);
 //            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
 //                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
 //                    Calculation.lastNTime(), 5, 2000000);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
