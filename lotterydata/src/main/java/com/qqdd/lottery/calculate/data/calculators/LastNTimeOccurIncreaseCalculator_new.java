@@ -24,9 +24,11 @@ public class LastNTimeOccurIncreaseCalculator_new extends CalculatorImpl {
 
     private static final int TYPE_NORMAL = 0;
     private static final int TYPE_SPECIAL = 1;
+    private boolean mRevert = false;
 
-    public LastNTimeOccurIncreaseCalculator_new() {
+    public LastNTimeOccurIncreaseCalculator_new(final boolean revert) {
         super("新版的lastNtime", "");
+        mRevert = revert;
     }
 
     private static final HashMap<HistoryItem, Universe[]> CACHE = new HashMap<>();
@@ -44,13 +46,21 @@ public class LastNTimeOccurIncreaseCalculator_new extends CalculatorImpl {
             Number number = normalTable.get(i);
             final int value = number.getValue();
             int occTime = cache[TYPE_NORMAL].currentOccTime[value];
-            number.setWeight(number.getWeight() * cache[TYPE_NORMAL].occRate[occTime]);
+            float v = cache[TYPE_NORMAL].occRate[occTime];
+            if (mRevert) {
+                 v = 1 - v;
+            }
+            number.setWeight(number.getWeight() * v);
         }
         for (int i = 0; i < specialTable.size(); i++) {
             Number number = specialTable.get(i);
             final int value = number.getValue();
             int occTime = cache[TYPE_SPECIAL].currentOccTime[value];
-            number.setWeight(number.getWeight() * cache[TYPE_SPECIAL].occRate[occTime]);
+            float v = cache[TYPE_SPECIAL].occRate[occTime];
+            if (mRevert) {
+                v = 1 - v;
+            }
+            number.setWeight(number.getWeight() * v);
         }
 
     }

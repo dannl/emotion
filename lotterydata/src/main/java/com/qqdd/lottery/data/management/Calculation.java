@@ -62,7 +62,19 @@ public class Calculation {
                 .createCalculator());
 //        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
 //                .createCalculator());
-        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new());
+        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(false));
+        calculatorList.add(new NoSelectionCalculator());
+        return calculatorList;
+    }
+
+
+    public static CalculatorCollection lastNTimeRevert() {
+        CalculatorCollection calculatorList = new CalculatorCollection("稳健型_revert", "根据测试结果，概率分布最稳定，平均中奖率最高，约20%（大乐透），13.5%(双色球)");
+        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
+                .createCalculator());
+//        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
+//                .createCalculator());
+        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(true));
         calculatorList.add(new NoSelectionCalculator());
         return calculatorList;
     }
