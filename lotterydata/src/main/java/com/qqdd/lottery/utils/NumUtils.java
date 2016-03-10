@@ -3,6 +3,7 @@ package com.qqdd.lottery.utils;
 
 import com.qqdd.lottery.data.NumberList;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -88,6 +89,17 @@ public class NumUtils {
         }
         for (int i = 1; i <= index; i++) {
             result /= i;
+        }
+        return result;
+    }
+
+    public static int calculateTotalInList(List<Integer> list) {
+        int result = 0;
+        if (list == null) {
+            return result;
+        }
+        for (int i = 0; i < list.size(); i++) {
+            result += list.get(i);
         }
         return result;
     }

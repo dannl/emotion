@@ -23,18 +23,22 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
-import com.qqdd.lottery.data.Lottery;
+import com.qqdd.lottery.data.KeyValuePair;
 import com.qqdd.lottery.test.TestRoundRates;
 import com.qqdd.lottery.utils.NumUtils;
+import com.qqdd.lottery.utils.SimpleIOUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import la.niub.util.utils.StorageHelper;
-import la.niub.util.utils.UIUtil;
 
 public class ChartActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
@@ -203,26 +207,45 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_go_home_100000) {
-            loadGoHome100000();
+        if (id == R.id.action_rate) {
+            showFilePicker("_rates", new FileLoader() {
+
+                @Override
+                public void load(String file) {
+                    loadRate(file);
+                }
+            });
             return true;
-        } else if (id == R.id.action_go_home_1000000) {
-            loadGoHome1000000();
-            return true;
-        } else if (id == R.id.action_rate) {
-            showFilePicker();
+        } else if (id ==R.id.action_kv) {
+            showFilePicker(KeyValuePair.TAIL, new FileLoader() {
+                @Override
+                public void load(String file) {
+                    try {
+                        loadKV(file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void showFilePicker() {
+    private interface FileLoader {
+
+        void load(String file);
+    }
+
+    private void showFilePicker(final String filter, final FileLoader fileLoader) {
         final File root = getFile();
         final String[] names = root.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
-                return !TextUtils.isEmpty(filename) && filename.endsWith("_rates");
+                return !TextUtils.isEmpty(filename) && filename.endsWith(filter);
             }
         });
         final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(
@@ -231,7 +254,7 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final String name = names[which];
-                loadRate(name);
+                fileLoader.load(name);
                 dialog.dismiss();
             }
         });
@@ -308,31 +331,25 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         afterSetData();
 
     }
+    private void loadKV(final String name) throws IOException, JSONException {
 
-    private void loadGoHome1000000() {
-        loadGoHome(1000000);
-    }
-
-    private void loadGoHome100000() {
-        loadGoHome(100000);
-    }
-
-    private void loadGoHome(final int count) {
-        TimeToGoHome goHome = TimeToGoHome.load(getFile(), Lottery.Type.DLT, count);
-        if (goHome.size() == 0) {
-            UIUtil.showToastSafe(this, "没数据啊！");
-            return;
-        }
-        float[] rate = calculateTimeToHomeRate(goHome);
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         ArrayList<String> xV = new ArrayList<>();
+        final File f = new File(getFile(), name);
+        final List<KeyValuePair> rates = KeyValuePair.parseArray(new JSONArray(SimpleIOUtils.loadContent(new FileInputStream(f),"UTF-8")));
         ArrayList<Entry> yV = new ArrayList<>();
-        for (int i = 0; i < rate.length; i++) {
-            xV.add(String.valueOf(i * (goHome.getTestCount() / RANGE_DIVIDER)));
-            yV.add(new Entry(rate[i], i));
+        float max = 0;
+        int larger = 0;
+        float total = 0;
+        for (int j = 0; j < rates.size(); j++) {
+            final KeyValuePair testRoundRates = rates.get(j);
+            xV.add(testRoundRates.getKey());
+            yV.add(new Entry(testRoundRates.getValue(), j));
         }
-        LineDataSet dataSet = new LineDataSet(yV, String.valueOf(count));
+        Log.e("TEST", " larger: " + larger + " avr: " + (total / larger));
+        LineDataSet dataSet = new LineDataSet(yV, name);
         dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        final int color = COLORS[new Random().nextInt(COLORS.length)];
+        int color = COLORS[0];
         dataSet.setColor(color);
         dataSet.setCircleColor(color);
         dataSet.setLineWidth(1f);
@@ -341,7 +358,29 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         dataSet.setFillColor(color);
         dataSet.setDrawCircleHole(false);
         dataSet.setHighLightColor(Color.rgb(244, 117, 117));
-        LineData data = new LineData(xV, dataSet);
+
+        dataSets.add(dataSet);
+
+        ArrayList<Entry> yVRandom = new ArrayList<>();
+        for (int i = 0; i < rates.size(); i++) {
+            yVRandom.add(new Entry(0.0666f, i));
+        }
+
+        dataSet = new LineDataSet(yVRandom, "随机");
+        dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+        color = COLORS[1];
+        dataSet.setColor(color);
+        dataSet.setCircleColor(color);
+        dataSet.setLineWidth(1f);
+        dataSet.setCircleSize(1f);
+        dataSet.setFillAlpha(65);
+        dataSet.setFillColor(color);
+        dataSet.setDrawCircleHole(false);
+        dataSet.setHighLightColor(Color.rgb(244, 117, 117));
+
+        dataSets.add(dataSet);
+
+        LineData data = new LineData(xV, dataSets);
         data.setValueTextColor(Color.WHITE);
         data.setValueTextSize(9f);
         mChart.setData(data);
@@ -351,7 +390,6 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         afterSetData();
 
     }
-
 
     private float[] calculateTimeToHomeRate(TimeToGoHome timeToGoHome) {
         if (timeToGoHome == null) {

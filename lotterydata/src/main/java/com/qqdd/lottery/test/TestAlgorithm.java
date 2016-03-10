@@ -3,6 +3,7 @@ package com.qqdd.lottery.test;
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.data.HistoryItem;
+import com.qqdd.lottery.data.KeyValuePair;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
@@ -22,6 +23,7 @@ import com.qqdd.lottery.utils.SimpleIOUtils;
 import org.json.JSONArray;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +51,10 @@ public class TestAlgorithm {
 //                                            Lottery.Type.DLT, Calculation.lastNTimeRevert(), 100000, 10);
 //            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
 //                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
-                    Calculation.lastNTimeRevert(), 5, 2000000);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
+//                    Calculation.lastNTimeRevert(), 5, 2000000);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateTotalValue(new History(SimpleIOUtils.getProjectRoot()).load(
+                    Lottery.Type.SSQ), 300);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
@@ -64,6 +68,24 @@ public class TestAlgorithm {
 
     private File getProjectRoot() {
         return mRoot;
+    }
+
+    private void calculateTotalValue(List<HistoryItem> items, int to) {
+        if (to > items.size()) {
+            return;
+        }
+        final Lottery.Type type = items.get(0).getType();
+        final List<KeyValuePair> list = new ArrayList<>();
+        for (int i = 0; i < to; i++) {
+            final HistoryItem item = items.get(i);
+            int total = NumUtils.calculateTotalInList(item.getNormals()) + NumUtils.calculateTotalInList(item.getSpecials());
+            list.add(new KeyValuePair(item.getDateDisplay(), total));
+        }
+        final File destFile = new File(mRoot, type.getName() + to + KeyValuePair.TAIL);
+        try {
+            SimpleIOUtils.saveToFile(destFile, KeyValuePair.toArray(list).toString(), "UTF-8");
+        } catch (IOException e) {
+        }
     }
 
     private void testBuyCount(final Lottery.Type type, final CalculatorCollection calculators, final int buyCount, final int since)

@@ -4,4 +4,5 @@
     <string name="action_go_home">GO_HOME分布</string>
     <string name="action_go_home_100000">GO_HOME_100000</string>
     <string name="action_go_home_1000000">GO_HOME_1000000</string>
+    <string name="action_kv">加载key_value记录...</string>
 </resources>
