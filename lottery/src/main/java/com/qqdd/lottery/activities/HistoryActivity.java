@@ -2,6 +2,7 @@ package com.qqdd.lottery.activities;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,6 +16,7 @@ import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 import com.qqdd.lottery.data.management.HistoryDelegate;
+import com.qqdd.lottery.ui.view.NumberLineView;
 
 import java.util.List;
 
@@ -35,9 +37,11 @@ public class HistoryActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         final ListView listView = (ListView) findViewById(R.id.list);
+        showProgress(R.string.loading);
         HistoryDelegate.getInstance().load(mType, new DataLoadingCallback<List<HistoryItem>>() {
             @Override
             public void onLoaded(final List<HistoryItem> result) {
+                dismissProgress();
                 listView.setAdapter(new BaseAdapter() {
                     @Override
                     public int getCount() {
@@ -56,21 +60,28 @@ public class HistoryActivity extends BaseActivity {
 
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
-                        final TextView textView = new TextView(HistoryActivity.this);
-                        textView.setText(result.get(position)
-                                .toString());
-                        return textView;
+                        if (convertView == null) {
+                            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_item, parent, false);
+                        }
+                        TextView date = (TextView) convertView.findViewById(R.id.date);
+                        NumberLineView lineView = (NumberLineView) convertView.findViewById(R.id.number);
+                        final HistoryItem item = result.get(position);
+                        date.setText(item.getDateDisplay());
+                        lineView.setLottery(item);
+                        return convertView;
                     }
                 });
             }
 
             @Override
             public void onLoadFailed(String err) {
+                dismissProgress();
                 showSnackBar(err);
             }
 
             @Override
             public void onBusy() {
+                dismissProgress();
                 showSnackBar(getString(R.string.duplicated_operation));
             }
 

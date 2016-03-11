@@ -338,7 +338,6 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         final File f = new File(getFile(), name);
         final List<KeyValuePair> rates = KeyValuePair.parseArray(new JSONArray(SimpleIOUtils.loadContent(new FileInputStream(f),"UTF-8")));
         ArrayList<Entry> yV = new ArrayList<>();
-        float max = 0;
         int larger = 0;
         float total = 0;
         for (int j = 0; j < rates.size(); j++) {
@@ -361,24 +360,14 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
 
         dataSets.add(dataSet);
 
+        dataSets.add(formatAverageLine(rates, 5, COLORS[1]));
+        dataSets.add(formatAverageLine(rates, 10, COLORS[2]));
+        dataSets.add(formatAverageLine(rates, 20, COLORS[3]));
+
         ArrayList<Entry> yVRandom = new ArrayList<>();
         for (int i = 0; i < rates.size(); i++) {
             yVRandom.add(new Entry(0.0666f, i));
         }
-
-        dataSet = new LineDataSet(yVRandom, "随机");
-        dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        color = COLORS[1];
-        dataSet.setColor(color);
-        dataSet.setCircleColor(color);
-        dataSet.setLineWidth(1f);
-        dataSet.setCircleSize(1f);
-        dataSet.setFillAlpha(65);
-        dataSet.setFillColor(color);
-        dataSet.setDrawCircleHole(false);
-        dataSet.setHighLightColor(Color.rgb(244, 117, 117));
-
-        dataSets.add(dataSet);
 
         LineData data = new LineData(xV, dataSets);
         data.setValueTextColor(Color.WHITE);
@@ -389,6 +378,35 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
 
         afterSetData();
 
+    }
+
+    private LineDataSet formatAverageLine(final List<KeyValuePair> kv, final int av, final int color) {
+        if (kv == null || kv.size() < av) {
+            return null;
+        }
+        ArrayList<String> xV = new ArrayList<>();
+        ArrayList<Entry> yV = new ArrayList<>();
+        for (int i = 0; i < av; i++) {
+            yV.add(new Entry(0, i));
+        }
+        for (int i = av; i < kv.size(); i++) {
+            float total = 0;
+            for (int j = i - av; j < i; j++) {
+                total += kv.get(j).getValue();
+            }
+            yV.add(new Entry(total / av, i));
+        }
+        LineDataSet dataSet = new LineDataSet(yV, "av_" + av);
+        dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+        dataSet.setColor(color);
+        dataSet.setLineWidth(1f);
+        dataSet.setCircleSize(2f);
+        dataSet.setFillAlpha(65);
+        dataSet.setFillColor(color);
+        dataSet.setDrawCircles(false);
+        dataSet.setDrawCubic(true);
+        dataSet.setHighLightColor(Color.rgb(244, 117, 117));
+        return dataSet;
     }
 
     private float[] calculateTimeToHomeRate(TimeToGoHome timeToGoHome) {
