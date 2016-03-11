@@ -4,9 +4,9 @@ import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
-import com.qqdd.lottery.calculate.data.calculators.KillDuplicatedNumberCalculator;
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
 import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
+import com.qqdd.lottery.calculate.data.calculators.SameNumberCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
@@ -79,46 +79,20 @@ public class Calculation {
         return calculatorList;
     }
 
-    public static CalculatorCollection lastNTime_Kill_duplicate() {
-        CalculatorCollection calculatorList = new CalculatorCollection("稳健型_杀重复", "");
-        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                .createCalculator());
-        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-                .createCalculator());
-        calculatorList.add(new KillDuplicatedNumberCalculator(3));
-        return calculatorList;
-    }
-
     public static CalculatorCollection lastNTime_sameNumber() {
-        CalculatorCollection calculatorList = new CalculatorCollection("波动型","根据测试结果，概率分布波动较大，平均中奖率19%(大乐透),13%(双色球)，使用往期开奖号码进行测试，最高中奖率可以到40%,同时最低也到了9%");
+        CalculatorCollection calculatorList = new CalculatorCollection("波动型","");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
-        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-                .createCalculator());
-        calculatorList.add(CalculatorFactory.SameNumberCalculatorFactory.instance()
-                        .createCalculator());
-        return calculatorList;
-    }
-    public static CalculatorCollection lastNTime_sameTail() {
-        CalculatorCollection calculatorList = new CalculatorCollection("测试用_波动型_同尾","测试用...");
-        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                .createCalculator());
-        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-                .createCalculator());
-        calculatorList.add(CalculatorFactory.SameNumberCalculatorFactory.instance()
-                        .createCalculator());
+        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(false));
+        calculatorList.add(new SameNumberCalculator());
         return calculatorList;
     }
 
-    public static CalculatorCollection lastNTime_sameNumber_sameTail() {
-        CalculatorCollection calculatorList = new CalculatorCollection("测试用_波动型_同号_同尾","测试用...");
+    public static CalculatorCollection sameNumber() {
+        CalculatorCollection calculatorList = new CalculatorCollection("sameNumber","");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
-        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-                .createCalculator());
-        calculatorList.add(CalculatorFactory.SameNumberCalculatorFactory.instance()
-                        .createCalculator());
-        calculatorList.add(CalculatorFactory.SameTailCalculatorFactory.instance().createCalculator());
+        calculatorList.add(new SameNumberCalculator());
         return calculatorList;
     }
 
@@ -133,8 +107,6 @@ public class Calculation {
         result.add(lastNTime());
         result.add(lastNTime_sameNumber());
         result.add(random());
-//        result.add(lastNTime_sameTail());
-//        result.add(lastNTime_sameNumber_sameTail());
         return result;
     }
 }

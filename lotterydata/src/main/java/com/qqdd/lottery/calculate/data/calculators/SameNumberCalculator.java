@@ -1,14 +1,10 @@
 package com.qqdd.lottery.calculate.data.calculators;
 
 import com.qqdd.lottery.calculate.data.CalculatorImpl;
-import com.qqdd.lottery.data.HistoryItem;
-import com.qqdd.lottery.data.LotteryConfiguration;
-import com.qqdd.lottery.data.LotteryRecord;
+import com.qqdd.lottery.data.*;
 import com.qqdd.lottery.data.Number;
-import com.qqdd.lottery.data.NumberList;
-import com.qqdd.lottery.data.NumberTable;
-import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.utils.NumUtils;
+import com.qqdd.lottery.utils.Random;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +16,8 @@ public class SameNumberCalculator extends CalculatorImpl {
 
     private static final HashMap<Integer, Probability> PROBABILITY_CACHE = new HashMap<>();
 
-    public SameNumberCalculator(String title, String desc) {
-        super(title, desc);
+    public SameNumberCalculator() {
+        super("重复上期","重复上期");
     }
 
     @Override
@@ -34,108 +30,112 @@ public class SameNumberCalculator extends CalculatorImpl {
                     .getConfiguration());
             PROBABILITY_CACHE.put(record.hashCode(), probabilities);
         }
-
+        final int normalSameCount = NumUtils.calculateIndexWithWeight(
+                probabilities.normalSameCountProb, Random.getInstance());
+        final int specialSameCount = NumUtils.calculateIndexWithWeight(
+                probabilities.specialSameCountProb, Random.getInstance());
+        final List<Integer> normalNumbers = NumUtils.calculateIndexesWithWeight(
+                probabilities.normalNumberProbability, Random.getInstance(), normalSameCount);
+        final List<Integer> specialNumbers = NumUtils.calculateIndexesWithWeight(
+                probabilities.specialNumberProbability, Random.getInstance(), specialSameCount);
         final NumberList recordNormals = record.getNormals();
-
-        final NumberList recordSpecials = record.getSpecials();
-
-        int value = 0;
-        float maxProbability = 0;
         for (int i = 0; i < recordNormals.size(); i++) {
-            final Number number = normalTable.getWithNumber(recordNormals.get(i));
-            //            number.setWeight(
-            //                    number.getWeight() * probabilities.normalProbability[number.getValue()]);
-            if (probabilities.normalProbability[number.getValue()] > maxProbability) {
-                maxProbability = probabilities.normalProbability[number.getValue()];
-                value = number.getValue();
+            final Integer value = recordNormals.get(i);
+            final com.qqdd.lottery.data.Number number = normalTable.getWithNumber(value);
+            if (normalNumbers.contains(value)) {
+                number.setWeight(
+                        number.getWeight() * probabilities.normalNumberProbability[number.getValue()]);
+            } else {
+                number.setWeight(
+                        number.getWeight() / probabilities.normalNumberProbability[number.getValue()]);
             }
         }
-        normalTable.getWithNumber(value)
-                .setWeight(normalTable.getWithNumber(value)
-                        .getWeight() * maxProbability * 2);
-
-        value = 0;
-        maxProbability = 0;
+        final NumberList recordSpecials = record.getSpecials();
         for (int i = 0; i < recordSpecials.size(); i++) {
-            final Number number = specialTable.getWithNumber(recordSpecials.get(i));
-            //            number.setWeight(
-            //                    number.getWeight() * probabilities.specialProbability[number.getValue()]);
-            if (probabilities.specialProbability[number.getValue()] > maxProbability) {
-                maxProbability = probabilities.specialProbability[number.getValue()];
-                value = number.getValue();
+            final Integer value = recordSpecials.get(i);
+            Number number = specialTable.getWithNumber(value);
+            if (specialNumbers.contains(value)) {
+                number.setWeight(
+                        number.getWeight() * probabilities.specialNumberProbability[number.getValue()]);
+            } else {
+                number.setWeight(
+                        number.getWeight() / probabilities.specialNumberProbability[number.getValue()]);
             }
         }
-        specialTable.getWithNumber(value)
-                .setWeight(specialTable.getWithNumber(value)
-                        .getWeight() * maxProbability * 2);
-
     }
 
     private Probability calculateDuplicateProbability(List<HistoryItem> lts,
                                                       LotteryConfiguration lotteryConfiguration) {
         Probability result = new Probability();
-        int[] normalSameCountRecord = NumUtils.newEmptyIntArray(
+        int[] normalNumberWasSameRecord = NumUtils.newEmptyIntArray(
                 lotteryConfiguration.getNormalRange() + 1);
-        int[] specialSameCountRecord = NumUtils.newEmptyIntArray(
+        int[] specialNumberWasSameRecord = NumUtils.newEmptyIntArray(
                 lotteryConfiguration.getSpecialRange() + 1);
-        int normalHasSame = 0;
-        int specialHasSame = 0;
+        int[] normalSameCountRecord = NumUtils.newEmptyIntArray(
+                lotteryConfiguration.getNormalSize() + 1);
+        int[] specialSameCountRecord = NumUtils.newEmptyIntArray(
+                lotteryConfiguration.getSpecialSize() + 1);
         for (int i = 1; i < lts.size() - 1; i++) {
-            //                        final NumberList normalList = lts.get(i).getNormals();
-            //                        final NumberList specialList = lts.get(i).getSpecials();
-            //                        final NumberList lastNormalList = lts.get(i + 1).getNormals();
-            //                        final NumberList lastSpecialList = lts.get(i + 1).getSpecials();
-            //                        final int normalSame = NumUtils.calculateSameCount(normalList, lastNormalList);
-            //                        final int specialSame = NumUtils.calculateSameCount(specialList, lastSpecialList);
             HistoryItem record = lts.get(i);
             HistoryItem recordOther = lts.get(i + 1);
             RewardRule.RewardDetail detail = record.calculateRewardDetail(recordOther);
             final NumberList normalSames = detail.getNormals();
             final NumberList specialSames = detail.getSpecials();
             for (int j = 0; j < normalSames.size(); j++) {
-                normalSameCountRecord[normalSames.get(j)]++;
+                normalNumberWasSameRecord[normalSames.get(j)]++;
             }
+            normalSameCountRecord[normalSames.size()]++;
             for (int j = 0; j < specialSames.size(); j++) {
-                specialSameCountRecord[specialSames.get(j)]++;
+                specialNumberWasSameRecord[specialSames.get(j)]++;
             }
-            normalHasSame += normalSames.size() > 0 ?
-                    1 :
-                    0;
-            specialHasSame += specialSames.size() > 0 ?
-                    1 :
-                    0;
+            specialSameCountRecord[specialSames.size()]++;
         }
-        result.normalProbability = NumUtils.calculateProbability(normalSameCountRecord);
-        result.specialProbability = NumUtils.calculateProbability(specialSameCountRecord);
+        result.normalNumberProbability = NumUtils.calculateProbability(normalNumberWasSameRecord);
+        result.specialNumberProbability = NumUtils.calculateProbability(specialNumberWasSameRecord);
+        result.normalSameCountProb = NumUtils.calculateProbability(normalSameCountRecord);
+        result.specialSameCountProb = NumUtils.calculateProbability(specialSameCountRecord);
+
         LotteryRecord record = lts.get(0);
-        float normalHasSameRate = ((float) normalHasSame) / lts.size();
-        float specialHasSameRate = ((float) specialHasSame) / lts.size();
         final NumberList normals = record.getNormals();
+        for (int i = 0; i < result.normalNumberProbability.length; i++) {
+            if (!normals.contains(i)) {
+                result.normalNumberProbability[i] = 0;
+            }
+        }
         float totalRate = 0;
         for (int i = 0; i < normals.size(); i++) {
-            totalRate += result.normalProbability[normals.get(i)];
+            totalRate += result.normalNumberProbability[normals.get(i)];
         }
+        final float[] normalizedProbability = NumUtils.getNormalizedProbability(
+                lotteryConfiguration.getType());
         for (int i = 0; i < normals.size(); i++) {
-            result.normalProbability[normals.get(
-                    i)] = 1 + normalHasSameRate * result.normalProbability[normals.get(
-                    i)] / totalRate;
+            result.normalNumberProbability[normals.get(
+                    i)] = result.normalNumberProbability[normals.get(
+                    i)] / totalRate / normalizedProbability[0];
         }
         totalRate = 0;
         final NumberList specials = record.getSpecials();
-        for (int i = 0; i < specials.size(); i++) {
-            totalRate += result.specialProbability[specials.get(i)];
+        for (int i = 0; i < result.specialNumberProbability.length; i++) {
+            if (!specials.contains(i)) {
+                result.specialNumberProbability[i] = 0;
+            }
         }
         for (int i = 0; i < specials.size(); i++) {
-            result.specialProbability[specials.get(
-                    i)] = 1 + specialHasSameRate * result.specialProbability[specials.get(
-                    i)] / totalRate;
+            totalRate += result.specialNumberProbability[specials.get(i)];
+        }
+        for (int i = 0; i < specials.size(); i++) {
+            result.specialNumberProbability[specials.get(
+                    i)] = result.specialNumberProbability[specials.get(
+                    i)] / totalRate / normalizedProbability[1];
         }
         return result;
     }
 
     private static class Probability {
-        float[] normalProbability;
-        float[] specialProbability;
+        float[] normalNumberProbability;
+        float[] specialNumberProbability;
+        float[] normalSameCountProb;
+        float[] specialSameCountProb;
     }
 
 }

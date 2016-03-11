@@ -2,6 +2,7 @@ package com.qqdd.lottery.test;
 
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
+import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.KeyValuePair;
 import com.qqdd.lottery.data.Lottery;
@@ -48,13 +49,15 @@ public class TestAlgorithm {
 //                                }
 //                        });
 //                                    new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                                            Lottery.Type.DLT, Calculation.lastNTimeRevert(), 100000, 10);
+//                                            Lottery.Type.DLT, Calculation.lastNTime(), 1, 10);
 //            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
 //                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
 //                    Calculation.lastNTimeRevert(), 5, 2000000);
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateTotalValue(new History(SimpleIOUtils.getProjectRoot()).load(
-                    Lottery.Type.SSQ), 300);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateTotalValue(new History(SimpleIOUtils.getProjectRoot()).load(
+//                    Lottery.Type.SSQ), 300);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testLastNTime(new History(SimpleIOUtils.getProjectRoot()).load(
+                    Lottery.Type.DLT));
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
@@ -68,6 +71,15 @@ public class TestAlgorithm {
 
     private File getProjectRoot() {
         return mRoot;
+    }
+
+    private void testLastNTime(List<HistoryItem> items) {
+        final LastNTimeOccurIncreaseCalculator_new calculator = new LastNTimeOccurIncreaseCalculator_new(false);
+        for (int i = 300; i >= 0; i--) {
+            final List<HistoryItem> sub = items.subList(i, items.size());
+            calculator.calculateUniverses(sub);
+        }
+
     }
 
     private void calculateTotalValue(List<HistoryItem> items, int to) {

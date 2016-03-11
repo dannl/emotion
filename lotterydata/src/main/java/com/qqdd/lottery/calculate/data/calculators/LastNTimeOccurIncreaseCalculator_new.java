@@ -73,14 +73,30 @@ public class LastNTimeOccurIncreaseCalculator_new extends CalculatorImpl {
             universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
             index ++;
         } while (!universe.isUniverse);
-        System.out.println("================ normal lastN : " + universe.lastN + "=================");
-        System.out.println("occ distribution:");
-        for (int i = 0; i < universe.occRate.length; i++) {
-            System.out.println(" time: " + i + " occ: " + universe.occRate[i]);
+        if (universe.lastN == 27) {
+            System.out.println("27");
+            index = 0;
+            do {
+                universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
+                index ++;
+            } while (!universe.isUniverse);
         }
-        System.out.println("current occ time distribution: ");
+        if (universe.lastN == 50) {
+            System.out.println("50");
+            index = 0;
+            do {
+                universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
+                index ++;
+            } while (!universe.isUniverse);
+        }
+        System.out.println("================ normal lastN : " + universe.lastN + "=================");
+//        System.out.println("occ distribution:");
+        for (int i = 0; i < universe.occRate.length; i++) {
+//            System.out.println(" time: " + i + " occ: " + universe.occRate[i]);
+        }
+//        System.out.println("current occ time distribution: ");
         for (int i = 0; i < universe.currentOccTime.length; i++) {
-            System.out.println(" number: " + i + " occ: " + universe.currentOccTime[i]);
+//            System.out.println(" number: " + i + " occ: " + universe.currentOccTime[i]);
         }
         result[TYPE_NORMAL] = universe;
         index = 0;
@@ -88,14 +104,14 @@ public class LastNTimeOccurIncreaseCalculator_new extends CalculatorImpl {
             universe = calculateUniverseImpl(history, index, TYPE_SPECIAL);
             index ++;
         } while (!universe.isUniverse);
-        System.out.println("================ special lastN : " + universe.lastN + "=================");
-        System.out.println("occ distribution:");
+//        System.out.println("================ special lastN : " + universe.lastN + "=================");
+//        System.out.println("occ distribution:");
         for (int i = 0; i < universe.occRate.length; i++) {
-            System.out.println(" time: " + i + " occ: " + universe.occRate[i]);
+//            System.out.println(" time: " + i + " occ: " + universe.occRate[i]);
         }
-        System.out.println("current occ time distribution: ");
+//        System.out.println("current occ time distribution: ");
         for (int i = 0; i < universe.currentOccTime.length; i++) {
-            System.out.println(" number: " + i + " occ: " + universe.currentOccTime[i]);
+//            System.out.println(" number: " + i + " occ: " + universe.currentOccTime[i]);
         }
         result[TYPE_SPECIAL] = universe;
         return result;

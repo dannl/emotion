@@ -1,8 +1,12 @@
 package com.qqdd.lottery.utils;
 
 
+import com.qqdd.lottery.data.Lottery;
+import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.NumberList;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -71,7 +75,19 @@ public class NumUtils {
             }
             totalRate += weights[i] / total;
         }
-        return 0;
+        throw new IllegalArgumentException("bad weight!");
+    }
+
+    public static List<Integer> calculateIndexesWithWeight(final float[] weights, final
+                                                   Random random, final int resultCount) {
+        if (resultCount == 0) {
+            return Collections.emptyList();
+        }
+        NumberList result = new NumberList(resultCount);
+        while(result.size() < resultCount) {
+            result.add(calculateIndexWithWeight(weights, random));
+        }
+        return result;
     }
 
     public static float[] newEmptyFloatArray(int i) {
@@ -100,6 +116,27 @@ public class NumUtils {
         }
         for (int i = 0; i < list.size(); i++) {
             result += list.get(i);
+        }
+        return result;
+    }
+
+    private static final HashMap<Lottery.Type, float[]> NORMALIZED_PROB = new HashMap<>();
+
+    public static float[] getNormalizedProbability(Lottery.Type type) {
+        float[] result = NORMALIZED_PROB.get(type);
+        if (result == null) {
+            LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
+            if (configuration == null) {
+                return null;
+            }
+            float normalizedProbNormal = (float) (NumUtils.C(configuration.getNormalRange() - 1,
+                    configuration.getNormalSize() - 1) / NumUtils.C(configuration.getNormalRange(),
+                    configuration.getNormalSize()));
+            float normalizedProbSpecial = (float) (NumUtils.C(configuration.getSpecialRange() - 1,
+                    configuration.getSpecialSize() - 1) / NumUtils.C(configuration.getSpecialRange(),
+                    configuration.getSpecialSize()));
+            result = new float[]{normalizedProbNormal, normalizedProbSpecial};
+            NORMALIZED_PROB.put(type, result);
         }
         return result;
     }
