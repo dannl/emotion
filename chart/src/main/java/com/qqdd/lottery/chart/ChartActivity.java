@@ -271,6 +271,12 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         ArrayList<String> xV = new ArrayList<>();
         final File f = new File(getFile(), name);
         final List<TestRoundRates> rates = TestRoundRates.load(f);
+        final LineData lineData = mChart.getLineData();
+        int xVCount = 0;
+        if (lineData != null) {
+             xVCount = lineData
+                    .getXValCount();
+        }
         ArrayList<Entry> yV = new ArrayList<>();
         float max = 0;
         int larger = 0;
@@ -300,31 +306,37 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         dataSet.setDrawCircleHole(false);
         dataSet.setHighLightColor(Color.rgb(244, 117, 117));
 
-        dataSets.add(dataSet);
+        if (xVCount == rates.size()) {
+            LineData data = mChart.getLineData();
+            dataSet.setColor(COLORS[data.getDataSetCount() % COLORS.length ]);
+            dataSet.setCircleColor(COLORS[data.getDataSetCount() % COLORS.length ]);
+            data.addDataSet(dataSet);
+            mChart.setData(data);
+        } else {
+            dataSets.add(dataSet);
+            ArrayList<Entry> yVRandom = new ArrayList<>();
+            for (int i = 0; i < rates.size(); i++) {
+                yVRandom.add(new Entry(0.0666f, i));
+            }
+            dataSet = new LineDataSet(yVRandom, "随机");
+            dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+            color = COLORS[1];
+            dataSet.setColor(color);
+            dataSet.setCircleColor(color);
+            dataSet.setLineWidth(1f);
+            dataSet.setCircleSize(1f);
+            dataSet.setFillAlpha(65);
+            dataSet.setFillColor(color);
+            dataSet.setDrawCircleHole(false);
+            dataSet.setHighLightColor(Color.rgb(244, 117, 117));
 
-        ArrayList<Entry> yVRandom = new ArrayList<>();
-        for (int i = 0; i < rates.size(); i++) {
-            yVRandom.add(new Entry(0.0666f, i));
+            dataSets.add(dataSet);
+
+            LineData data = new LineData(xV, dataSets);
+            data.setValueTextColor(Color.WHITE);
+            data.setValueTextSize(9f);
+            mChart.setData(data);
         }
-
-        dataSet = new LineDataSet(yVRandom, "随机");
-        dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        color = COLORS[1];
-        dataSet.setColor(color);
-        dataSet.setCircleColor(color);
-        dataSet.setLineWidth(1f);
-        dataSet.setCircleSize(1f);
-        dataSet.setFillAlpha(65);
-        dataSet.setFillColor(color);
-        dataSet.setDrawCircleHole(false);
-        dataSet.setHighLightColor(Color.rgb(244, 117, 117));
-
-        dataSets.add(dataSet);
-
-        LineData data = new LineData(xV, dataSets);
-        data.setValueTextColor(Color.WHITE);
-        data.setValueTextSize(9f);
-        mChart.setData(data);
 
         mChart.invalidate();
 

@@ -49,15 +49,15 @@ public class TestAlgorithm {
 //                                }
 //                        });
 //                                    new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                                            Lottery.Type.DLT, Calculation.lastNTime(), 1, 10);
+//                                            Lottery.Type.DLT, Calculation.lastNTimeRevert_sameNumber(), 100000, 10);
 //            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
 //                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
-//                    Calculation.lastNTimeRevert(), 5, 2000000);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
+                    Calculation.lastNTimeRevert_sameNumber(), 5, 2000000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateTotalValue(new History(SimpleIOUtils.getProjectRoot()).load(
 //                    Lottery.Type.SSQ), 300);
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testLastNTime(new History(SimpleIOUtils.getProjectRoot()).load(
-                    Lottery.Type.DLT));
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testLastNTime(new History(SimpleIOUtils.getProjectRoot()).load(
+//                    Lottery.Type.DLT));
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
@@ -349,7 +349,6 @@ public class TestAlgorithm {
             for (Map.Entry<RewardRule.Reward, Integer> entry : entrySet) {
                 final int value = entry.getValue();
                 final RewardRule.Reward key = entry.getKey();
-                totalMoney += value * key.getMoney();
                 builder.append(key.getTitle())
                         .append(" 奖金:")
                         .append(key.getMoney())

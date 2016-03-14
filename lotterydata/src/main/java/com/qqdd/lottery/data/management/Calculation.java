@@ -4,6 +4,7 @@ import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
+import com.qqdd.lottery.calculate.data.calculators.KillLastNormal;
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
 import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.calculate.data.calculators.SameNumberCalculator;
@@ -57,7 +58,7 @@ public class Calculation {
     }
 
     public static CalculatorCollection lastNTime() {
-        CalculatorCollection calculatorList = new CalculatorCollection("稳健型", "根据测试结果，概率分布最稳定，平均中奖率最高，约20%（大乐透），13.5%(双色球)");
+        CalculatorCollection calculatorList = new CalculatorCollection("稳健型", "");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
 //        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
@@ -67,14 +68,39 @@ public class Calculation {
         return calculatorList;
     }
 
+    public static CalculatorCollection killLast() {
+        CalculatorCollection calculatorList = new CalculatorCollection("kill_last", "");
+        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
+                .createCalculator());
+//        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
+//                .createCalculator());
+        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(false));
+        calculatorList.add(new KillLastNormal());
+//        calculatorList.add(new NoSelectionCalculator());
+        return calculatorList;
+    }
+
+
 
     public static CalculatorCollection lastNTimeRevert() {
-        CalculatorCollection calculatorList = new CalculatorCollection("稳健型_revert", "根据测试结果，概率分布最稳定，平均中奖率最高，约20%（大乐透），13.5%(双色球)");
+        CalculatorCollection calculatorList = new CalculatorCollection("稳健型_revert", "");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
 //        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
 //                .createCalculator());
         calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(true));
+        calculatorList.add(new NoSelectionCalculator());
+        return calculatorList;
+    }
+
+    public static CalculatorCollection lastNTimeRevert_sameNumber() {
+        CalculatorCollection calculatorList = new CalculatorCollection("lastRevert_sameNumber", "");
+        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
+                .createCalculator());
+//        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
+//                .createCalculator());
+        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(true));
+        calculatorList.add(new SameNumberCalculator());
         calculatorList.add(new NoSelectionCalculator());
         return calculatorList;
     }

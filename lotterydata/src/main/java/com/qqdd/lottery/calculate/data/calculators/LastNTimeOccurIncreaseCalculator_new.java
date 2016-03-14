@@ -73,44 +73,44 @@ public class LastNTimeOccurIncreaseCalculator_new extends CalculatorImpl {
             universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
             index ++;
         } while (!universe.isUniverse);
-        if (universe.lastN == 27) {
-            System.out.println("27");
-            index = 0;
-            do {
-                if (index == 27) {
-                    System.out.println("27");
-                }
-                universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
-                index ++;
-            } while (!universe.isUniverse);
-        }
-        if (universe.lastN == 50) {
-            System.out.println("50");
-            index = 0;
-            do {
-                if (index == 50) {
-                    System.out.println("50");
-                }
-                universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
-                index ++;
-            } while (!universe.isUniverse);
-        }
+//        if (universe.lastN == 27) {
+//            System.out.println("27");
+//            index = 0;
+//            do {
+//                if (index == 27) {
+//                    System.out.println("27");
+//                }
+//                universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
+//                index ++;
+//            } while (!universe.isUniverse);
+//        }
+//        if (universe.lastN == 50) {
+//            System.out.println("50");
+//            index = 0;
+//            do {
+//                if (index == 50) {
+//                    System.out.println("50");
+//                }
+//                universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
+//                index ++;
+//            } while (!universe.isUniverse);
+//        }
         System.out.println("================ normal lastN : " + universe.lastN + "=================");
 //        System.out.println("occ distribution:");
-        for (int i = 0; i < universe.occRate.length; i++) {
+//        for (int i = 0; i < universe.occRate.length; i++) {
 //            System.out.println(" time: " + i + " occ: " + universe.occRate[i]);
-        }
+//        }
 //        System.out.println("current occ time distribution: ");
-        for (int i = 0; i < universe.currentOccTime.length; i++) {
+//        for (int i = 0; i < universe.currentOccTime.length; i++) {
 //            System.out.println(" number: " + i + " occ: " + universe.currentOccTime[i]);
-        }
+//        }
         result[TYPE_NORMAL] = universe;
         index = 0;
         do {
             universe = calculateUniverseImpl(history, index, TYPE_SPECIAL);
             index ++;
         } while (!universe.isUniverse);
-//        System.out.println("================ special lastN : " + universe.lastN + "=================");
+        System.out.println("================ special lastN : " + universe.lastN + "=================");
 //        System.out.println("occ distribution:");
         for (int i = 0; i < universe.occRate.length; i++) {
 //            System.out.println(" time: " + i + " occ: " + universe.occRate[i]);
@@ -141,15 +141,15 @@ public class LastNTimeOccurIncreaseCalculator_new extends CalculatorImpl {
         int[] currentOccTimes = NumUtils.newEmptyIntArray(range + 1);
         for (int i = history.size() - lastN; i > 0; i--) {
             if (i == 1) {
-                System.out.println("1");
+//                System.out.println("1");
             }
             if (i == 2) {
-                System.out.println("2");
+//                System.out.println("2");
             }
             final HistoryItem record = history.get(i - 1);
             total += size;
             int[] occs = NumUtils.newEmptyIntArray(range + 1);
-            for (int j = 0; j < lastN; j++) {
+            for (int j = i; j < i + lastN; j++) {
                 final HistoryItem item = history.get(j);
                 final NumberList list;
                 if (type == TYPE_NORMAL) {
@@ -172,11 +172,16 @@ public class LastNTimeOccurIncreaseCalculator_new extends CalculatorImpl {
                 occTimes[occ]++;
                 if (occ > 0) {
                     totalOcc++;
+//                } else {
+//                    System.out.println("not 命中.");
                 }
             }
         }
         Universe result = new Universe();
         result.isUniverse = (total == totalOcc);
+        if (!result.isUniverse) {
+            return result;
+        }
         result.occRate = NumUtils.calculateProbability(occTimes);
         result.lastN = lastN;
         for (int i = 0; i < lastN; i++) {

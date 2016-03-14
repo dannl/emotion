@@ -59,7 +59,7 @@ public class NumberProducer {
     }
 
     private float[] calculateTimeToHomeRate(TimeToGoHome timeToGoHome) {
-        if (timeToGoHome == null) {
+        if (timeToGoHome == null || timeToGoHome.isEmpty()) {
             return NumUtils.newEmptyFloatArray(RANGE_DIVIDER);
         }
         final int testCount = timeToGoHome.getTestCount();

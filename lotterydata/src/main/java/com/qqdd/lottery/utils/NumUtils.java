@@ -75,6 +75,9 @@ public class NumUtils {
             }
             totalRate += weights[i] / total;
         }
+        for (int i = 0; i < weights.length; i++) {
+            System.out.println(weights[i]);
+        }
         throw new IllegalArgumentException("bad weight!");
     }
 
