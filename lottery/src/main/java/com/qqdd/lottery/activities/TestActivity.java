@@ -72,7 +72,7 @@ public class TestActivity extends BaseActivity implements SelectionHistory {
         final List<CalculatorCollection> calculatorCollections = Calculation.allCalculorGroups();
         final CharSequence[] items = new CharSequence[calculatorCollections.size()];
         for (int i = 0; i < items.length; i++) {
-            items[i] = calculatorCollections.get(i).getTitle() + "\n" + calculatorCollections.get(i).getDesc();
+            items[i] = calculatorCollections.get(i).getTitle();
         }
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.select_calculator_set);

@@ -24,7 +24,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.data.KeyValuePair;
-import com.qqdd.lottery.test.TestRoundRates;
+import com.qqdd.lottery.calculate.data.Rate;
 import com.qqdd.lottery.utils.NumUtils;
 import com.qqdd.lottery.utils.SimpleIOUtils;
 
@@ -270,7 +270,7 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         ArrayList<String> xV = new ArrayList<>();
         final File f = new File(getFile(), name);
-        final List<TestRoundRates> rates = TestRoundRates.load(f);
+        final List<Rate> rates = Rate.load(f);
         final LineData lineData = mChart.getLineData();
         int xVCount = 0;
         if (lineData != null) {
@@ -282,15 +282,15 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         int larger = 0;
         float total = 0;
         for (int j = 0; j < rates.size(); j++) {
-            final TestRoundRates testRoundRates = rates.get(j);
-            xV.add(testRoundRates.getRecord()
+            final Rate rate = rates.get(j);
+            xV.add(rate.getRecord()
                     .getDateDisplay());
-            yV.add(new Entry(testRoundRates.getRate(), j));
-            if (max < testRoundRates.getRate()) {
-                max  = testRoundRates.getRate();
+            yV.add(new Entry(rate.getRate(), j));
+            if (max < rate.getRate()) {
+                max  = rate.getRate();
             }
-            if (testRoundRates.getRate() > 0.0666f) {
-                larger ++;total += testRoundRates.getRate();
+            if (rate.getRate() > 0.0666f) {
+                larger ++;total += rate.getRate();
             }
         }
         Log.e("TEST", " larger: " + larger + " avr: " + (total / larger));

@@ -58,7 +58,7 @@ public class Calculation {
     }
 
     public static CalculatorCollection lastNTime() {
-        CalculatorCollection calculatorList = new CalculatorCollection("稳健型", "");
+        CalculatorCollection calculatorList = new CalculatorCollection("稳健型");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
 //        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
@@ -69,7 +69,7 @@ public class Calculation {
     }
 
     public static CalculatorCollection killLast() {
-        CalculatorCollection calculatorList = new CalculatorCollection("kill_last", "");
+        CalculatorCollection calculatorList = new CalculatorCollection("kill_last");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
 //        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
@@ -83,7 +83,7 @@ public class Calculation {
 
 
     public static CalculatorCollection lastNTimeRevert() {
-        CalculatorCollection calculatorList = new CalculatorCollection("稳健型_revert", "");
+        CalculatorCollection calculatorList = new CalculatorCollection("稳健型_revert");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
 //        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
@@ -94,7 +94,7 @@ public class Calculation {
     }
 
     public static CalculatorCollection lastNTimeRevert_sameNumber() {
-        CalculatorCollection calculatorList = new CalculatorCollection("lastRevert_sameNumber", "");
+        CalculatorCollection calculatorList = new CalculatorCollection("lastRevert_sameNumber");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
 //        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
@@ -106,7 +106,7 @@ public class Calculation {
     }
 
     public static CalculatorCollection lastNTime_sameNumber() {
-        CalculatorCollection calculatorList = new CalculatorCollection("波动型","");
+        CalculatorCollection calculatorList = new CalculatorCollection("波动型");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
         calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(false));
@@ -115,7 +115,7 @@ public class Calculation {
     }
 
     public static CalculatorCollection sameNumber() {
-        CalculatorCollection calculatorList = new CalculatorCollection("sameNumber","");
+        CalculatorCollection calculatorList = new CalculatorCollection("sameNumber");
         calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
                 .createCalculator());
         calculatorList.add(new SameNumberCalculator());
@@ -123,7 +123,7 @@ public class Calculation {
     }
 
     public static CalculatorCollection random() {
-        CalculatorCollection calculatorList = new CalculatorCollection("纯随机","平均中奖率6.6%");
+        CalculatorCollection calculatorList = new CalculatorCollection("纯随机");
         calculatorList.add(new AverageProbabilityCalculator());
         return calculatorList;
     }

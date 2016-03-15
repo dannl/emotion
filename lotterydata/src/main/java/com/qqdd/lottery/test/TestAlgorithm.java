@@ -1,7 +1,6 @@
 package com.qqdd.lottery.test;
 
-import com.qqdd.lottery.calculate.data.CalculatorCollection;
-import com.qqdd.lottery.calculate.data.TimeToGoHome;
+import com.qqdd.lottery.calculate.data.*;
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.KeyValuePair;
@@ -49,11 +48,11 @@ public class TestAlgorithm {
 //                                }
 //                        });
 //                                    new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                                            Lottery.Type.DLT, Calculation.lastNTimeRevert_sameNumber(), 100000, 10);
+//                                            Lottery.Type.SSQ, Calculation.lastNTime(), 100000, 1000);
 //            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
 //                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT,
-                    Calculation.lastNTimeRevert_sameNumber(), 5, 2000000);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
+                    Calculation.lastNTime(), 5, 2000000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateTotalValue(new History(SimpleIOUtils.getProjectRoot()).load(
 //                    Lottery.Type.SSQ), 300);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testLastNTime(new History(SimpleIOUtils.getProjectRoot()).load(
@@ -267,7 +266,7 @@ public class TestAlgorithm {
         float maxRate = 0;
         float minRate = 1;
         final JSONArray json = new JSONArray();
-        for (TestRoundRates entry : result.recordRate) {
+        for (Rate entry : result.recordRate) {
             if (entry.getRate() > maxRate) {
                 maxRate = entry.getRate();
             }
@@ -276,7 +275,7 @@ public class TestAlgorithm {
             }
             json.put(entry.toJson());
         }
-        TestRoundRates.save(getProjectRoot(), result.title, result.recordRate);
+        Rate.save(getProjectRoot(), result.title, result.recordRate);
         System.out.println("max: " + maxRate + " min: " + minRate);
 
         StringBuilder builder = new StringBuilder();
@@ -318,7 +317,7 @@ public class TestAlgorithm {
         long startTime;
         long endTime;
         private HashMap<LotteryRecord, Integer> goHomeDistribute = new HashMap<>();
-        List<TestRoundRates> recordRate = new ArrayList<>();
+        List<Rate> recordRate = new ArrayList<>();
         public ArrayList<Lottery> allLtResult;
 
         public TestResult(File root, final Lottery.Type type, final int testTime,
@@ -492,7 +491,7 @@ public class TestAlgorithm {
                     publishProgressLocal();
                 }
                 mResult.recordRate.add(
-                        new TestRoundRates(record, ((float) roundRewardCount) / mCalculateTimes));
+                        new Rate(record, ((float) roundRewardCount) / mCalculateTimes));
             }
             result.endTime = System.currentTimeMillis();
             return result;

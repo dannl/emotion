@@ -1,6 +1,7 @@
-package com.qqdd.lottery.test;
+package com.qqdd.lottery.calculate.data;
 
 import com.qqdd.lottery.data.HistoryItem;
+import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.utils.SimpleIOUtils;
 
 import org.json.JSONArray;
@@ -12,19 +13,21 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by danliu on 2/2/16.
  */
-public class TestRoundRates implements Comparable<TestRoundRates> {
+public class Rate implements Comparable<Rate> {
 
     public static final String TAIL = "_rates";
 
     private HistoryItem mRecord;
     private float mRate;
+    private HashMap<RewardRule.Reward, Float> mDetailRates;
 
-    public TestRoundRates(HistoryItem record, float rate) {
+    public Rate(HistoryItem record, float rate) {
         mRecord = record;
         mRate = rate;
     }
@@ -39,7 +42,7 @@ public class TestRoundRates implements Comparable<TestRoundRates> {
         return result;
     }
 
-    public static TestRoundRates fromJson(final JSONObject json) {
+    public static Rate fromJson(final JSONObject json) {
         if (json == null) {
             return null;
         }
@@ -47,7 +50,7 @@ public class TestRoundRates implements Comparable<TestRoundRates> {
         try {
             item = HistoryItem.fromJson(json.getJSONObject("record"));
             final float rate = Float.parseFloat(json.getString("rate"));
-            return new TestRoundRates(item, rate);
+            return new Rate(item, rate);
         } catch (JSONException e) {
         }
         return null;
@@ -62,7 +65,7 @@ public class TestRoundRates implements Comparable<TestRoundRates> {
     }
 
     @Override
-    public int compareTo(TestRoundRates o) {
+    public int compareTo(Rate o) {
         return (int) (o.mRecord.getDate().getTime() - mRecord.getDate().getTime());
     }
 
@@ -79,16 +82,16 @@ public class TestRoundRates implements Comparable<TestRoundRates> {
         });
     }
 
-    public static List<TestRoundRates> load(final File file) {
+    public static List<Rate> load(final File file) {
         if (file == null || !file.exists()) {
             return null;
         }
         try {
             final String content = SimpleIOUtils.loadContent(new FileInputStream(file), "UTF-8");
             final JSONArray jsonArray = new JSONArray(content);
-            List<TestRoundRates> result = new ArrayList<>();
+            List<Rate> result = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
-                result.add(TestRoundRates.fromJson(jsonArray.getJSONObject(i)));
+                result.add(Rate.fromJson(jsonArray.getJSONObject(i)));
             }
             return result;
         } catch (IOException | JSONException ignored) {
@@ -96,7 +99,7 @@ public class TestRoundRates implements Comparable<TestRoundRates> {
         return null;
     }
 
-    public static void save(File root, String name, List<TestRoundRates> array) {
+    public static void save(File root, String name, List<Rate> array) {
         try {
             final JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < array.size(); i++) {

@@ -7,17 +7,11 @@ import java.util.ArrayList;
  */
 public class CalculatorCollection extends ArrayList<Calculator> {
 
-    private final String mDesc;
     private String mTitle;
 
-    public CalculatorCollection(String title, String desc) {
+    public CalculatorCollection(String title) {
         super();
         mTitle = title;
-        mDesc = desc;
-    }
-
-    public String getDesc() {
-        return mDesc;
     }
 
     public String getTitle() {
