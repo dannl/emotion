@@ -13,21 +13,12 @@ import java.util.List;
 
 public class LastNTimeOccurIncreaseCalculator_new extends CalculatorImpl {
 
-    /**
-     * ssq:
-     * normal: 19
-     * special: 60
-     * dlt:
-     * normal: 24
-     * special: 22
-     */
-
     private static final int TYPE_NORMAL = 0;
     private static final int TYPE_SPECIAL = 1;
     private boolean mRevert = false;
 
     public LastNTimeOccurIncreaseCalculator_new(final boolean revert) {
-        super("新版的lastNtime", "");
+        super("newLastN" + (revert ? "Rev" : ""));
         mRevert = revert;
     }
 

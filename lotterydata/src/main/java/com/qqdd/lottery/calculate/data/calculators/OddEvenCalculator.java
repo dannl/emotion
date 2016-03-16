@@ -18,7 +18,7 @@ import java.util.Set;
 public class OddEvenCalculator extends CalculatorImpl implements NumberPicker {
 
     public OddEvenCalculator() {
-        super("奇偶选号", "根据奇偶组合出现的概率选号");
+        super("oddEven");
     }
 
     @Override

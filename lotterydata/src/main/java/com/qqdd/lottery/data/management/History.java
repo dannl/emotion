@@ -82,7 +82,7 @@ public class History {
                         .toJson());
             }
             try {
-                SimpleIOUtils.saveToFile(getCacheFile(mType), jsonArray.toString(), "UTF-8");
+                SimpleIOUtils.saveToFile(getCacheFile(mType), jsonArray.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -91,8 +91,8 @@ public class History {
         protected List<HistoryItem> loadFromLocal() throws DataSource.DataLoadingException {
             final File cacheFile = getCacheFile(mType);
             try {
-                final String content = SimpleIOUtils.loadContent(new FileInputStream(cacheFile),
-                        "UTF-8");
+                final String content = SimpleIOUtils.loadContent(new FileInputStream(cacheFile)
+                        );
                 final JSONArray jsonArray = new JSONArray(content);
                 final List<HistoryItem> records = new ArrayList<>();
                 for (int i = 0; i < jsonArray.length(); i++) {

@@ -1,6 +1,5 @@
 #!/bin/bash
-for f in $(ls | grep _rates)
-do
-	echo "push $f"
-	adb push $f "/sdcard/Ltt/$f"
-done
+adb shell rm -rf /sdcard/Ltt/rates
+adb push rates /sdcard/Ltt/rates
+ls rates/ > rate_list.txt
+

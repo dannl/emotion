@@ -13,8 +13,9 @@ import java.util.List;
  * Created by danliu on 1/21/16.
  */
 public class HistoryOccurrenceProbabilityCalculator extends CalculatorImpl {
-    public HistoryOccurrenceProbabilityCalculator(String title, String desc) {
-        super(title, desc);
+
+    public HistoryOccurrenceProbabilityCalculator() {
+        super("base");
     }
 
     @Override

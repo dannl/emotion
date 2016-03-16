@@ -162,8 +162,7 @@ public class UserSelections {
         final File summaryFile = new File(mRootFile, SUMMARY_FILE);
         if (summaryFile.exists()) {
             try {
-                final String s = SimpleIOUtils.loadContent(new FileInputStream(summaryFile),
-                        "UTF-8");
+                final String s = SimpleIOUtils.loadContent(new FileInputStream(summaryFile));
                 mSummary = UserSelectionSummary.fromJson(new JSONObject(s));
             } catch (IOException | JSONException ignored) {
             }
@@ -303,7 +302,7 @@ public class UserSelections {
     private void saveSummary(UserSelectionSummary summary) {
         try {
             SimpleIOUtils.saveToFile(new File(mRootFile, SUMMARY_FILE), summary.toJson()
-                    .toString(), "UTF-8");
+                    .toString());
         } catch (IOException ignored) {
         }
     }
@@ -353,7 +352,7 @@ public class UserSelections {
         }
         final List<UserSelection> result = new ArrayList<>();
         try {
-            final String content = SimpleIOUtils.loadContent(new FileInputStream(file), "UTF-8");
+            final String content = SimpleIOUtils.loadContent(new FileInputStream(file));
             final JSONArray jsonArray = new JSONArray(content);
             for (int i = 0; i < jsonArray.length(); i++) {
                 final UserSelection userSelection = UserSelection.fromJson(
@@ -380,7 +379,7 @@ public class UserSelections {
                     .toJson());
         }
         try {
-            SimpleIOUtils.saveToFile(file, jsonArray.toString(), "UTF-8");
+            SimpleIOUtils.saveToFile(file, jsonArray.toString());
         } catch (IOException ignored) {
         }
     }

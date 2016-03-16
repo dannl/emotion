@@ -87,7 +87,7 @@ public class Rate implements Comparable<Rate> {
             return null;
         }
         try {
-            final String content = SimpleIOUtils.loadContent(new FileInputStream(file), "UTF-8");
+            final String content = SimpleIOUtils.loadContent(new FileInputStream(file));
             final JSONArray jsonArray = new JSONArray(content);
             List<Rate> result = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -105,7 +105,7 @@ public class Rate implements Comparable<Rate> {
             for (int i = 0; i < array.size(); i++) {
                 jsonArray.put(array.get(i).toJson());
             }
-            SimpleIOUtils.saveToFile(new File(root, name + TAIL), jsonArray.toString(), "UTF-8");
+            SimpleIOUtils.saveToFile(new File(root, name + TAIL), jsonArray.toString());
         } catch (IOException ignored) {
         }
     }

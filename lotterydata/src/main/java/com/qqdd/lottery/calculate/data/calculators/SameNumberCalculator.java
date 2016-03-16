@@ -17,7 +17,7 @@ public class SameNumberCalculator extends CalculatorImpl {
     private static final HashMap<Integer, Probability> PROBABILITY_CACHE = new HashMap<>();
 
     public SameNumberCalculator() {
-        super("重复上期","重复上期");
+        super("sameNum");
     }
 
     @Override

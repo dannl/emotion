@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,9 +21,10 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.qqdd.lottery.calculate.data.Rate;
+import com.qqdd.lottery.calculate.data.RateList;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.data.KeyValuePair;
-import com.qqdd.lottery.calculate.data.Rate;
 import com.qqdd.lottery.utils.NumUtils;
 import com.qqdd.lottery.utils.SimpleIOUtils;
 
@@ -208,16 +208,22 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_rate) {
-            showFilePicker("_rates", new FileLoader() {
+            final File rateRoot = new File(getFile(), "rates");
+            showFilePicker(rateRoot, null, new FileLoader() {
 
                 @Override
                 public void load(String file) {
-                    loadRate(file);
+                    loadRate(rateRoot, file);
                 }
             });
             return true;
         } else if (id ==R.id.action_kv) {
-            showFilePicker(KeyValuePair.TAIL, new FileLoader() {
+            showFilePicker(getFile(), new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String filename) {
+                    return filename.endsWith(KeyValuePair.TAIL);
+                }
+            }, new FileLoader() {
                 @Override
                 public void load(String file) {
                     try {
@@ -240,14 +246,8 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         void load(String file);
     }
 
-    private void showFilePicker(final String filter, final FileLoader fileLoader) {
-        final File root = getFile();
-        final String[] names = root.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                return !TextUtils.isEmpty(filename) && filename.endsWith(filter);
-            }
-        });
+    private void showFilePicker(File root, final FilenameFilter filter, final FileLoader fileLoader) {
+        final String[] names = root.list(filter);
         final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(
                 this);
         builder.setItems(names, new DialogInterface.OnClickListener() {
@@ -265,12 +265,12 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         return new File(StorageHelper.getExternalStorageDirectory(), "Ltt");
     }
 
-    private void loadRate(final String name) {
+    private void loadRate(File root, final String name) {
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         ArrayList<String> xV = new ArrayList<>();
-        final File f = new File(getFile(), name);
-        final List<Rate> rates = Rate.load(f);
+        final File f = new File(root, name);
+        final RateList rates = RateList.loadFrom(f);
         final LineData lineData = mChart.getLineData();
         int xVCount = 0;
         if (lineData != null) {
@@ -349,7 +349,7 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         ArrayList<String> xV = new ArrayList<>();
         final File f = new File(getFile(), name);
         final List<KeyValuePair> rates = KeyValuePair.parseArray(
-                new JSONArray(SimpleIOUtils.loadContent(new FileInputStream(f), "UTF-8")));
+                new JSONArray(SimpleIOUtils.loadContent(new FileInputStream(f))));
         ArrayList<Entry> yV = new ArrayList<>();
         int larger = 0;
         float total = 0;

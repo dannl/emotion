@@ -1,23 +1,23 @@
 package com.qqdd.lottery.calculate.data;
 
+import cz.msebera.android.httpclient.util.TextUtils;
+
 /**
  * Created by danliu on 1/21/16.
  */
 public abstract class CalculatorImpl implements Calculator {
 
     private final String mTitle;
-    private final String mDesc;
 
-    public CalculatorImpl(final String title, final String desc) {
+    public CalculatorImpl(final String title) {
         mTitle = title;
-        mDesc = desc;
+        if (TextUtils.isEmpty(title)) {
+            throw new IllegalArgumentException("bad title!");
+        }
     }
 
     public String getTitle() {
         return mTitle;
     }
 
-    public String getDesc() {
-        return mDesc;
-    }
 }

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class AverageProbabilityCalculator extends CalculatorImpl {
     public AverageProbabilityCalculator() {
-        super("平均分布，测试用", "平均分布，测试用");
+        super("av_base");
     }
 
     @Override

@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class SameTailCalculator extends CalculatorImpl implements NumberPicker {
 
-    public SameTailCalculator(String title, String desc) {
-        super(title, desc);
+    public SameTailCalculator() {
+        super("sameTail");
     }
 
     private static HashMap<HistoryItem, Probabilities> CACHE = new HashMap<>();

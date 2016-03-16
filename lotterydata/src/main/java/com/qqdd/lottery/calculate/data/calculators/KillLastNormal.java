@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class KillLastNormal extends CalculatorImpl {
     public KillLastNormal() {
-        super("干掉上期","干掉上期");
+        super("killLastNormal");
     }
 
     @Override

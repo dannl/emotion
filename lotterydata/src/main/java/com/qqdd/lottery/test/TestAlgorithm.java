@@ -38,6 +38,7 @@ public class TestAlgorithm {
     public static void main(String[] args) {
 //        Random.getInstance()
 //                .init();
+//        new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).refresh(Lottery.Type.SSQ);
         try {
 //            System.out.println(new KillDuplicatedNumberCalculator(3).calculateProb(new History(SimpleIOUtils.getProjectRoot()).load(
 //                    Lottery.Type.SSQ)));
@@ -47,12 +48,12 @@ public class TestAlgorithm {
 //                                        7
 //                                }
 //                        });
-//                                    new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                                            Lottery.Type.SSQ, Calculation.lastNTime(), 100000, 1000);
+                                    new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+                                            Lottery.Type.DLT, CalculatorCollection.lastNTimeMedium(1.3f,1.3f), 100000, 10);
 //            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
 //                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
-                    Calculation.lastNTime(), 5, 2000000);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
+//                    CalculatorCollection.lastNTimeMedium(), 5, 2000000);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateTotalValue(new History(SimpleIOUtils.getProjectRoot()).load(
 //                    Lottery.Type.SSQ), 300);
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testLastNTime(new History(SimpleIOUtils.getProjectRoot()).load(
@@ -94,7 +95,7 @@ public class TestAlgorithm {
         }
         final File destFile = new File(mRoot, type.getName() + to + KeyValuePair.TAIL);
         try {
-            SimpleIOUtils.saveToFile(destFile, KeyValuePair.toArray(list).toString(), "UTF-8");
+            SimpleIOUtils.saveToFile(destFile, KeyValuePair.toArray(list).toString());
         } catch (IOException e) {
         }
     }
@@ -290,13 +291,6 @@ public class TestAlgorithm {
                     .append("\n");
         }
         return result.getExpectationOnBuying(5);
-    }
-
-    public TestResult testRandom(Lottery.Type type, int calculateTimes, int since)
-            throws DataSource.DataLoadingException {
-        final Task task = new Task(getProjectRoot(), type, Calculation.random(), calculateTimes,
-                since, null, false);
-        return task.execute();
     }
 
     public TestResult testAlgorithm(Lottery.Type type, CalculatorCollection collection,

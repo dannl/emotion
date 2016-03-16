@@ -12,7 +12,5 @@ public interface Calculator {
 
     String getTitle();
 
-    String getDesc();
-
     void calculate(List<HistoryItem> lts, NumberTable normalTable, NumberTable specialTable);
 }

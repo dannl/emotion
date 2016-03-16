@@ -23,10 +23,6 @@ public class CalculatorItem implements Calculator {
         return mCalculator.getTitle();
     }
 
-    @Override
-    public String getDesc() {
-        return mCalculator.getDesc();
-    }
 
     public boolean isEditable() {
         return mEditable;

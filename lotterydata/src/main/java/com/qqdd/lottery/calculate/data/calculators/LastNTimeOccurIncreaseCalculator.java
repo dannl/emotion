@@ -11,8 +11,8 @@ import java.util.List;
 
 public class LastNTimeOccurIncreaseCalculator extends CalculatorImpl {
 
-    public LastNTimeOccurIncreaseCalculator(String title, String desc) {
-        super(title, desc);
+    public LastNTimeOccurIncreaseCalculator() {
+        super("oldLastN");
     }
 
     private static final int N = 3;

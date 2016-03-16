@@ -5,6 +5,7 @@ import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.NumberList;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -87,8 +88,23 @@ public class NumUtils {
             return Collections.emptyList();
         }
         NumberList result = new NumberList(resultCount);
-        while(result.size() < resultCount) {
-            result.add(calculateIndexWithWeight(weights, random));
+        int hasValueCount = 0;
+        List<Integer> hasValueIndexes = new ArrayList<>();
+        for (int i = 0; i < weights.length; i++) {
+            if (weights[i] > 0) {
+                hasValueCount ++;
+                hasValueIndexes.add(i);
+            }
+        }
+        if (hasValueCount <= resultCount) {
+            return hasValueIndexes;
+        }
+        try {
+            while(result.size() < resultCount) {
+                result.add(calculateIndexWithWeight(weights, random));
+            }
+        } catch (Exception e) {
+            return Collections.emptyList();
         }
         return result;
     }

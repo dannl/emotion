@@ -69,7 +69,7 @@ public class TimeToGoHome extends ArrayList<Integer> {
     public static TimeToGoHome load(File root, Lottery.Type type, int count) {
         try {
             final String content = SimpleIOUtils.loadContent(
-                    new FileInputStream(new File(root, "GO_HOME_RECORD_" + type.toString() + count)), "UTF-8");
+                    new FileInputStream(new File(root, "GO_HOME_RECORD_" + type.toString() + count)));
             TimeToGoHome result = TimeToGoHome.fromJson(content);
             if (result != null) {
                 return result;
@@ -83,7 +83,7 @@ public class TimeToGoHome extends ArrayList<Integer> {
         final File file = new File(root, "GO_HOME_RECORD_" + type.toString() + goHome.getTestCount());
         try {
             SimpleIOUtils.saveToFile(file, goHome.toJson()
-                    .toString(), "UTF8");
+                    .toString());
         } catch (IOException e) {
         }
     }

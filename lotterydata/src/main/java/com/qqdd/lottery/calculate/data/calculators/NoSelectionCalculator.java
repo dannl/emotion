@@ -42,7 +42,7 @@ public class NoSelectionCalculator extends CalculatorImpl {
     }
 
     public NoSelectionCalculator() {
-        super("选中的号码不选","选中的号码不选");
+        super("killSelection");
     }
 
     @Override

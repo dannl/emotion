@@ -18,8 +18,8 @@ public class SelectionIncreaseCalculator extends CalculatorImpl {
     private Set<Integer> mSpecials;
     private float mPower;
 
-    public SelectionIncreaseCalculator(String title, String desc) {
-        super(title, desc);
+    public SelectionIncreaseCalculator() {
+        super("selectionIncrease");
         mNormals = new HashSet<>();
         mSpecials = new HashSet<>();
         //by default, set power to 2.

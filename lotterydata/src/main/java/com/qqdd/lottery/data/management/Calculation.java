@@ -1,7 +1,6 @@
 package com.qqdd.lottery.data.management;
 
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
-import com.qqdd.lottery.calculate.data.CalculatorFactory;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
 import com.qqdd.lottery.calculate.data.calculators.KillLastNormal;
@@ -57,82 +56,4 @@ public class Calculation {
                 .select(tempBuffer, count, TimeToGoHome.load(mRoot, type, calculateTimes));
     }
 
-    public static CalculatorCollection lastNTime() {
-        CalculatorCollection calculatorList = new CalculatorCollection("稳健型");
-        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                .createCalculator());
-//        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-//                .createCalculator());
-        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(false));
-        calculatorList.add(new NoSelectionCalculator());
-        return calculatorList;
-    }
-
-    public static CalculatorCollection killLast() {
-        CalculatorCollection calculatorList = new CalculatorCollection("kill_last");
-        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                .createCalculator());
-//        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-//                .createCalculator());
-        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(false));
-        calculatorList.add(new KillLastNormal());
-//        calculatorList.add(new NoSelectionCalculator());
-        return calculatorList;
-    }
-
-
-
-    public static CalculatorCollection lastNTimeRevert() {
-        CalculatorCollection calculatorList = new CalculatorCollection("稳健型_revert");
-        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                .createCalculator());
-//        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-//                .createCalculator());
-        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(true));
-        calculatorList.add(new NoSelectionCalculator());
-        return calculatorList;
-    }
-
-    public static CalculatorCollection lastNTimeRevert_sameNumber() {
-        CalculatorCollection calculatorList = new CalculatorCollection("lastRevert_sameNumber");
-        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                .createCalculator());
-//        calculatorList.add(CalculatorFactory.LastNTimeOccurIncreaseCalculatorFactory.instance()
-//                .createCalculator());
-        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(true));
-        calculatorList.add(new SameNumberCalculator());
-        calculatorList.add(new NoSelectionCalculator());
-        return calculatorList;
-    }
-
-    public static CalculatorCollection lastNTime_sameNumber() {
-        CalculatorCollection calculatorList = new CalculatorCollection("波动型");
-        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                .createCalculator());
-        calculatorList.add(new LastNTimeOccurIncreaseCalculator_new(false));
-        calculatorList.add(new SameNumberCalculator());
-        return calculatorList;
-    }
-
-    public static CalculatorCollection sameNumber() {
-        CalculatorCollection calculatorList = new CalculatorCollection("sameNumber");
-        calculatorList.add(CalculatorFactory.OccurrenceProbabilityCalculatorFactory.instance()
-                .createCalculator());
-        calculatorList.add(new SameNumberCalculator());
-        return calculatorList;
-    }
-
-    public static CalculatorCollection random() {
-        CalculatorCollection calculatorList = new CalculatorCollection("纯随机");
-        calculatorList.add(new AverageProbabilityCalculator());
-        return calculatorList;
-    }
-
-    public static List<CalculatorCollection> allCalculorGroups() {
-        final List<CalculatorCollection> result = new ArrayList<>();
-        result.add(lastNTime());
-        result.add(lastNTime_sameNumber());
-        result.add(random());
-        return result;
-    }
 }

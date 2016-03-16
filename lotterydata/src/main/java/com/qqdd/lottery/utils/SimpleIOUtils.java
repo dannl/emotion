@@ -21,7 +21,7 @@ public class SimpleIOUtils {
         return new File(projectRoot);
     }
 
-    public static void saveToFile(File file, String content, String encoding) throws IOException {
+    public static void saveToFile(File file, String content) throws IOException {
         if (!file.getParentFile()
                 .exists()) {
             file.getParentFile()
@@ -29,7 +29,7 @@ public class SimpleIOUtils {
         }
         OutputStreamWriter writer = null;
         try {
-            writer = new OutputStreamWriter(new FileOutputStream(file), encoding);
+            writer = new OutputStreamWriter(new FileOutputStream(file), "utf-8");
             writer.write(content);
         } finally {
             writer.close();
@@ -37,10 +37,8 @@ public class SimpleIOUtils {
     }
 
 
-    public static String loadContent(InputStream stream, String encoding) throws IOException {
-        if (encoding == null) {
-            encoding = System.getProperty("file.encoding", "utf-8");
-        }
+    public static String loadContent(InputStream stream) throws IOException {
+        String encoding = "utf-8";
         Reader reader = new InputStreamReader(stream, encoding);
         CharArrayBuffer buffer = new CharArrayBuffer(stream.available());
         try {

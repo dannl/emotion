@@ -15,7 +15,7 @@ public class KillDuplicatedNumberCalculator extends CalculatorImpl {
     private int mRange = 3;
 
     public KillDuplicatedNumberCalculator(int range) {
-        super("title", "desc");
+        super("killDuplicate");
         mRange = range;
     }
 
