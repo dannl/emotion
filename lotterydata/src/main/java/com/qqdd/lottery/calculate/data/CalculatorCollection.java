@@ -3,6 +3,7 @@ package com.qqdd.lottery.calculate.data;
 import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
 import com.qqdd.lottery.calculate.data.calculators.HistoryOccurrenceProbabilityCalculator;
 import com.qqdd.lottery.calculate.data.calculators.LastNMediumIncrease;
+import com.qqdd.lottery.calculate.data.calculators.LastNNormalizedIncrease;
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
 import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.calculate.data.calculators.SameNumberCalculator;
@@ -47,25 +48,8 @@ public class CalculatorCollection extends ArrayList<Calculator> {
         result.add(lastNTime_sameNumber());
         result.add(lastNTimeRevert());
         result.add(lastNTimeRevert_sameNumber());
-        result.add(lastNTimeMedium(1.2f, 0.9f));
-        result.add(lastNTimeMedium(1.2f, 0.8f));
-        result.add(lastNTimeMedium(1.2f, 0.7f));
-        result.add(lastNTimeMedium(1.2f, 0.6f));
-        result.add(lastNTimeMedium(1.2f, 0.5f));
-        result.add(lastNTimeMedium(1.2f, 1.1f));
-        result.add(lastNTimeMedium(1.2f, 1.2f));
-        result.add(lastNTimeMedium(1.2f, 1.3f));
-        result.add(lastNTimeMedium(1.2f, 1.4f));
-        result.add(lastNTimeMedium(1.2f, 1.5f));
-        result.add(lastNTimeMedium(1.1f,1f));
-        result.add(lastNTimeMedium(1.3f,1f));
-        result.add(lastNTimeMedium(1.4f,1f));
-        result.add(lastNTimeMedium(1.5f,1f));
-        result.add(lastNTimeMedium(0.9f,1f));
-        result.add(lastNTimeMedium(0.8f,1f));
-        result.add(lastNTimeMedium(0.7f,1f));
-        result.add(lastNTimeMedium(0.6f,1f));
-        result.add(lastNTimeMedium(0.5f,1f));
+        result.add(lastNNormalized());
+        result.add(lastNMedium());
         return result;
     }
 
@@ -77,18 +61,26 @@ public class CalculatorCollection extends ArrayList<Calculator> {
         return calculatorList;
     }
 
-    public static CalculatorCollection lastNTimeMedium() {
+    public static CalculatorCollection lastNNormalized() {
         CalculatorCollection calculatorList = new CalculatorCollection();
         calculatorList.add(new HistoryOccurrenceProbabilityCalculator());
-        calculatorList.add(new LastNMediumIncrease());
+        calculatorList.add(new LastNNormalizedIncrease());
         calculatorList.add(new NoSelectionCalculator());
         return calculatorList;
     }
 
-    public static CalculatorCollection lastNTimeMedium(float scale, float move) {
+    public static CalculatorCollection lastNNormalized(float scale, float move) {
         CalculatorCollection calculatorList = new CalculatorCollection();
         calculatorList.add(new HistoryOccurrenceProbabilityCalculator());
-        calculatorList.add(new LastNMediumIncrease(scale, move));
+        calculatorList.add(new LastNNormalizedIncrease(scale, move));
+        calculatorList.add(new NoSelectionCalculator());
+        return calculatorList;
+    }
+
+    public static CalculatorCollection lastNMedium() {
+        CalculatorCollection calculatorList = new CalculatorCollection();
+        calculatorList.add(new HistoryOccurrenceProbabilityCalculator());
+        calculatorList.add(new LastNMediumIncrease());
         calculatorList.add(new NoSelectionCalculator());
         return calculatorList;
     }

@@ -8,20 +8,25 @@ import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.management.DataSource;
 import com.qqdd.lottery.data.management.History;
+import com.qqdd.lottery.utils.Random;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by danliu on 3/14/16.
  */
 public class CalculatorAutoSwitcher {
 
-    private static final int TEST_COUNT = 10000;
+    private static final int TEST_COUNT = 100000;
     private static final int INITIAL_SINCE_DLT = 900;
     private static final int INITIAL_SINCE_SSQ = 1500;
+    private static final int DEFAULT_LATEST_SINCE = 100;
     private static final String FOLDER = "rates";
+    private static final float STANDARD_AVG_RATE = 0.0666f;
 
     private File mRoot;
     private History mHistory;
@@ -34,6 +39,35 @@ public class CalculatorAutoSwitcher {
         }
         mHistory = new History(root);
         mRates = new HashMap<>(2);
+    }
+
+
+    public void test(Lottery.Type type) {
+        refresh(type);
+        HashMap<CalculatorCollection,RateList> rateLists = mRates.get(type);
+        Set<Map.Entry<CalculatorCollection, RateList>> entries = rateLists.entrySet();
+        for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
+            final RateList list = entry.getValue();
+            System.out.println(
+                    "name: " + list.getName() + " av: " + list.getAverageRate() + " max: " + list.getMaxRate() + " min: " + list.getMinRate());
+            float winCount = 0;
+            //连续出现高于平均的次数的平均数
+            float averageWinLast = 0;
+            int contiunuousWin = 0;
+            int continuousWinCount = 0;
+            for (int i = 0; i < list.size(); i++) {
+                final float rate = list.get(i)
+                        .getRate();
+                if (rate > STANDARD_AVG_RATE + 0.005f) {
+                    winCount ++;
+                    contiunuousWin ++;
+                } else {
+
+                }
+            }
+            System.out.println("win: " + (winCount / list.size()));
+
+        }
     }
 
     public void refresh(Lottery.Type type) {
@@ -87,6 +121,7 @@ public class CalculatorAutoSwitcher {
         int since = 0;
         if (rates.isEmpty()) {
             since = historyItems.size() - getDefaultSince(type);
+//            since = DEFAULT_LATEST_SINCE;
         } else {
             final LotteryRecord last = rates.get(rates.size() - 1).getRecord();
             for (int i = 0; i < historyItems.size(); i++) {
@@ -100,6 +135,7 @@ public class CalculatorAutoSwitcher {
             return false;
         }
         final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
+        Random.getInstance().init();
         for (int i = since; i > 0; i --) {
             NumberTable normalTable = new NumberTable(configuration.getNormalRange());
             NumberTable specialTable = new NumberTable(configuration.getSpecialRange());

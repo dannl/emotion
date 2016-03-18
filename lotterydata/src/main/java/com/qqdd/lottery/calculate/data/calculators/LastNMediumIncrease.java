@@ -1,8 +1,11 @@
 package com.qqdd.lottery.calculate.data.calculators;
 
 import com.qqdd.lottery.calculate.data.CalculatorImpl;
-import com.qqdd.lottery.data.*;
+import com.qqdd.lottery.data.HistoryItem;
+import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.Number;
+import com.qqdd.lottery.data.NumberList;
+import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.utils.NumUtils;
 
 import java.util.HashMap;
@@ -17,19 +20,19 @@ public class LastNMediumIncrease extends CalculatorImpl {
         this(SCALE, MOVE);
     }
 
-    public LastNMediumIncrease(float scale, float move) {
-        super("lastNMediumIncrease_" + scale + "_" + move);
+    public LastNMediumIncrease(float scale, float inflexion) {
+        super("lastNMediumIncrease_" + scale + "_" + inflexion);
         mScale = scale;
-        mMove = move;
+        mInflexion = inflexion;
     }
 
     private static final int TYPE_NORMAL = 0;
     private static final int TYPE_SPECIAL = 1;
-    private static final float SCALE = 1.2f;
+    private static final float SCALE = 1;
     private static final float MOVE = 1;
 
     private final float mScale;
-    private final float mMove;
+    private final float mInflexion;
 
     private static final HashMap<HistoryItem, Universe[]> CACHE = new HashMap<>();
 
@@ -43,7 +46,7 @@ public class LastNMediumIncrease extends CalculatorImpl {
             CACHE.put(record, cache);
         }
         for (int i = 0; i < normalTable.size(); i++) {
-            com.qqdd.lottery.data.Number number = normalTable.get(i);
+            Number number = normalTable.get(i);
             final int value = number.getValue();
             int occTime = cache[TYPE_NORMAL].currentOccTime[value];
             float v = cache[TYPE_NORMAL].occRate[occTime];
@@ -74,12 +77,13 @@ public class LastNMediumIncrease extends CalculatorImpl {
                 min = rates[i];
             }
         }
-        float av = total / rates.length * mMove;
+        float av = total / rates.length * mInflexion;
         if (v > av) {
             v = Math.max(max - v, min);
         }
         return (float) Math.pow(v, mScale);
     }
+
 
     public Universe[] calculateUniverses(final List<HistoryItem> history) {
         int index = 0;
@@ -89,52 +93,12 @@ public class LastNMediumIncrease extends CalculatorImpl {
             universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
             index ++;
         } while (!universe.isUniverse);
-        //        if (universe.lastN == 27) {
-        //            System.out.println("27");
-        //            index = 0;
-        //            do {
-        //                if (index == 27) {
-        //                    System.out.println("27");
-        //                }
-        //                universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
-        //                index ++;
-        //            } while (!universe.isUniverse);
-        //        }
-        //        if (universe.lastN == 50) {
-        //            System.out.println("50");
-        //            index = 0;
-        //            do {
-        //                if (index == 50) {
-        //                    System.out.println("50");
-        //                }
-        //                universe = calculateUniverseImpl(history, index, TYPE_NORMAL);
-        //                index ++;
-        //            } while (!universe.isUniverse);
-        //        }
-        System.out.println("================ normal lastN : " + universe.lastN + "=================");
-        //        System.out.println("occ distribution:");
-        //        for (int i = 0; i < universe.occRate.length; i++) {
-        //            System.out.println(" time: " + i + " occ: " + universe.occRate[i]);
-        //        }
-        //        System.out.println("current occ time distribution: ");
-        //        for (int i = 0; i < universe.currentOccTime.length; i++) {
-        //            System.out.println(" number: " + i + " occ: " + universe.currentOccTime[i]);
-        //        }
         result[TYPE_NORMAL] = universe;
         index = 0;
         do {
             universe = calculateUniverseImpl(history, index, TYPE_SPECIAL);
             index ++;
         } while (!universe.isUniverse);
-        System.out.println("================ special lastN : " + universe.lastN + "=================");
-        //        System.out.println("occ distribution:");
-        for (int i = 0; i < universe.occRate.length; i++) {
-            //            System.out.println(" time: " + i + " occ: " + universe.occRate[i]);
-        }
-        //        System.out.println("current occ time distribution: ");
-        for (int i = 0; i < universe.currentOccTime.length; i++) {
-            //            System.out.println(" number: " + i + " occ: " + universe.currentOccTime[i]);
-        }
         result[TYPE_SPECIAL] = universe;
         return result;
     }

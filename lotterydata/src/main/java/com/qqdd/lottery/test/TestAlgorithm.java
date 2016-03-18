@@ -1,6 +1,9 @@
 package com.qqdd.lottery.test;
 
-import com.qqdd.lottery.calculate.data.*;
+import com.qqdd.lottery.calculate.data.CalculatorAutoSwitcher;
+import com.qqdd.lottery.calculate.data.CalculatorCollection;
+import com.qqdd.lottery.calculate.data.Rate;
+import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.KeyValuePair;
@@ -38,29 +41,19 @@ public class TestAlgorithm {
     public static void main(String[] args) {
 //        Random.getInstance()
 //                .init();
-//        new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).refresh(Lottery.Type.SSQ);
-        try {
-//            System.out.println(new KillDuplicatedNumberCalculator(3).calculateProb(new History(SimpleIOUtils.getProjectRoot()).load(
-//                    Lottery.Type.SSQ)));
-//                        NoSelectionCalculator.setExclusion(Lottery.Type.SSQ, new int[][]{
-//                                new int[]{},
-//                                new int[]{
-//                                        7
-//                                }
-//                        });
-                                    new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                                            Lottery.Type.DLT, CalculatorCollection.lastNTimeMedium(1.3f,1.3f), 100000, 10);
+        new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).test(Lottery.Type.DLT);
+//        try {
+//                                    new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+//                                            Lottery.Type.DLT, CalculatorCollection.lastNNormalized(1.3f,1.3f), 100000, 10);
 //            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
 //                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
 //            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
-//                    CalculatorCollection.lastNTimeMedium(), 5, 2000000);
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateTotalValue(new History(SimpleIOUtils.getProjectRoot()).load(
-//                    Lottery.Type.SSQ), 300);
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testLastNTime(new History(SimpleIOUtils.getProjectRoot()).load(
+//                    CalculatorCollection.lastNNormalized(), 5, 2000000);
+//            new LastNNormalizedIncrease(1.3f,1.3f).testChangeLine(new History(SimpleIOUtils.getProjectRoot()).load(
 //                    Lottery.Type.DLT));
-        } catch (DataSource.DataLoadingException e) {
-            System.out.println(e.getMessage());
-        }
+//        } catch (DataSource.DataLoadingException e) {
+//            System.out.println(e.getMessage());
+//        }
     }
 
     private File mRoot;
