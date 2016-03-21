@@ -39,21 +39,122 @@ public class TestAlgorithm {
     private static final DecimalFormat TEST_RESULT_FORMAT = new DecimalFormat("##0.0000000");
 
     public static void main(String[] args) {
-//        Random.getInstance()
-//                .init();
+                testAutoSwitcher();
+        //        calculate();
+//                try {
+//                    new UniverseRateRangeCalculator().calculateImpl(new History(SimpleIOUtils.getProjectRoot()).load(
+//                            Lottery.Type.SSQ));
+//                } catch (DataSource.DataLoadingException e) {
+//                    e.printStackTrace();
+//                }
+//        calculateLargeMin(Lottery.Type.SSQ);
+//        calculateOddEven(Lottery.Type.DLT);
+//        calculateLargeMin(Lottery.Type.DLT);
+//        calculate();
+    }
+
+    private static void calculateOddEven(Lottery.Type type) {
+        try {
+            final List<HistoryItem> items = new History(SimpleIOUtils.getProjectRoot()).load(type);
+            HashMap<String, Integer> dis = new HashMap<>();
+            final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
+            for (int i = 0; i < items.size(); i++) {
+                final NumberList table = items.get(i)
+                        .getNormals();
+                int odd = 0;
+                int even = 0;
+                for (int j = 0; j < table.size(); j++) {
+                    if (table.get(j) % 2 > 0) {
+                        odd++;
+                    } else {
+                        even++;
+                    }
+                }
+                String key = "odd: " +String.valueOf(odd) + " even: " +even;
+                Integer v = dis.get(key);
+                if (v == null) {
+                    dis.put(key, 1);
+                } else {
+                    v++;
+                    dis.put(key, v);
+                }
+            }
+            final Set<Map.Entry<String, Integer>> entries = dis.entrySet();
+            int total = 0;
+            for (Map.Entry<String, Integer> entry : entries) {
+                total += entry.getValue();
+            }
+            for (Map.Entry<String, Integer> entry : entries) {
+                System.out.println(entry.getKey() + " count: " + entry.getValue() + " rate: " + ((float) entry.getValue()) / total);
+            }
+        } catch (DataSource.DataLoadingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void calculateLargeMin(Lottery.Type type) {
+        try {
+            final List<HistoryItem> items = new History(SimpleIOUtils.getProjectRoot()).load(type);
+            HashMap<String, Integer> dis = new HashMap<>();
+            final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
+            for (int i = 0; i < items.size(); i++) {
+                final NumberList table = items.get(i)
+                        .getNormals();
+                int large = 0;
+                int small = 0;
+                for (int j = 0; j < table.size(); j++) {
+                    if (table.get(j) > configuration.getNormalRange() / 2) {
+                        large++;
+                    } else {
+                        small++;
+                    }
+                }
+                String key = "large: " +String.valueOf(large) + " small: " +small;
+                 Integer v = dis.get(key);
+                if (v == null) {
+                    dis.put(key, 1);
+                } else {
+                    v++;
+                    dis.put(key, v);
+                }
+            }
+            final Set<Map.Entry<String, Integer>> entries = dis.entrySet();
+            int total = 0;
+            for (Map.Entry<String, Integer> entry : entries) {
+                total += entry.getValue();
+            }
+            for (Map.Entry<String, Integer> entry : entries) {
+                System.out.println(entry.getKey() + " count: " + entry.getValue() + " rate: " + ((float) entry.getValue()) / total);
+            }
+
+        } catch (DataSource.DataLoadingException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private static void testAutoSwitcher() {
         new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).test(Lottery.Type.DLT);
-//        try {
-//                                    new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                                            Lottery.Type.DLT, CalculatorCollection.lastNNormalized(1.3f,1.3f), 100000, 10);
-//            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
-//                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
-//                    CalculatorCollection.lastNNormalized(), 5, 2000000);
-//            new LastNNormalizedIncrease(1.3f,1.3f).testChangeLine(new History(SimpleIOUtils.getProjectRoot()).load(
-//                    Lottery.Type.DLT));
-//        } catch (DataSource.DataLoadingException e) {
-//            System.out.println(e.getMessage());
-//        }
+    }
+
+    private static void calculate() {
+        try {
+            //            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
+            //                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
+//            NoSelectionCalculator.setExclusion(Lottery.Type.SSQ, new int[][]{
+//                    new int[]{19},
+//            });
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+                    Lottery.Type.DLT, CalculatorCollection.urr(), 100000,
+                    1000);
+//                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
+//                                CalculatorCollection.lastNTime_sameNumber(), 5, 2000000);
+            //            new LastNNormalizedIncrease(1.3f,1.3f).testChangeLine(new History(SimpleIOUtils.getProjectRoot()).load(
+            //                    Lottery.Type.DLT));
+        } catch (DataSource.DataLoadingException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private File mRoot;
@@ -67,7 +168,8 @@ public class TestAlgorithm {
     }
 
     private void testLastNTime(List<HistoryItem> items) {
-        final LastNTimeOccurIncreaseCalculator_new calculator = new LastNTimeOccurIncreaseCalculator_new(false);
+        final LastNTimeOccurIncreaseCalculator_new calculator = new LastNTimeOccurIncreaseCalculator_new(
+                false);
         for (int i = 300; i >= 0; i--) {
             final List<HistoryItem> sub = items.subList(i, items.size());
             calculator.calculateUniverses(sub);
@@ -79,21 +181,25 @@ public class TestAlgorithm {
         if (to > items.size()) {
             return;
         }
-        final Lottery.Type type = items.get(0).getType();
+        final Lottery.Type type = items.get(0)
+                .getType();
         final List<KeyValuePair> list = new ArrayList<>();
         for (int i = 0; i < to; i++) {
             final HistoryItem item = items.get(i);
-            int total = NumUtils.calculateTotalInList(item.getNormals()) + NumUtils.calculateTotalInList(item.getSpecials());
+            int total = NumUtils.calculateTotalInList(
+                    item.getNormals()) + NumUtils.calculateTotalInList(item.getSpecials());
             list.add(new KeyValuePair(item.getDateDisplay(), total));
         }
         final File destFile = new File(mRoot, type.getName() + to + KeyValuePair.TAIL);
         try {
-            SimpleIOUtils.saveToFile(destFile, KeyValuePair.toArray(list).toString());
+            SimpleIOUtils.saveToFile(destFile, KeyValuePair.toArray(list)
+                    .toString());
         } catch (IOException e) {
         }
     }
 
-    private void testBuyCount(final Lottery.Type type, final CalculatorCollection calculators, final int buyCount, final int since)
+    private void testBuyCount(final Lottery.Type type, final CalculatorCollection calculators,
+                              final int buyCount, final int since)
             throws DataSource.DataLoadingException {
         final List<HistoryItem> history = new History(SimpleIOUtils.getProjectRoot()).load(type);
         final int from = Math.max(1, history.size() / since);
@@ -101,7 +207,7 @@ public class TestAlgorithm {
         int win = 0;
         long allMoney = 0;
         for (int i = from; i > 0; i--) {
-            total ++;
+            total++;
             final HistoryItem record = history.get(i - 1);
             final List<Lottery> result = new Calculation(SimpleIOUtils.getProjectRoot()).calculate(
                     history.subList(i, history.size()), calculators, new ProgressCallback() {
@@ -116,10 +222,11 @@ public class TestAlgorithm {
             }
             final long earn = totalMoney - buyCount * 2;
             if (earn > 0) {
-                win ++;
+                win++;
             }
             allMoney += earn;
-            System.out.println("total round: " + total + " win: " + win + " all money: " + allMoney + " earn this round: " + earn);
+            System.out.println(
+                    "total round: " + total + " win: " + win + " all money: " + allMoney + " earn this round: " + earn);
         }
     }
 
@@ -132,21 +239,21 @@ public class TestAlgorithm {
         int totalCount = 0;
         for (int i = 0; i < 100; i++) {
             List<Lottery> result = new Calculation(getProjectRoot()).calculate(
-                    loaded
-                            .subList(1, loaded.size()), calculators, new ProgressCallback() {
+                    loaded.subList(1, loaded.size()), calculators, new ProgressCallback() {
                         @Override
                         public void onProgressUpdate(String progress) {
                             System.out.println("\r" + progress);
                         }
                     }, calculateTimes, type, resultCount);
             for (int j = 0; j < result.size(); j++) {
-                totalCount ++;
+                totalCount++;
                 RewardRule.Reward reward = record.calculateReward(result.get(j));
                 if (reward != null && reward.getMoney() > 0) {
-                    rewardCount ++;
+                    rewardCount++;
                 }
             }
-            System.out.println("reward count: " + rewardCount + " total: " + totalCount + " rate: " + (((float) rewardCount) / totalCount));
+            System.out.println(
+                    "reward count: " + rewardCount + " total: " + totalCount + " rate: " + (((float) rewardCount) / totalCount));
         }
     }
 
@@ -167,10 +274,12 @@ public class TestAlgorithm {
         }
         return result;
     }
+
     private static final DecimalFormat FORMAT = new DecimalFormat("00");
 
     public void printAllHistory(final List<HistoryItem> items) {
-        final LotteryConfiguration configuration = items.get(0).getConfiguration();
+        final LotteryConfiguration configuration = items.get(0)
+                .getConfiguration();
         final String[] line = new String[configuration.getNormalRange() + configuration.getSpecialRange() + 1];
         for (int i = items.size() - 1; i >= 0; i--) {
             for (int j = 0; j < line.length; j++) {
@@ -438,7 +547,8 @@ public class TestAlgorithm {
                 final List<HistoryItem> subHistory = history.subList(i, size);
                 final HistoryItem record = history.get(i - 1);
                 int roundRewardCount = 0;
-                Random.getInstance().init();
+                Random.getInstance()
+                        .init();
                 for (int j = 0; j < mCalculateTimes; j++) {
                     result.totalTestCount++;
                     normalTable.reset();
@@ -466,7 +576,7 @@ public class TestAlgorithm {
                         result.totalMoney += money;
                         if (reward.isGoHome()) {
                             mResult.mTimeToGoHome.add(j);
-//                            updateGoHomeRecord();
+                            //                            updateGoHomeRecord();
                             Integer v = mResult.goHomeDistribute.get(record);
                             if (v == null) {
                                 v = 0;
@@ -495,8 +605,7 @@ public class TestAlgorithm {
                 return;
             }
             mLastPublishProgressTime = System.currentTimeMillis();
-            mProgressCallback.onProgressUpdate(
-                    "\n" + mResult.toString() + "\n");
+            mProgressCallback.onProgressUpdate("\n" + mResult.toString() + "\n");
         }
 
     }

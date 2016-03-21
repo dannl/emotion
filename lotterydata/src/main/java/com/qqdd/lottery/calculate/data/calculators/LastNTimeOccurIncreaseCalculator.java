@@ -15,7 +15,7 @@ public class LastNTimeOccurIncreaseCalculator extends CalculatorImpl {
         super("oldLastN");
     }
 
-    private static final int N = 3;
+    private static final int N = 5;
     private static final float POWER = 1f;
 
     private static HashMap<HistoryItem, Probability> CACHE = new HashMap<>();
@@ -57,10 +57,20 @@ public class LastNTimeOccurIncreaseCalculator extends CalculatorImpl {
             final NumberList specialList = lts.get(i)
                     .getSpecials();
             for (int j = 0; j < normalList.size(); j++) {
-                normalOccurrence[normalList.get(j)]++;
+                normalOccurrence[normalList.get(j)]+=0.5f;
             }
             for (int j = 0; j < specialList.size(); j++) {
-                specialOccurrence[specialList.get(j)]++;
+                specialOccurrence[specialList.get(j)]+=0.5f;
+            }
+        }
+        for (int i = 0; i < normalOccurrence.length; i++) {
+            if (normalOccurrence[i] > 2) {
+                normalOccurrence[i] = 1f;
+            }
+        }
+        for (int i = 0; i < specialOccurrence.length; i++) {
+            if (specialOccurrence[i] > 2) {
+                specialOccurrence[i] = 1f;
             }
         }
         result.normalProbability = normalOccurrence;

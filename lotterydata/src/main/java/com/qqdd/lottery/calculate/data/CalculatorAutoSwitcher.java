@@ -4,6 +4,7 @@ import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.LotteryRecord;
+import com.qqdd.lottery.data.NumberList;
 import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.management.DataSource;
@@ -26,7 +27,7 @@ public class CalculatorAutoSwitcher {
     private static final int INITIAL_SINCE_SSQ = 1500;
     private static final int DEFAULT_LATEST_SINCE = 100;
     private static final String FOLDER = "rates";
-    private static final float STANDARD_AVG_RATE = 0.0666f;
+    private static final float STANDARD_AVG_RATE = 0.066f;
 
     private File mRoot;
     private History mHistory;
@@ -41,7 +42,6 @@ public class CalculatorAutoSwitcher {
         mRates = new HashMap<>(2);
     }
 
-
     public void test(Lottery.Type type) {
         refresh(type);
         HashMap<CalculatorCollection,RateList> rateLists = mRates.get(type);
@@ -53,21 +53,67 @@ public class CalculatorAutoSwitcher {
             float winCount = 0;
             //连续出现高于平均的次数的平均数
             float averageWinLast = 0;
-            int contiunuousWin = 0;
+            int continuousWin = 0;
             int continuousWinCount = 0;
+            int totalContinuousWin = 0;
             for (int i = 0; i < list.size(); i++) {
                 final float rate = list.get(i)
                         .getRate();
-                if (rate > STANDARD_AVG_RATE + 0.005f) {
+                if (rate > STANDARD_AVG_RATE) {
                     winCount ++;
-                    contiunuousWin ++;
+                    continuousWin ++;
                 } else {
-
+                    if (continuousWin > 1) {
+                        continuousWinCount ++;
+                        totalContinuousWin += continuousWin;
+                        continuousWin = 0;
+                    }
                 }
             }
-            System.out.println("win: " + (winCount / list.size()));
+            System.out.println("win: " + winCount + " win rate: " + (winCount / list.size()) + " continuous rate: " + ((float) totalContinuousWin) / list.size());
+            System.out.println("continuous win count: " + continuousWinCount + " av: " + ((float) totalContinuousWin) / continuousWinCount);
+            boolean lastWasWin = list.get(0).getRate() > STANDARD_AVG_RATE;
+            int totalLostCount = lastWasWin ? 0 : 1;
+            int totalWinCount = lastWasWin ? 1 : 0;
+            int lastWinLeadToWin = 0;
+            int lastLostLeadToWin = 0;
+            for (int i = 1; i < list.size(); i++) {
+                final float rate = list.get(i).getRate();
+                if (rate > STANDARD_AVG_RATE) {
+                    totalWinCount ++;
+                    if (lastWasWin) {
+                        lastWinLeadToWin ++;
+                    } else {
+                        lastLostLeadToWin ++;
+                    }
+                } else {
+                    totalLostCount ++;
+                }
+                lastWasWin = rate > STANDARD_AVG_RATE;
+            }
+//            System.out.println("win to win: " + ((float) lastWinLeadToWin) / totalWinCount);
+//            System.out.println("lost to win: " + ((float) lastLostLeadToWin) / totalLostCount);
 
+            //
+            int N = 3;
+            int total = 0;
+            int win = 0;
+            for (int i = N; i < list.size(); i++) {
+                boolean right = true;
+                for (int j = i - 1; j >= i - N; j--) {
+                    right &= (list.get(j).getRate() > STANDARD_AVG_RATE);
+                }
+                if (right) {
+                    total ++;
+                    if (list.get(i).getRate() > STANDARD_AVG_RATE) {
+                        win ++;
+                    }
+                }
+            }
+            System.out.println(" n = " + N + " win: " + win + " total : " + total + " listsize: " + list.size() + " rate: " + ((float) win) / total);
         }
+
+
     }
 
     public void refresh(Lottery.Type type) {
@@ -165,6 +211,18 @@ public class CalculatorAutoSwitcher {
 
         }
         return true;
+    }
+
+    /**
+     * 默认的奇偶+大小,最大的出现组合的概率.
+     */
+    private static final float DEFAULT_PASS_RATE = 0.8f;
+
+    private boolean shouldIgnore(Lottery tempResult) {
+        final NumberList normals = tempResult.getNormals();
+        int odd = 0;
+        int large = 0;
+        return false;
     }
 
 }

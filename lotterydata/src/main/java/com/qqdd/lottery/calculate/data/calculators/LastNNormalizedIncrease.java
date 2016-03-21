@@ -56,7 +56,7 @@ public class LastNNormalizedIncrease extends CalculatorImpl {
             final int value = number.getValue();
             int occTime = cache[TYPE_NORMAL].currentOccTime[value];
             float v = cache[TYPE_NORMAL].occRate[occTime];
-//            v = calculateV(cache[TYPE_NORMAL].occRate, v);
+//            v = calculateV(cache[TYPE_NORMAL].normalOccRate, v);
             number.setWeight(number.getWeight() * v);
         }
         for (int i = 0; i < specialTable.size(); i++) {
@@ -64,7 +64,7 @@ public class LastNNormalizedIncrease extends CalculatorImpl {
             final int value = number.getValue();
             int occTime = cache[TYPE_SPECIAL].currentOccTime[value];
             float v = cache[TYPE_SPECIAL].occRate[occTime];
-//            v = calculateV(cache[TYPE_SPECIAL].occRate, v);
+//            v = calculateV(cache[TYPE_SPECIAL].normalOccRate, v);
             number.setWeight(number.getWeight() * v);
         }
 

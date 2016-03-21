@@ -4,9 +4,11 @@ import com.qqdd.lottery.calculate.data.calculators.AverageProbabilityCalculator;
 import com.qqdd.lottery.calculate.data.calculators.HistoryOccurrenceProbabilityCalculator;
 import com.qqdd.lottery.calculate.data.calculators.LastNMediumIncrease;
 import com.qqdd.lottery.calculate.data.calculators.LastNNormalizedIncrease;
+import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator;
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
 import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.calculate.data.calculators.SameNumberCalculator;
+import com.qqdd.lottery.calculate.data.calculators.UniverseRateRangeCalculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +47,28 @@ public class CalculatorCollection extends ArrayList<Calculator> {
         final List<CalculatorCollection> result = new ArrayList<>();
         result.add(sameNumber());
         result.add(lastNTime());
-        result.add(lastNTime_sameNumber());
         result.add(lastNTimeRevert());
-        result.add(lastNTimeRevert_sameNumber());
         result.add(lastNNormalized());
         result.add(lastNMedium());
+        result.add(urr());
+        result.add(oldLastNTime());
         return result;
+    }
+
+    public static CalculatorCollection oldLastNTime() {
+        CalculatorCollection calculatorList = new CalculatorCollection();
+        calculatorList.add(new HistoryOccurrenceProbabilityCalculator());
+        calculatorList.add(new LastNTimeOccurIncreaseCalculator());
+        calculatorList.add(new NoSelectionCalculator());
+        return calculatorList;
+    }
+
+    public static CalculatorCollection urr() {
+        CalculatorCollection calculatorList = new CalculatorCollection();
+        calculatorList.add(new HistoryOccurrenceProbabilityCalculator());
+        calculatorList.add(new UniverseRateRangeCalculator());
+        calculatorList.add(new NoSelectionCalculator());
+        return calculatorList;
     }
 
     public static CalculatorCollection lastNTime() {

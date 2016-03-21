@@ -105,7 +105,7 @@ public class Lottery implements ILottery {
             builder.append(v)
                     .append(" ");
         }
-        builder.append("---- ");
+        builder.append("- ");
         for (int v : mSpecial) {
             builder.append(v)
                     .append(" ");

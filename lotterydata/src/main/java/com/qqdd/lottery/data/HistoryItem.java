@@ -32,11 +32,6 @@ public class HistoryItem extends LotteryRecord {
         return result;
     }
 
-    @Override
-    public String toString() {
-        return "开奖记录：" + super.toString();
-    }
-
     public static HistoryItem fromJson(final JSONObject json) {
         if (json == null) {
             return null;

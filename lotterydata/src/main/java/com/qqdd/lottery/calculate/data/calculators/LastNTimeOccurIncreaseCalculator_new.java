@@ -88,8 +88,8 @@ public class LastNTimeOccurIncreaseCalculator_new extends CalculatorImpl {
 //        }
         System.out.println("================ normal lastN : " + universe.lastN + "=================");
 //        System.out.println("occ distribution:");
-//        for (int i = 0; i < universe.occRate.length; i++) {
-//            System.out.println(" time: " + i + " occ: " + universe.occRate[i]);
+//        for (int i = 0; i < universe.normalOccRate.length; i++) {
+//            System.out.println(" time: " + i + " occ: " + universe.normalOccRate[i]);
 //        }
 //        System.out.println("current occ time distribution: ");
 //        for (int i = 0; i < universe.currentOccTime.length; i++) {
@@ -104,7 +104,7 @@ public class LastNTimeOccurIncreaseCalculator_new extends CalculatorImpl {
         System.out.println("================ special lastN : " + universe.lastN + "=================");
 //        System.out.println("occ distribution:");
         for (int i = 0; i < universe.occRate.length; i++) {
-//            System.out.println(" time: " + i + " occ: " + universe.occRate[i]);
+//            System.out.println(" time: " + i + " occ: " + universe.normalOccRate[i]);
         }
 //        System.out.println("current occ time distribution: ");
         for (int i = 0; i < universe.currentOccTime.length; i++) {

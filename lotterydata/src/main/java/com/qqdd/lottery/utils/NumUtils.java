@@ -1,6 +1,7 @@
 package com.qqdd.lottery.utils;
 
 
+import com.qqdd.lottery.data.KeyValuePair;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryConfiguration;
 import com.qqdd.lottery.data.NumberList;
@@ -158,5 +159,41 @@ public class NumUtils {
             NORMALIZED_PROB.put(type, result);
         }
         return result;
+    }
+
+    public static float[] normalizeProbability(float[] rates) {
+
+        //计算平均x, y
+        float yTotal = 0;
+        float xTotal = 0;
+        float xYMultiTotal = 0;
+        float xPower2Total = 0;
+        final int n = rates.length;
+        for (int i = 0; i < n; i++) {
+            yTotal += rates[i];
+            xTotal += i;
+            xYMultiTotal += i * rates[i];
+            xPower2Total += Math.pow(i, 2);
+        }
+        float yAv = yTotal / n;
+        float xAv = xTotal / n;
+        //计算拟合线
+        /**
+         * 线性回归公式.
+         * b = (∑xy - n * xAv * yAv) / (∑(x^2) - n * (xAv^2))
+         * a = yAv - b * xAv
+         * y = b * x + a
+         */
+        float b = (float) ((xYMultiTotal - n * xAv * yAv) / (xPower2Total - n * Math.pow(xAv, 2)));
+        float a = yAv - b * xAv;
+
+        List<KeyValuePair> line = new ArrayList<>();
+        for (int i = 0; i < rates.length; i++) {
+//            final KeyValuePair item = rates[i];
+//            final KeyValuePair lineItem = new KeyValuePair(item.getKey(), i * b + a);
+//            line.add(lineItem);
+            rates[i] = i * b + a;
+        }
+        return rates;
     }
 }
