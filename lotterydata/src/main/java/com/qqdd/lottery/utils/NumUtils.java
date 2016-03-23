@@ -123,10 +123,23 @@ public class NumUtils {
         for (int i = 0; i < index; i++) {
             result *= range - i;
         }
+        long divider = 1;
         for (int i = 1; i <= index; i++) {
-            result /= i;
+            divider *= i;
         }
-        return result;
+        return result / divider;
+    }
+
+    public static long C_Long(int range, int index) {
+        long result = 1;
+        for (int i = 0; i < index; i++) {
+            result *= range - i;
+        }
+        long divider = 1;
+        for (int i = 1; i <= index; i++) {
+            divider *= i;
+        }
+        return result / divider;
     }
 
     public static int calculateTotalInList(List<Integer> list) {
@@ -196,4 +209,34 @@ public class NumUtils {
         }
         return rates;
     }
+
+    public static List<List<Integer>> exhaustC(int n, int m) {
+        long size = C_Long(n, m);
+        List<List<Integer>> result = pick(1,n,m);
+        if (size != result.size()) {
+            throw new IllegalStateException("bad!");
+        }
+        return result;
+    }
+
+    public static List<List<Integer>> pick(int start, int end, int m) {
+        List<List<Integer>> result = new ArrayList<>();
+        if (m == 1) {
+            for (int i = start; i <= end; i++) {
+                List<Integer> item = new ArrayList<>(m);
+                item.add(i);
+                result.add(item);
+            }
+            return result;
+        }
+        for (int i = start; i <= end - m + 1; i++) {
+            List<List<Integer>> subResult = pick(i + 1, end, m - 1);
+            for (int j = 0; j < subResult.size(); j++) {
+                subResult.get(j).add(i);
+            }
+            result.addAll(subResult);
+        }
+        return result;
+    }
+
 }

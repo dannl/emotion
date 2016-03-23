@@ -27,7 +27,7 @@ public class LotteryConfiguration {
         } else if (type == Lottery.Type.SSQ) {
             return SSQConfiguration();
         }
-        return null;
+        throw new IllegalArgumentException("bad type: " + type);
     }
 
     private final int mNormalSize;
