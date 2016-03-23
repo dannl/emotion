@@ -5,6 +5,7 @@ import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.Rate;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
+import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.KeyValuePair;
 import com.qqdd.lottery.data.Lottery;
@@ -39,119 +40,15 @@ public class TestAlgorithm {
     private static final DecimalFormat TEST_RESULT_FORMAT = new DecimalFormat("##0.0000000");
 
     public static void main(String[] args) {
-                testAutoSwitcher();
-        //        calculate();
-//                try {
-//                    new UniverseRateRangeCalculator().calculateImpl(new History(SimpleIOUtils.getProjectRoot()).load(
-//                            Lottery.Type.SSQ));
-//                } catch (DataSource.DataLoadingException e) {
-//                    e.printStackTrace();
-//                }
-//        calculateLargeMin(Lottery.Type.SSQ);
-//        calculateOddEven(Lottery.Type.DLT);
-//        calculateLargeMin(Lottery.Type.DLT);
-//        calculate();
-    }
-
-    private static void calculateOddEven(Lottery.Type type) {
+//        new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).test(Lottery.Type.SSQ);
         try {
-            final List<HistoryItem> items = new History(SimpleIOUtils.getProjectRoot()).load(type);
-            HashMap<String, Integer> dis = new HashMap<>();
-            final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
-            for (int i = 0; i < items.size(); i++) {
-                final NumberList table = items.get(i)
-                        .getNormals();
-                int odd = 0;
-                int even = 0;
-                for (int j = 0; j < table.size(); j++) {
-                    if (table.get(j) % 2 > 0) {
-                        odd++;
-                    } else {
-                        even++;
-                    }
-                }
-                String key = "odd: " +String.valueOf(odd) + " even: " +even;
-                Integer v = dis.get(key);
-                if (v == null) {
-                    dis.put(key, 1);
-                } else {
-                    v++;
-                    dis.put(key, v);
-                }
-            }
-            final Set<Map.Entry<String, Integer>> entries = dis.entrySet();
-            int total = 0;
-            for (Map.Entry<String, Integer> entry : entries) {
-                total += entry.getValue();
-            }
-            for (Map.Entry<String, Integer> entry : entries) {
-                System.out.println(entry.getKey() + " count: " + entry.getValue() + " rate: " + ((float) entry.getValue()) / total);
-            }
-        } catch (DataSource.DataLoadingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void calculateLargeMin(Lottery.Type type) {
-        try {
-            final List<HistoryItem> items = new History(SimpleIOUtils.getProjectRoot()).load(type);
-            HashMap<String, Integer> dis = new HashMap<>();
-            final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
-            for (int i = 0; i < items.size(); i++) {
-                final NumberList table = items.get(i)
-                        .getNormals();
-                int large = 0;
-                int small = 0;
-                for (int j = 0; j < table.size(); j++) {
-                    if (table.get(j) > configuration.getNormalRange() / 2) {
-                        large++;
-                    } else {
-                        small++;
-                    }
-                }
-                String key = "large: " +String.valueOf(large) + " small: " +small;
-                 Integer v = dis.get(key);
-                if (v == null) {
-                    dis.put(key, 1);
-                } else {
-                    v++;
-                    dis.put(key, v);
-                }
-            }
-            final Set<Map.Entry<String, Integer>> entries = dis.entrySet();
-            int total = 0;
-            for (Map.Entry<String, Integer> entry : entries) {
-                total += entry.getValue();
-            }
-            for (Map.Entry<String, Integer> entry : entries) {
-                System.out.println(entry.getKey() + " count: " + entry.getValue() + " rate: " + ((float) entry.getValue()) / total);
-            }
-
-        } catch (DataSource.DataLoadingException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    private static void testAutoSwitcher() {
-        new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).test(Lottery.Type.DLT);
-    }
-
-    private static void calculate() {
-        try {
-            //            new LastNTimeOccurIncreaseCalculator_new(60,3).calculateUniverses(
-            //                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.SSQ));
-//            NoSelectionCalculator.setExclusion(Lottery.Type.SSQ, new int[][]{
-//                    new int[]{19},
-//            });
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-                    Lottery.Type.DLT, CalculatorCollection.urr(), 100000,
-                    1000);
-//                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ,
-//                                CalculatorCollection.lastNTime_sameNumber(), 5, 2000000);
-            //            new LastNNormalizedIncrease(1.3f,1.3f).testChangeLine(new History(SimpleIOUtils.getProjectRoot()).load(
-            //                    Lottery.Type.DLT));
+                        NoSelectionCalculator.setExclusion(Lottery.Type.SSQ, new int[][]{
+                                new int[]{19},
+                        });
+//                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
+//                                Lottery.Type.DLT, CalculatorCollection.urr(), 10000, 10);
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ, 5,
+                    2000000);
         } catch (DataSource.DataLoadingException e) {
             System.out.println(e.getMessage());
         }
@@ -257,11 +154,14 @@ public class TestAlgorithm {
         }
     }
 
-    private List<Lottery> calculateResult(Lottery.Type type, CalculatorCollection calculators,
+    private List<Lottery> calculateResult(Lottery.Type type,
                                           int resultCount, int calculateTimes)
             throws DataSource.DataLoadingException {
-        List<Lottery> result = new Calculation(getProjectRoot()).calculate(
-                new History(getProjectRoot()).load(type), calculators, new ProgressCallback() {
+        final List<HistoryItem> history = new History(getProjectRoot()).load(type);
+        CalculatorCollection collection = new CalculatorAutoSwitcher(mRoot).getCalculators(
+                history.get(0));
+        List<Lottery> result = new Calculation(getProjectRoot()).calculate(history, collection,
+                new ProgressCallback() {
                     @Override
                     public void onProgressUpdate(String progress) {
                         System.out.println("\r" + progress);
@@ -311,10 +211,10 @@ public class TestAlgorithm {
         System.out.println(builder.toString());
     }
 
-    public void calculateAndSave(Lottery.Type type, CalculatorCollection calculators,
+    public void calculateAndSave(Lottery.Type type,
                                  int resultCount, int calculateTimes)
             throws DataSource.DataLoadingException {
-        List<Lottery> result = calculateResult(type, calculators, resultCount, calculateTimes);
+        List<Lottery> result = calculateResult(type, resultCount, calculateTimes);
         final List<UserSelection> userSelections = new ArrayList<>(result.size());
         for (int i = 0; i < result.size(); i++) {
             final UserSelection useSelection = new UserSelection(result.get(i));
@@ -543,18 +443,20 @@ public class TestAlgorithm {
             NumberTable specialTable = new NumberTable(mConfiguration.getSpecialRange());
             final int size = history.size();
             //全随机算法。
+            CalculatorAutoSwitcher switcher = new CalculatorAutoSwitcher(mRoot);
             for (int i = size / mSince; i > 0; i--) {
                 final List<HistoryItem> subHistory = history.subList(i, size);
                 final HistoryItem record = history.get(i - 1);
                 int roundRewardCount = 0;
                 Random.getInstance()
                         .init();
+                final CalculatorCollection calculators = switcher.getCalculators(record);
                 for (int j = 0; j < mCalculateTimes; j++) {
                     result.totalTestCount++;
                     normalTable.reset();
                     specialTable.reset();
-                    for (int k = 0; k < mCalculators.size(); k++) {
-                        mCalculators.get(k)
+                    for (int k = 0; k < calculators.size(); k++) {
+                        calculators.get(k)
                                 .calculate(subHistory, normalTable, specialTable);
                     }
                     final Lottery tempResult = com.qqdd.lottery.data.management.NumberProducer.getInstance()

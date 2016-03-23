@@ -1,5 +1,6 @@
 package com.qqdd.lottery.calculate.data;
 
+import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.utils.SimpleIOUtils;
 
 import org.json.JSONArray;
@@ -11,6 +12,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by danliu on 3/15/16.
@@ -21,6 +25,8 @@ public class RateList extends ArrayList<Rate> {
     private float mMaxRate;
     private float mMinRate;
     private String mName;
+    private int mTestCount;
+    private HashMap<RewardRule.Reward, Integer> mDetail = new HashMap<>();
 
     public RateList(final String name) {
         if (name == null || name.length() == 0) {
@@ -29,6 +35,24 @@ public class RateList extends ArrayList<Rate> {
         mName = name;
         mMaxRate = 0;
         mMinRate = 1;
+    }
+
+    public void setTestCount(int testCount) {
+        mTestCount = testCount;
+    }
+
+    public int getTestCount() {
+        return mTestCount;
+    }
+
+    public void plusReward(RewardRule.Reward reward) {
+        Integer value = mDetail.get(reward);
+        if (value == null) {
+            mDetail.put(reward, 1);
+        } else {
+            value ++;
+            mDetail.put(reward, value);
+        }
     }
 
     public String getName() {
@@ -73,6 +97,17 @@ public class RateList extends ArrayList<Rate> {
             result.put("av", String.valueOf(mAverageRate));
             result.put("max", String.valueOf(mMaxRate));
             result.put("min", String.valueOf(mMinRate));
+            result.put("testCount", mTestCount);
+            final Set<Map.Entry<RewardRule.Reward, Integer>> entries = mDetail.entrySet();
+            JSONArray detail  = new JSONArray();
+            for (Map.Entry<RewardRule.Reward, Integer> entry
+                    : entries) {
+                final JSONObject item = new JSONObject();
+                item.put("reward", entry.getKey().toJson());
+                item.put("value", entry.getValue());
+                detail.put(item);
+            }
+            result.put("detail", detail);
         } catch (JSONException e) {
         }
         return result;
@@ -87,10 +122,16 @@ public class RateList extends ArrayList<Rate> {
             rates.mAverageRate = Float.parseFloat(json.getString("av"));
             rates.mMaxRate = Float.parseFloat(json.getString("max"));
             rates.mMinRate = Float.parseFloat(json.getString("min"));
+            rates.mTestCount = json.getInt("testCount");
             final JSONArray array = json.getJSONArray("data");
             for (int i = 0; i < array.length(); i++) {
                 Rate rate = Rate.fromJson(array.getJSONObject(i));
                 rates.superAdd(rate);
+            }
+            final JSONArray detail = json.getJSONArray("detail");
+            for (int i = 0; i < detail.length(); i++) {
+                final JSONObject item = detail.getJSONObject(i);
+                rates.mDetail.put(RewardRule.Reward.fromJson(item.getJSONObject("reward")), item.getInt("value"));
             }
             return rates;
         } catch (Exception e) {
@@ -174,4 +215,16 @@ public class RateList extends ArrayList<Rate> {
         throw new UnsupportedOperationException();
     }
 
+    public void reset(int newTestCount) {
+        mAverageRate = 0;
+        mMaxRate = 0;
+        mMinRate = 1;
+        mTestCount = newTestCount;
+        mDetail.clear();
+        clear();
+    }
+
+    public HashMap<RewardRule.Reward, Integer> getDetail() {
+        return new HashMap<>(mDetail);
+    }
 }
