@@ -3,7 +3,7 @@ package com.qqdd.lottery.test;
 import com.qqdd.lottery.calculate.data.CalculatorAutoSwitcher;
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.Rate;
-import com.qqdd.lottery.calculate.data.UniversalNumPicker;
+import com.qqdd.lottery.calculate.data.SumPicker;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
 import com.qqdd.lottery.data.HistoryItem;
@@ -40,13 +40,7 @@ public class TestAlgorithm {
     private static final DecimalFormat TEST_RESULT_FORMAT = new DecimalFormat("##0.0000000");
 
     public static void main(String[] args) {
-//        try {
-//            System.out.println(HistoryDetail.calculate(
-//                    new History(SimpleIOUtils.getProjectRoot()).load(Lottery.Type.DLT)));
-//        } catch (DataSource.DataLoadingException e) {
-//        }
-        new UniversalNumPicker(SimpleIOUtils.getProjectRoot()).calculate(
-                Lottery.Type.DLT);
+        new SumPicker(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ, new int[]{50,102}, null, 5);
         //        new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).test(Lottery.Type.SSQ);
 //        try {
 //                        NoSelectionCalculator.setExclusion(Lottery.Type.SSQ, new int[][]{

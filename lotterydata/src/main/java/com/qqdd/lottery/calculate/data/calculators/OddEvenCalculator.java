@@ -55,7 +55,7 @@ public class OddEvenCalculator extends CalculatorImpl implements NumberPicker {
         picked.addNormals(normalNumbers);
         picked.addSpecials(specialNumbers);
         if (!picked.isValid()) {
-            throw new IllegalStateException("we did not calculate right at OddEvenCalculator!");
+            throw new IllegalStateException("we did not calculateAndSave right at OddEvenCalculator!");
         }
     }
 
