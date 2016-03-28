@@ -68,7 +68,7 @@ public class CalculatorAutoSwitcher {
     }
 
     public CalculatorCollection getCalculators(HistoryItem record) {
-        return CalculatorCollection.urr();
+        return CalculatorCollection.lastNNormalized();
 //        refresh(record.getType());
 //        final HashMap<CalculatorCollection, RateList> rates = mRates.get(record.getType());
 //        Set<Map.Entry<CalculatorCollection, RateList>> entries = rates.entrySet();

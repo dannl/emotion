@@ -3,9 +3,9 @@ package com.qqdd.lottery.test;
 import com.qqdd.lottery.calculate.data.CalculatorAutoSwitcher;
 import com.qqdd.lottery.calculate.data.CalculatorCollection;
 import com.qqdd.lottery.calculate.data.Rate;
-import com.qqdd.lottery.calculate.data.SumPicker;
 import com.qqdd.lottery.calculate.data.TimeToGoHome;
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
+import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.KeyValuePair;
 import com.qqdd.lottery.data.Lottery;
@@ -40,20 +40,22 @@ public class TestAlgorithm {
     private static final DecimalFormat TEST_RESULT_FORMAT = new DecimalFormat("##0.0000000");
 
     public static void main(String[] args) {
-        new SumPicker(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ, new int[]{50,102}, null, 5);
-        //        new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).test(Lottery.Type.SSQ);
-//        try {
-//                        NoSelectionCalculator.setExclusion(Lottery.Type.SSQ, new int[][]{
-//                                new int[]{8},
-//                                new int[]{3,15},
-//                        });
+//        new SumPicker(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ, new int[]{50,102}, null, 5);
+//        new SumPicker(SimpleIOUtils.getProjectRoot()).historySumDistribution(Lottery.Type.SSQ);
+//                new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).test(Lottery.Type.DLT);
+        try {
+                        NoSelectionCalculator.setExclusion(Lottery.Type.DLT, new int[][]{
+                                new int[]{14,35,31},
+                                new int[]{9,10
+                                },
+                        });
 //                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
 //                                Lottery.Type.DLT, CalculatorCollection.urr(), 10000, 10);
-//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ, 5,
-//                    2000000);
-//        } catch (DataSource.DataLoadingException e) {
-//            System.out.println(e.getMessage());
-//        }
+            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT, 5,
+                    2000000);
+        } catch (DataSource.DataLoadingException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private File mRoot;

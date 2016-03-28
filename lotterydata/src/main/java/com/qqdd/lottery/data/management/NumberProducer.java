@@ -96,26 +96,26 @@ public class NumberProducer {
     }
 
     private List<Lottery> filterTempBuffer(List<Lottery> tempBuffer) {
-        List<Lottery> result = new ArrayList<>(tempBuffer.size());
-        for (int i = 0; i < tempBuffer.size(); i++) {
-            final Lottery item = tempBuffer.get(i);
-            final NumberList normals = item.getNormals();
-            int large = 0;
-            int odd = 0;
-            for (int j = 0; j < normals.size(); j++) {
-                if (normals.get(j) > item.getConfiguration().getNormalRange() / 2) {
-                    large ++;
-                }
-                if (normals.get(j) % 2 > 0) {
-                    odd ++;
-                }
-            }
-            if (large >= 2 && large <= 4 && odd >= 2 && odd <= 4) {
-                result.add(item);
-            }
-
-        }
-        System.out.println("filterTempBuffer:  ori size: " + tempBuffer.size() + " result size: " + result.size());
+//        List<Lottery> result = new ArrayList<>(tempBuffer.size());
+//        for (int i = 0; i < tempBuffer.size(); i++) {
+//            final Lottery item = tempBuffer.get(i);
+//            final NumberList normals = item.getNormals();
+//            int large = 0;
+//            int odd = 0;
+//            for (int j = 0; j < normals.size(); j++) {
+//                if (normals.get(j) > item.getConfiguration().getNormalRange() / 2) {
+//                    large ++;
+//                }
+//                if (normals.get(j) % 2 > 0) {
+//                    odd ++;
+//                }
+//            }
+//            if (large >= 2 && large <= 4 && odd >= 2 && odd <= 4) {
+//                result.add(item);
+//            }
+//
+//        }
+//        System.out.println("filterTempBuffer:  ori size: " + tempBuffer.size() + " result size: " + result.size());
         return tempBuffer;
     }
 

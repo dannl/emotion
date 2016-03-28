@@ -164,9 +164,19 @@ public class SumPicker {
             List<HistoryItem> items = new History(mRoot).load(type);
             Collections.reverse(items);
             double total = 0;
+            StringBuilder x = new StringBuilder();
+            StringBuilder y = new StringBuilder();
+            x.append("[");
+            y.append("[");
             for (int i = items.size() * 4 / 5; i < items.size(); i++) {
                 final HistoryItem item = items.get(i);
                 sum.add(new KeyValuePair(item.getDateDisplay(), sum(item)));
+                x.append(i);
+                y.append(sum(item));
+                if (i < items.size() - 1) {
+                    x.append(",");
+                    y.append(",");
+                }
                 total += sum(item);
                 av.add(new KeyValuePair(item.getDateDisplay(), (float) (total / sum.size())));
                 double total5 = 0;
@@ -180,6 +190,10 @@ public class SumPicker {
                 }
                 av10.add(new KeyValuePair(item.getDateDisplay(), (float) (total10 / 10)));
             }
+            x.append("];");
+            y.append("];");
+            SimpleIOUtils.saveToFile(new File(mRoot, type + "disx"), x.toString());
+            SimpleIOUtils.saveToFile(new File(mRoot, type + "disy"), y.toString());
             SimpleIOUtils.saveToFile(new File(mRoot, type + "_sum_line"), KeyValuePair.toArray(sum)
                     .toString());
             SimpleIOUtils.saveToFile(new File(mRoot, type + "_sum_line_av"),
