@@ -17,12 +17,11 @@ import com.qqdd.lottery.data.Constants;
 import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.UserSelection;
-import com.qqdd.lottery.data.management.Calculation;
 import com.qqdd.lottery.data.management.CalculationDelegate;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 import com.qqdd.lottery.data.management.HistoryDelegate;
-import com.qqdd.lottery.data.management.UserSelectionsDelegate;
 import com.qqdd.lottery.data.management.UserSelectionOperationResult;
+import com.qqdd.lottery.data.management.UserSelectionsDelegate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,7 @@ public class OccurrenceProbabilityActivity extends BaseActivity {
 
 
     public void handleCalculateClicked(View view) {
-        final List<CalculatorCollection> calculatorCollections = Calculation.allCalculorGroups();
+        final List<CalculatorCollection> calculatorCollections = CalculatorCollection.allCollections();
         final CharSequence[] items = new CharSequence[calculatorCollections.size()];
         for (int i = 0; i < items.length; i++) {
             items[i] = calculatorCollections.get(i).getTitle();

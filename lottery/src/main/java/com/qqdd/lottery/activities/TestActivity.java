@@ -1,7 +1,5 @@
 package com.qqdd.lottery.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +17,6 @@ import com.qqdd.lottery.data.HistoryItem;
 import com.qqdd.lottery.data.Lottery;
 import com.qqdd.lottery.data.LotteryRecord;
 import com.qqdd.lottery.data.UserSelection;
-import com.qqdd.lottery.data.management.Calculation;
 import com.qqdd.lottery.data.management.DataLoadingCallback;
 import com.qqdd.lottery.data.management.DataSource;
 import com.qqdd.lottery.data.management.HistoryDelegate;
@@ -69,26 +66,26 @@ public class TestActivity extends BaseActivity implements SelectionHistory {
     }
 
     public void handleCalculateCLicked(View view) {
-        final List<CalculatorCollection> calculatorCollections = Calculation.allCalculorGroups();
-        final CharSequence[] items = new CharSequence[calculatorCollections.size()];
-        for (int i = 0; i < items.length; i++) {
-            items[i] = calculatorCollections.get(i).getTitle();
-        }
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.select_calculator_set);
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                calculationImpl(calculatorCollections.get(which));
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.show();
+//        final List<CalculatorCollection> calculatorCollections = Calculation.allCalculorGroups();
+//        final CharSequence[] items = new CharSequence[calculatorCollections.size()];
+//        for (int i = 0; i < items.length; i++) {
+//            items[i] = calculatorCollections.get(i).getTitle();
+//        }
+//        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle(R.string.select_calculator_set);
+//        builder.setItems(items, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                calculationImpl(calculatorCollections.get(which));
+//            }
+//        });
+//        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//            }
+//        });
+//        builder.show();
     }
 
     private void calculationImpl(final CalculatorCollection calculators) {

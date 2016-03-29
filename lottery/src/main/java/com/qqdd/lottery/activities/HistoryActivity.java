@@ -66,6 +66,7 @@ public class HistoryActivity extends BaseActivity {
                         TextView date = (TextView) convertView.findViewById(R.id.date);
                         NumberLineView lineView = (NumberLineView) convertView.findViewById(R.id.number);
                         final HistoryItem item = result.get(position);
+                        item.sort();
                         date.setText(item.getDateDisplay());
                         lineView.setLottery(item);
                         return convertView;
