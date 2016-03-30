@@ -9,6 +9,7 @@ import com.qqdd.lottery.data.NumberTable;
 import com.qqdd.lottery.data.RewardRule;
 import com.qqdd.lottery.data.management.DataSource;
 import com.qqdd.lottery.data.management.History;
+import com.qqdd.lottery.utils.NumUtils;
 import com.qqdd.lottery.utils.Random;
 
 import java.io.File;
@@ -58,84 +59,86 @@ public class CalculatorAutoSwitcher {
         final HashMap<CalculatorCollection, RateList> rates = mRates.get(type);
         Set<Map.Entry<CalculatorCollection, RateList>> entries = rates.entrySet();
         for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
-            RateList list =entry.getValue();
+            RateList list = entry.getValue();
             float total = 0;
             for (int i = list.size() - 1; i >= list.size() - CALCULATOR_SELECTION_FACTOR; i--) {
-                total += list.get(i).getRate();
+                total += list.get(i)
+                        .getRate();
             }
-            System.out.println(entry.getKey().getTitle() + " av: " + total / CALCULATOR_SELECTION_FACTOR);
+            System.out.println(entry.getKey()
+                    .getTitle() + " av: " + total / CALCULATOR_SELECTION_FACTOR);
         }
     }
 
     public CalculatorCollection getCalculators(HistoryItem record) {
-        return CalculatorCollection.lastNNormalized();
-//        refresh(record.getType());
-//        final HashMap<CalculatorCollection, RateList> rates = mRates.get(record.getType());
-//        Set<Map.Entry<CalculatorCollection, RateList>> entries = rates.entrySet();
-//        //1. 找到record的index.
-//        int index = -1;
-//        for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
-//            RateList list = entry.getValue();
-//            for (int i = 0; i < list.size(); i++) {
-//                if (list.get(i)
-//                        .getRecord()
-//                        .equals(record)) {
-//                    index = i;
-//                    if (index < CALCULATOR_SELECTION_FACTOR) {
-//                        throw new IllegalArgumentException("rates data is not enough to fit factor " + CALCULATOR_SELECTION_FACTOR + " at record: " + record);
-//                    }
-//                    break;
-//                }
-//            }
-//            if (index >= 0) {
-//                break;
-//            }
-//        }
-//        if (index == -1) {
-//            throw new IllegalArgumentException("no rate record for " + record);
-//        }
-//        int minWin = Integer.MAX_VALUE;
-//        //找到minWinCount
-//        for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
-//            final RateList list = entry.getValue();
-//            int winCount = 0;
-//            for (int i = index; i > index - CALCULATOR_SELECTION_FACTOR; i--) {
-//                if (list.get(i).getRate() > STANDARD_AVG_RATE) {
-//                    winCount ++;
-//                }
-//            }
-//            if (winCount < minWin) {
-//                minWin = winCount;
-//            }
-//        }
-//        //找到所有为minWinCount的collection
-//        List<CalculatorCollectionRates> leastWin = new ArrayList<>();
-//        for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
-//            final RateList list = entry.getValue();
-//            int winCount = 0;
-//            float totalRate = 0;
-//            for (int i = index; i > index - CALCULATOR_SELECTION_FACTOR; i--) {
-//                if (list.get(i).getRate() > STANDARD_AVG_RATE) {
-//                    winCount ++;
-//                }
-//                totalRate += list.get(i).getRate();
-//            }
-//            if (winCount == minWin) {
-//                leastWin.add(new CalculatorCollectionRates(entry.getKey(), totalRate / CALCULATOR_SELECTION_FACTOR));
-//            }
-//        }
-//
-//        //找到对应的collection.
-//        float minRate = 1;
-//        CalculatorCollection result = null;
-//        for (int i = 0; i < leastWin.size(); i++) {
-//            if (leastWin.get(i).averageRate < minRate) {
-//                result = leastWin.get(i).collection;
-//                minRate = leastWin.get(i).averageRate;
-//            }
-//        }
-//        System.out.println("selected :" + result.getTitle() + " latest " + CALCULATOR_SELECTION_FACTOR + " average rate: " + minRate);
-//        return result;
+        return CalculatorCollection.sequenceOcc();
+        //        refresh(record.getType());
+        //        final HashMap<CalculatorCollection, RateList> rates = mRates.get(record.getType());
+        //        Set<Map.Entry<CalculatorCollection, RateList>> entries = rates.entrySet();
+        //        //1. 找到record的index.
+        //        int index = -1;
+        //        for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
+        //            RateList list = entry.getValue();
+        //            for (int i = 0; i < list.size(); i++) {
+        //                if (list.get(i)
+        //                        .getRecord()
+        //                        .equals(record)) {
+        //                    index = i;
+        //                    if (index < CALCULATOR_SELECTION_FACTOR) {
+        //                        throw new IllegalArgumentException("rates data is not enough to fit factor " + CALCULATOR_SELECTION_FACTOR + " at record: " + record);
+        //                    }
+        //                    break;
+        //                }
+        //            }
+        //            if (index >= 0) {
+        //                break;
+        //            }
+        //        }
+        //        if (index == -1) {
+        //            throw new IllegalArgumentException("no rate record for " + record);
+        //        }
+        //        int minWin = Integer.MAX_VALUE;
+        //        //找到minWinCount
+        //        for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
+        //            final RateList list = entry.getValue();
+        //            int winCount = 0;
+        //            for (int i = index; i > index - CALCULATOR_SELECTION_FACTOR; i--) {
+        //                if (list.get(i).getRate() > STANDARD_AVG_RATE) {
+        //                    winCount ++;
+        //                }
+        //            }
+        //            if (winCount < minWin) {
+        //                minWin = winCount;
+        //            }
+        //        }
+        //        //找到所有为minWinCount的collection
+        //        List<CalculatorCollectionRates> leastWin = new ArrayList<>();
+        //        for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
+        //            final RateList list = entry.getValue();
+        //            int winCount = 0;
+        //            float totalRate = 0;
+        //            for (int i = index; i > index - CALCULATOR_SELECTION_FACTOR; i--) {
+        //                if (list.get(i).getRate() > STANDARD_AVG_RATE) {
+        //                    winCount ++;
+        //                }
+        //                totalRate += list.get(i).getRate();
+        //            }
+        //            if (winCount == minWin) {
+        //                leastWin.add(new CalculatorCollectionRates(entry.getKey(), totalRate / CALCULATOR_SELECTION_FACTOR));
+        //            }
+        //        }
+        //
+        //        //找到对应的collection.
+        //        float minRate = 1;
+        //        CalculatorCollection result = null;
+        //        for (int i = 0; i < leastWin.size(); i++) {
+        //            if (leastWin.get(i).averageRate < minRate) {
+        //                result = leastWin.get(i).collection;
+        //                minRate = leastWin.get(i).averageRate;
+        //            }
+        //        }
+        //        System.out.println("selected :" + result.getTitle() + " latest " + CALCULATOR_SELECTION_FACTOR + " average rate: " + minRate);
+        //        return result;
 
     }
 
@@ -143,16 +146,38 @@ public class CalculatorAutoSwitcher {
         refresh(type);
         HashMap<CalculatorCollection, RateList> rateLists = mRates.get(type);
         Set<Map.Entry<CalculatorCollection, RateList>> entries = rateLists.entrySet();
+        int size = 0;
+        for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
+            size = entry.getValue().size();
+            break;
+        }
+        int[] goodCounts = NumUtils.newEmptyIntArray(entries.size() + 1);
+        for (int i = 0; i < size; i++) {
+            int goodCount = 0;
+            for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
+                if (entry.getValue().get(i).getRate() > STANDARD_AVG_RATE) {
+                    goodCount ++;
+                }
+            }
+            goodCounts[goodCount] ++;
+        }
+        System.out.println("total rate size: " + size);
+        for (int i = 0; i < goodCounts.length; i++) {
+            System.out.println("good count: " + i + " total: " + goodCounts[i]);
+        }
         for (Map.Entry<CalculatorCollection, RateList> entry : entries) {
             final RateList list = entry.getValue();
             System.out.println(
                     "name: " + list.getName() + " av: " + list.getAverageRate() + " max: " + list.getMaxRate() + " min: " + list.getMinRate());
             final HashMap<RewardRule.Reward, Integer> detail = list.getDetail();
-//            final Set<Map.Entry<RewardRule.Reward, Integer>> detailEntries = detail.entrySet();
-//            for (Map.Entry<RewardRule.Reward, Integer> detailItem : detailEntries) {
-//                System.out.println(detailItem.getKey()
-//                        .getTitle() + " : count: " + detailItem.getValue() + " rate: " + ((float) detailItem.getValue()) / list.getTestCount() / list.size());
-//            }
+            final Set<Map.Entry<RewardRule.Reward, Integer>> detailEntries = detail.entrySet();
+            for (Map.Entry<RewardRule.Reward, Integer> detailItem : detailEntries) {
+                if (detailItem.getKey()
+                        .isGoHome()) {
+                    System.out.println(detailItem.getKey()
+                            .getTitle() + " : count: " + detailItem.getValue() + " rate: " + ((float) detailItem.getValue()) / list.getTestCount() / list.size());
+                }
+            }
             float winCount = 0;
             //连续出现高于平均的次数的平均数
             float averageWinLast = 0;
@@ -173,55 +198,9 @@ public class CalculatorAutoSwitcher {
                     continuousWin = 0;
                 }
             }
-                        System.out.println("win: " + winCount + " win rate: " + (winCount / list.size()) + " continuous win: " + ((float) totalContinuousWin) / winCount);
+            System.out.println(
+                    "win: " + winCount + " win rate: " + (winCount / list.size()) + " continuous win: " + ((float) totalContinuousWin) / winCount);
             //            System.out.println("continuous win count: " + continuousWinCount + " av: " + ((float) totalContinuousWin) / continuousWinCount);
-            boolean lastWasWin = list.get(0)
-                    .getRate() > STANDARD_AVG_RATE;
-            int totalLostCount = lastWasWin ?
-                    0 :
-                    1;
-            int totalWinCount = lastWasWin ?
-                    1 :
-                    0;
-            int lastWinLeadToWin = 0;
-            int lastLostLeadToWin = 0;
-            for (int i = 1; i < list.size(); i++) {
-                final float rate = list.get(i)
-                        .getRate();
-                if (rate > STANDARD_AVG_RATE) {
-                    totalWinCount++;
-                    if (lastWasWin) {
-                        lastWinLeadToWin++;
-                    } else {
-                        lastLostLeadToWin++;
-                    }
-                } else {
-                    totalLostCount++;
-                }
-                lastWasWin = rate > STANDARD_AVG_RATE;
-            }
-            //            System.out.println("win to win: " + ((float) lastWinLeadToWin) / totalWinCount);
-            //            System.out.println("lost to win: " + ((float) lastLostLeadToWin) / totalLostCount);
-
-            //
-            int N = 3;
-            int total = 0;
-            int win = 0;
-            for (int i = N; i < list.size(); i++) {
-                boolean right = true;
-                for (int j = i - 1; j >= i - N; j--) {
-                    right &= (list.get(j)
-                            .getRate() > STANDARD_AVG_RATE);
-                }
-                if (right) {
-                    total++;
-                    if (list.get(i)
-                            .getRate() > STANDARD_AVG_RATE) {
-                        win++;
-                    }
-                }
-            }
-            //            System.out.println(" n = " + N + " win: " + win + " total : " + total + " listsize: " + list.size() + " rate: " + ((float) win) / total);
         }
 
 
@@ -277,7 +256,7 @@ public class CalculatorAutoSwitcher {
             throws DataSource.DataLoadingException {
         final List<HistoryItem> historyItems = mHistory.load(type);
         int since = 0;
-        if (rates.isEmpty() || rates.getTestCount() != TEST_COUNT) {
+        if (rates.isEmpty()) {
             since = historyItems.size() - getDefaultSince(type);
             //            since = DEFAULT_LATEST_SINCE;
             rates.reset(TEST_COUNT);

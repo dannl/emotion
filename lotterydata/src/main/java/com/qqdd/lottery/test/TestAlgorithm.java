@@ -39,20 +39,21 @@ public class TestAlgorithm {
     private static final DecimalFormat TEST_RESULT_FORMAT = new DecimalFormat("##0.0000000");
 
     public static void main(String[] args) {
-        System.out.print(NumUtils.C(33,6));
+//        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testKilling(Lottery.Type.SSQ);
 //        new SumPicker(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ, new int[]{127,170}, null, 3);
 //        new SumPicker(SimpleIOUtils.getProjectRoot()).historySumDistribution(Lottery.Type.SSQ);
-//                new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).test(Lottery.Type.DLT);
+        new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).test(Lottery.Type.DLT);
 //        try {
-////                        NoSelectionCalculator.setExclusion(Lottery.Type.SSQ, new int[][]{
-////                                new int[]{},
-////                                new int[]{15
-////                                },
-////                        });
+//                        NoSelectionCalculator.setExclusion(Lottery.Type.DLT, new int[][]{
+//                                new int[]{14,31,35},
+//                                new int[]{
+//                                        9,10,12
+//                                },
+//                        });
 ////                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
 ////                                Lottery.Type.DLT, CalculatorCollection.urr(), 100000, 1000);
-////            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ, 5,
-////                    2000000);
+//            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.DLT, 3,
+//                    2000000);
 //        } catch (DataSource.DataLoadingException e) {
 //            System.out.println(e.getMessage());
 //        }
@@ -66,6 +67,46 @@ public class TestAlgorithm {
 
     private File getProjectRoot() {
         return mRoot;
+    }
+
+    private void testKilling(Lottery.Type type) {
+        try {
+            final List<HistoryItem> items = new History(mRoot).load(type);
+            final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
+            final int[][] normalsMap = NumUtils.newEmptyIntArray(configuration.getNormalRange() + 1,
+                    configuration.getNormalRange() + 1);
+            final int[][] specialsMap = NumUtils.newEmptyIntArray(configuration.getSpecialRange() + 1, configuration.getSpecialRange() + 1);
+            for (int i = items.size() - 1; i > 1; i--) {
+                HistoryItem item = items.get(i);
+                HistoryItem testTarget = items.get(i - 2);
+                for (int j = 0; j < item.getNormals()
+                        .size(); j++) {
+                    int value = item.getNormals().get(j);
+                    for (int jk = 0; jk < testTarget.getNormals()
+                            .size(); jk++) {
+                        normalsMap[value][testTarget.getNormals().get(jk)] ++;
+                    }
+                }
+                for (int j = 0; j < item.getSpecials()
+                        .size(); j++) {
+                    int value = item.getSpecials().get(j);
+                    for (int jk = 0; jk < testTarget.getSpecials()
+                            .size(); jk++) {
+                        specialsMap[value][testTarget.getSpecials().get(jk)] ++;
+                    }
+                }
+            }
+            for (int i = 1; i < normalsMap.length; i++) {
+                int[] item = normalsMap[i];
+                System.out.println("normal num: " + i + " variance: " + NumUtils.calculateVariance(item, true));
+            }
+            for (int i = 1; i < specialsMap.length; i++) {
+                int[] item = specialsMap[i];
+                System.out.println("special num: " + i + " variance: " + NumUtils.calculateVariance(item, true));
+            }
+        } catch (DataSource.DataLoadingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void testLastNTime(List<HistoryItem> items) {

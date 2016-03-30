@@ -58,17 +58,17 @@ public class NumUtils {
         int result = 0;
         for (int i = 0; i < src.size(); i++) {
             if (dest.contains(src.get(i))) {
-                result ++;
+                result++;
             }
         }
         return result;
     }
 
     public static int calculateIndexWithWeight(final float[] weights, final Random random) {
-        float rate  = random.nextFloat();
+        float rate = random.nextFloat();
         float total = 0;
         for (int i = 0; i < weights.length; i++) {
-            total+= weights[i];
+            total += weights[i];
         }
         float totalRate = 0;
         for (int i = 0; i < weights.length; i++) {
@@ -83,8 +83,9 @@ public class NumUtils {
         throw new IllegalArgumentException("bad weight!");
     }
 
-    public static List<Integer> calculateIndexesWithWeight(final float[] weights, final
-                                                   Random random, final int resultCount) {
+    public static List<Integer> calculateIndexesWithWeight(final float[] weights,
+                                                           final Random random,
+                                                           final int resultCount) {
         if (resultCount == 0) {
             return Collections.emptyList();
         }
@@ -93,7 +94,7 @@ public class NumUtils {
         List<Integer> hasValueIndexes = new ArrayList<>();
         for (int i = 0; i < weights.length; i++) {
             if (weights[i] > 0) {
-                hasValueCount ++;
+                hasValueCount++;
                 hasValueIndexes.add(i);
             }
         }
@@ -101,7 +102,7 @@ public class NumUtils {
             return hasValueIndexes;
         }
         try {
-            while(result.size() < resultCount) {
+            while (result.size() < resultCount) {
                 result.add(calculateIndexWithWeight(weights, random));
             }
         } catch (Exception e) {
@@ -166,9 +167,12 @@ public class NumUtils {
                     configuration.getNormalSize() - 1) / NumUtils.C(configuration.getNormalRange(),
                     configuration.getNormalSize()));
             float normalizedProbSpecial = (float) (NumUtils.C(configuration.getSpecialRange() - 1,
-                    configuration.getSpecialSize() - 1) / NumUtils.C(configuration.getSpecialRange(),
-                    configuration.getSpecialSize()));
-            result = new float[]{normalizedProbNormal, normalizedProbSpecial};
+                    configuration.getSpecialSize() - 1) / NumUtils.C(
+                    configuration.getSpecialRange(), configuration.getSpecialSize()));
+            result = new float[]{
+                    normalizedProbNormal,
+                    normalizedProbSpecial
+            };
             NORMALIZED_PROB.put(type, result);
         }
         return result;
@@ -202,9 +206,9 @@ public class NumUtils {
 
         List<KeyValuePair> line = new ArrayList<>();
         for (int i = 0; i < rates.length; i++) {
-//            final KeyValuePair item = rates[i];
-//            final KeyValuePair lineItem = new KeyValuePair(item.getKey(), i * b + a);
-//            line.add(lineItem);
+            //            final KeyValuePair item = rates[i];
+            //            final KeyValuePair lineItem = new KeyValuePair(item.getKey(), i * b + a);
+            //            line.add(lineItem);
             rates[i] = i * b + a;
         }
         return rates;
@@ -212,7 +216,7 @@ public class NumUtils {
 
     public static List<List<Integer>> exhaustC(int n, int m) {
         long size = C_Long(n, m);
-        List<List<Integer>> result = pick(1,n,m);
+        List<List<Integer>> result = pick(1, n, m);
         if (size != result.size()) {
             throw new IllegalStateException("bad!");
         }
@@ -232,11 +236,60 @@ public class NumUtils {
         for (int i = start; i <= end - m + 1; i++) {
             List<List<Integer>> subResult = pick(i + 1, end, m - 1);
             for (int j = 0; j < subResult.size(); j++) {
-                subResult.get(j).add(i);
+                subResult.get(j)
+                        .add(i);
             }
             result.addAll(subResult);
         }
         return result;
+    }
+
+    public static int[][] newEmptyIntArray(final int size_0, final int size_1) {
+        int[][] result = new int[size_0][];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = newEmptyIntArray(size_1);
+        }
+        return result;
+    }
+
+    public static float calculateVariance(final int[] array, boolean ignoreZero) {
+        if (array == null || (array.length == 1 && ignoreZero)) {
+            return 0;
+        }
+        float total = 0;
+        int startIndex = ignoreZero ?
+                1 :
+                0;
+        int divider = ignoreZero ? array.length - 1 : array.length;
+        for (int i = startIndex; i < array.length; i++) {
+            total += array[i];
+        }
+        float av = total /divider;
+        total = 0;
+        for (int i = startIndex; i < array.length; i++) {
+            total += Math.pow(array[i] - av, 2);
+        }
+        return total / divider;
+    }
+
+    public static float calculateVariance(final float[] array, boolean ignoreZero) {
+        if (array == null || (array.length == 1 && ignoreZero)) {
+            return 0;
+        }
+        float total = 0;
+        int startIndex = ignoreZero ?
+                1 :
+                0;
+        int divider = ignoreZero ? array.length - 1 : array.length;
+        for (int i = startIndex; i < array.length; i++) {
+            total += array[i];
+        }
+        float av = total /divider;
+        total = 0;
+        for (int i = startIndex; i < array.length; i++) {
+            total += Math.pow(array[i] - av, 2);
+        }
+        return total / divider;
     }
 
 }

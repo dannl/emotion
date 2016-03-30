@@ -8,6 +8,8 @@ import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalcula
 import com.qqdd.lottery.calculate.data.calculators.LastNTimeOccurIncreaseCalculator_new;
 import com.qqdd.lottery.calculate.data.calculators.NoSelectionCalculator;
 import com.qqdd.lottery.calculate.data.calculators.SameNumberCalculator;
+import com.qqdd.lottery.calculate.data.calculators.SequenceOccCalculator;
+import com.qqdd.lottery.calculate.data.calculators.SequenceOccSumRatesCalculator;
 import com.qqdd.lottery.calculate.data.calculators.UniverseRateRangeCalculator;
 
 import java.util.ArrayList;
@@ -52,7 +54,18 @@ public class CalculatorCollection extends ArrayList<Calculator> {
         result.add(lastNMedium());
         result.add(urr());
         result.add(oldLastNTime());
+        result.add(sequenceOcc());
+        result.add(sequenceSumRates());
         return result;
+    }
+
+    public static CalculatorCollection lastNMedium_sequenceOcc() {
+        CalculatorCollection calculatorList = new CalculatorCollection();
+        calculatorList.add(new HistoryOccurrenceProbabilityCalculator());
+        calculatorList.add(new LastNMediumIncrease());
+        calculatorList.add(new SequenceOccCalculator());
+        calculatorList.add(new NoSelectionCalculator());
+        return calculatorList;
     }
 
     public static CalculatorCollection oldLastNTime() {
@@ -115,6 +128,22 @@ public class CalculatorCollection extends ArrayList<Calculator> {
         CalculatorCollection calculatorList = new CalculatorCollection();
         calculatorList.add(new HistoryOccurrenceProbabilityCalculator());
         calculatorList.add(new SameNumberCalculator());
+        calculatorList.add(new NoSelectionCalculator());
+        return calculatorList;
+    }
+
+    public static CalculatorCollection sequenceOcc() {
+        CalculatorCollection calculatorList = new CalculatorCollection();
+        calculatorList.add(new HistoryOccurrenceProbabilityCalculator());
+        calculatorList.add(new SequenceOccCalculator());
+        calculatorList.add(new NoSelectionCalculator());
+        return calculatorList;
+    }
+
+    public static CalculatorCollection sequenceSumRates() {
+        CalculatorCollection calculatorList = new CalculatorCollection();
+        calculatorList.add(new HistoryOccurrenceProbabilityCalculator());
+        calculatorList.add(new SequenceOccSumRatesCalculator());
         calculatorList.add(new NoSelectionCalculator());
         return calculatorList;
     }
