@@ -1,4 +1,5 @@
 #!/bin/bash
+cd .data
 rm -rf DLT_US
 rm -rf SSQ_US
 mkdir DLT_US

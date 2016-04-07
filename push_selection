@@ -1,5 +1,5 @@
 #!/bin/bash
 adb shell rm -rf /sdcard/Ltt/DLT_US
-adb push DLT_US /sdcard/Ltt/DLT_US
+adb push .data/DLT_US /sdcard/Ltt/DLT_US
 adb shell rm -rf /sdcard/Ltt/SSQ_US
-adb push SSQ_US /sdcard/Ltt/SSQ_US
+adb push .data/SSQ_US /sdcard/Ltt/SSQ_US

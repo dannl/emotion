@@ -1,6 +1,0 @@
-#!/bin/bash
-for f in $(ls | grep _kv)
-do
-	echo "push $f"
-	adb push $f "/sdcard/Ltt/$f"
-done

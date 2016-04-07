@@ -18,7 +18,7 @@ public class SimpleIOUtils {
                 .getLocation()
                 .getFile();
         final String projectRoot = file.substring(0, file.indexOf("lotterydata"));
-        return new File(projectRoot);
+        return new File(new File(projectRoot),".data");
     }
 
     public static void saveToFile(File file, String content) throws IOException {

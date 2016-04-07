@@ -1,5 +1,0 @@
-#!/bin/bash
-adb shell rm -rf /sdcard/Ltt/rates
-adb push rates /sdcard/Ltt/rates
-ls rates/ > rate_list.txt
-
