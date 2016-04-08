@@ -41,7 +41,7 @@ public class SumPicker {
 
     public void listUniverse(Lottery.Type type) {
         System.out.println("get all started");
-        List<SimpleLottery> all = getAllLotteries(type);
+        List<SimpleLottery> all = getAllLotteries(type, true);
         System.out.println("get all finished");
         HashMap<Integer, List<SimpleLottery>> sumDistribution = new HashMap<>();
         for (int i = 0; i < all.size(); i++) {
@@ -85,7 +85,7 @@ public class SumPicker {
             throw new IllegalArgumentException("bad count " + count);
         }
         System.out.println("get all started");
-        List<SimpleLottery> all = getAllLotteries(type);
+        List<SimpleLottery> all = getAllLotteries(type, false);
         System.out.println("get all finished");
         HashMap<Integer, List<SimpleLottery>> sumDistribution = new HashMap<>();
         for (int i = 0; i < all.size(); i++) {
@@ -221,7 +221,7 @@ public class SumPicker {
             for (int i = 0; i < all.size(); i++) {
                 KeyValuePair pair = all.get(i);
                 historyResult.add(new KeyValuePair(pair.getKey(),
-                        detail.getTotalCounts()[Integer.parseInt(pair.getKey())]));
+                        detail.getTotalCounts()[Integer.parseInt(pair.getKey())] * 10000));
             }
             SimpleIOUtils.saveToFile(new File(mRoot, type + "_history_sum"),
                     KeyValuePair.toArray(historyResult)
@@ -261,7 +261,7 @@ public class SumPicker {
         return result;
     }
 
-    private List<SimpleLottery> getAllLotteries(Lottery.Type type) {
+    private List<SimpleLottery> getAllLotteries(Lottery.Type type, boolean noFilter) {
         final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
         List<List<Integer>> normals = NumUtils.exhaustC(configuration.getNormalRange(),
                 configuration.getNormalSize());
@@ -272,9 +272,11 @@ public class SumPicker {
                 "calculateAndSave integers finished! all size: " + normals.size() * specials.size());
         for (int i = 0; i < specials.size(); i++) {
             for (int j = 0; j < normals.size(); j++) {
-                if (!hasTooMuchSequence(normals.get(j), type)) {
-                    final SimpleLottery simpleLottery = new SimpleLottery(normals.get(j),
-                            specials.get(i));
+                final SimpleLottery simpleLottery = new SimpleLottery(normals.get(j),
+                        specials.get(i));
+                if (noFilter) {
+                    allLotteries.add(simpleLottery);
+                } else if (!hasTooMuchSequence(normals.get(j), type)) {
                     int sum = sum(simpleLottery);
                     int odd = odd(normals.get(j));
                     if (type == Lottery.Type.DLT) {

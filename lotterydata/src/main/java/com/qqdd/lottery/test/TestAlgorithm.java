@@ -38,29 +38,6 @@ public class TestAlgorithm {
 
     private static final DecimalFormat TEST_RESULT_FORMAT = new DecimalFormat("##0.0000000");
 
-    public static void main(String[] args) {
-//        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testKilling(Lottery.Type.SSQ);
-//        new SumPicker(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ, new int[]{127,170}, null, 3);
-//        new SumPicker(SimpleIOUtils.getProjectRoot()).historySumDistribution(Lottery.Type.SSQ);
-//        new CalculatorAutoSwitcher(SimpleIOUtils.getProjectRoot()).refresh(Lottery.Type.DLT);
-        try {
-//                        NoSelectionCalculator.setExclusion(Lottery.Type.DLT, new int[][]{
-//                                new int[]{3,13,23,33
-//                                },
-//                                new int[]{5
-//                                },
-//                        });
-//                        new TestAlgorithm(SimpleIOUtils.getProjectRoot()).testAlgorithmAndPrintRateDetail(
-//                                Lottery.Type.DLT, CalculatorCollection.urr(), 100000, 1000);
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ, CalculatorCollection.sequenceOcc(), 2,
-                    1000000);
-            new TestAlgorithm(SimpleIOUtils.getProjectRoot()).calculateAndSave(Lottery.Type.SSQ, CalculatorCollection.lastNMedium(), 2,
-                    1000000);
-        } catch (DataSource.DataLoadingException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     private File mRoot;
 
     public TestAlgorithm(final File root) {
@@ -71,7 +48,7 @@ public class TestAlgorithm {
         return mRoot;
     }
 
-    private void testKilling(Lottery.Type type) {
+    void testKilling(Lottery.Type type) {
         try {
             final List<HistoryItem> items = new History(mRoot).load(type);
             final LotteryConfiguration configuration = LotteryConfiguration.getWithType(type);
@@ -111,7 +88,7 @@ public class TestAlgorithm {
         }
     }
 
-    private void testLastNTime(List<HistoryItem> items) {
+    void testLastNTime(List<HistoryItem> items) {
         final LastNTimeOccurIncreaseCalculator_new calculator = new LastNTimeOccurIncreaseCalculator_new(
                 false);
         for (int i = 300; i >= 0; i--) {
@@ -121,7 +98,7 @@ public class TestAlgorithm {
 
     }
 
-    private void calculateTotalValue(List<HistoryItem> items, int to) {
+    void calculateTotalValue(List<HistoryItem> items, int to) {
         if (to > items.size()) {
             return;
         }
@@ -142,7 +119,7 @@ public class TestAlgorithm {
         }
     }
 
-    private void testBuyCount(final Lottery.Type type, final CalculatorCollection calculators,
+    void testBuyCount(final Lottery.Type type, final CalculatorCollection calculators,
                               final int buyCount, final int since)
             throws DataSource.DataLoadingException {
         final List<HistoryItem> history = new History(SimpleIOUtils.getProjectRoot()).load(type);
@@ -174,7 +151,7 @@ public class TestAlgorithm {
         }
     }
 
-    private void calculateSelectMethod(Lottery.Type type, CalculatorCollection calculators,
+    void calculateSelectMethod(Lottery.Type type, CalculatorCollection calculators,
                                        int resultCount, int calculateTimes)
             throws DataSource.DataLoadingException {
         final List<HistoryItem> loaded = new History(getProjectRoot()).load(type);
@@ -201,7 +178,7 @@ public class TestAlgorithm {
         }
     }
 
-    private List<Lottery> calculateResult(Lottery.Type type, CalculatorCollection calculators,
+    List<Lottery> calculateResult(Lottery.Type type, CalculatorCollection calculators,
                                           int resultCount, int calculateTimes)
             throws DataSource.DataLoadingException {
         final List<HistoryItem> history = new History(getProjectRoot()).load(type);
